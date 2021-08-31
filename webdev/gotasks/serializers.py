@@ -1,11 +1,11 @@
 from rest_framework import serializers
-from gotasks.models import Members, Projects, Lists, Cards
+from gotasks.models import User, Projects, Lists, Cards
 
 
 class ProjectsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Projects
-        fields = ['id', 'project_name', 'project_wiki', 'project_members', 'project_created']
+        fields = ['id', 'project_name', 'project_wiki', 'project_creator', 'project_members', 'project_created']
 
 
 class ListsSerializer(serializers.ModelSerializer):

@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.parsers import JSONParser
-from gotasks.models import Members, Projects, Lists, Cards
+from gotasks.models import User, Projects, Lists, Cards
 from gotasks.serializers import ProjectsSerializer, ListsSerializer, CardsSerializer
 from rest_framework import generics
 # from rest_framework.authentication import BasicAuthentication, SessionAuthentication, TokenAuthentication
