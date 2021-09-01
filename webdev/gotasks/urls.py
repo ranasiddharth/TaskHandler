@@ -3,6 +3,8 @@ from gotasks import views
 from rest_framework.urlpatterns import format_suffix_patterns
 
 urlpatterns = [
+    path('users/', views.UserList.as_view()),
+    path('users/<int:pk>/', views.UserDetail.as_view()),
     path('gotasks/', views.ProjectsList.as_view()),
     path('gotasks/<int:pk>/', views.ProjectsDetail.as_view()),
     path('getlist/', views.ListsList.as_view()),
