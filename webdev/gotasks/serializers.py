@@ -11,7 +11,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class ProjectsSerializer(serializers.ModelSerializer):
-    project_creator = serializers.ReadOnlyField(source='project_creator.username')
+    project_creator = serializers.ReadOnlyField(source='project_creator.fullname')
 
     class Meta:
         model = Projects

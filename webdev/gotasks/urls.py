@@ -11,6 +11,8 @@ urlpatterns = [
     path('getlist/<int:pk>/', views.ListsDetail.as_view()),
     path('getcards/', views.CardsList.as_view()),
     path('getcards/<int:pk>/', views.CardsDetail.as_view()),
+    path('', views.responseGet),
+    path('login/', views.profile),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
