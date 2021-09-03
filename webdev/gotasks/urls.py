@@ -1,18 +1,24 @@
+from os import name
 from django.urls import path
 from gotasks import views
-from rest_framework.urlpatterns import format_suffix_patterns
+from rest_framework.routers import DefaultRouter
+from rest_framework_extensions.routers import ExtendedSimpleRouter
+from django.urls import path, include
+
+basic_router = DefaultRouter()
+basic_router.register('projects', views.ProjectViewSet)
+basic_router.register('users', views.UserViewSet)
+basic_router.register('lists', views.ListViewSet)
+basic_router.register('cards', views.CardViewSet)
+
+router = ExtendedSimpleRouter()
+(
+    router.register('projects', views.ProjectViewSet, basename='projects').register('lists', views.ListViewSet, basename='projects-lists', parents_query_lookups=['project']).register('cards', views.CardViewSet, basename='lists-cards', parents_query_lookups=['list__project', 'list'])
+)
 
 urlpatterns = [
-    path('users/', views.UserList.as_view()),
-    path('users/<int:pk>/', views.UserDetail.as_view()),
-    path('gotasks/', views.ProjectsList.as_view()),
-    path('gotasks/<int:pk>/', views.ProjectsDetail.as_view()),
-    path('getlist/', views.ListsList.as_view()),
-    path('getlist/<int:pk>/', views.ListsDetail.as_view()),
-    path('getcards/', views.CardsList.as_view()),
-    path('getcards/<int:pk>/', views.CardsDetail.as_view()),
+    path('gotasks/', include(router.urls)),
+    path('gotasks/', include(basic_router.urls)),
     path('', views.responseGet),
     path('login/', views.profile),
 ]
-
-urlpatterns = format_suffix_patterns(urlpatterns)

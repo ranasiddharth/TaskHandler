@@ -1,12 +1,11 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login
 from django.http import HttpResponse, JsonResponse
-from rest_framework.parsers import JSONParser
+from rest_framework import viewsets
 from gotasks.models import User, Projects, Lists, Cards
 from gotasks.serializers import UserSerializer, ProjectsSerializer, ListsSerializer, CardsSerializer
-from rest_framework import generics
+from rest_framework_extensions.mixins import NestedViewSetMixin
 import requests
-import urllib
 import json
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser, IsAuthenticatedOrReadOnly
 
@@ -41,25 +40,20 @@ def responseGet(request):
         if User.objects.filter(username=username).count()==0:
             User.objects.create(username=username, fullname=fullname, email=email)
         login(request, User.objects.get(username=username))
-        return redirect('http://127.0.0.1:8000/gotasks/')
+        return redirect('http://127.0.0.1:8000/gotasks/projects')
     else:
         return HttpResponse('Not Authenticated')
 
 
 
-class UserList(generics.ListAPIView):
+class UserViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
 
 
-class UserDetail(generics.RetrieveAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-    permission_classes = [IsAuthenticated]
 
-
-class ProjectsList(generics.ListCreateAPIView):
+class ProjectViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
     queryset = Projects.objects.all()
     serializer_class = ProjectsSerializer
     
@@ -69,31 +63,16 @@ class ProjectsList(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated]
 
 
-class ProjectsDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Projects.objects.all()
-    serializer_class = ProjectsSerializer
-    permission_classes = [IsAuthenticated]
 
-
-class ListsList(generics.ListCreateAPIView):
+class ListViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
     queryset = Lists.objects.all()
     serializer_class = ListsSerializer
+
     permission_classes = [IsAuthenticated]
 
 
-class ListsDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Lists.objects.all()
-    serializer_class = ListsSerializer
-    permission_classes = [IsAuthenticated]
 
-
-class CardsList(generics.ListCreateAPIView):
-    queryset =  Cards.objects.all()
-    serializer_class =  CardsSerializer
-    permission_classes = [IsAuthenticated]
-
-
-class CardsDetail(generics.RetrieveUpdateDestroyAPIView):
+class CardViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
     queryset =  Cards.objects.all()
     serializer_class =  CardsSerializer
     permission_classes = [IsAuthenticated]

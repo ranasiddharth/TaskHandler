@@ -3,15 +3,16 @@ from gotasks.models import User, Projects, Lists, Cards
 
 
 class UserSerializer(serializers.ModelSerializer):
-    creator = serializers.PrimaryKeyRelatedField(many=True, queryset=Projects.objects.all())
+    creator = serializers.StringRelatedField(many=True)
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'creator']
+        fields = ['id', 'username', 'fullname', 'creator']
 
 
 class ProjectsSerializer(serializers.ModelSerializer):
     project_creator = serializers.ReadOnlyField(source='project_creator.fullname')
+    project_members = serializers.SlugRelatedField(many=True, queryset=User.objects.all(), slug_field='fullname')  
 
     class Meta:
         model = Projects
