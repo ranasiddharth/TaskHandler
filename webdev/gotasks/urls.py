@@ -8,8 +8,8 @@ from django.urls import path, include
 basic_router = DefaultRouter()
 basic_router.register('projects', views.ProjectViewSet)
 basic_router.register('users', views.UserViewSet)
-basic_router.register('lists', views.ListViewSet)
-basic_router.register('cards', views.CardViewSet)
+basic_router.register('lists', views.ListList)
+basic_router.register('cards', views.CardList)
 
 router = ExtendedSimpleRouter()
 (

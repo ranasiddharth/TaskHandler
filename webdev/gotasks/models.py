@@ -39,7 +39,7 @@ class Lists(models.Model):
 class Cards(models.Model):
     card_name = models.CharField(max_length=100)
     list = models.ForeignKey(to=Lists, on_delete=models.CASCADE)
-    assigned = models.ForeignKey(to=User, on_delete=models.CASCADE)
+    assigned = models.ForeignKey(to=User, on_delete=models.CASCADE, related_name='cards')
     date_created = models.DateTimeField(auto_now_add=True)
     due_date = models.DateTimeField()
 

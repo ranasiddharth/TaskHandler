@@ -1,9 +1,10 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login
 from django.http import HttpResponse, JsonResponse
-from rest_framework import viewsets
+from rest_framework import serializers, viewsets
+from rest_framework.decorators import action
 from gotasks.models import User, Projects, Lists, Cards
-from gotasks.serializers import UserSerializer, ProjectsSerializer, ListsSerializer, CardsSerializer
+from gotasks.serializers import ListsShowSerializer, UserSerializer, ProjectsSerializer, ListsSerializer, CardsSerializer, CardsShowSerializer
 from rest_framework_extensions.mixins import NestedViewSetMixin
 import requests
 import json
@@ -49,30 +50,53 @@ def responseGet(request):
 class UserViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    http_method_names = ['get']
     permission_classes = [IsAuthenticated]
-
 
 
 class ProjectViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
     queryset = Projects.objects.all()
     serializer_class = ProjectsSerializer
-    
+
     def perform_create(self, serializer):
         serializer.save(project_creator=self.request.user)
 
     permission_classes = [IsAuthenticated]
 
 
+class ListList(viewsets.ModelViewSet):
+    queryset = Lists.objects.all()
+    serializer_class = ListsShowSerializer
+    http_method_names = ['get']
+    permission_classes = [IsAuthenticated]
+
 
 class ListViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
     queryset = Lists.objects.all()
     serializer_class = ListsSerializer
 
+    def perform_create(self, serializer):
+        id = self.kwargs.get("parent_lookup_project")
+        project_instance = Projects.objects.get(id=id)
+        serializer.save(project=project_instance)
+
     permission_classes = [IsAuthenticated]
 
+
+class CardList(viewsets.ModelViewSet):
+    queryset = Cards.objects.all()
+    serializer_class = CardsShowSerializer
+    http_method_names = ['get']
+    permission_classes = [IsAuthenticated]
 
 
 class CardViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
     queryset =  Cards.objects.all()
     serializer_class =  CardsSerializer
+
+    def perform_create(self, serializer):
+        id = self.kwargs.get("parent_lookup_list")
+        list_instance = Lists.objects.get(id=id)
+        serializer.save(list=list_instance)
+
     permission_classes = [IsAuthenticated]

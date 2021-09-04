@@ -1,13 +1,5 @@
-from rest_framework import serializers
+from rest_framework import response, serializers
 from gotasks.models import User, Projects, Lists, Cards
-
-
-class UserSerializer(serializers.ModelSerializer):
-    creator = serializers.StringRelatedField(many=True)
-
-    class Meta:
-        model = User
-        fields = ['id', 'username', 'fullname', 'creator']
 
 
 class ProjectsSerializer(serializers.ModelSerializer):
@@ -19,13 +11,33 @@ class ProjectsSerializer(serializers.ModelSerializer):
         fields = ['id', 'project_name', 'project_wiki', 'project_creator', 'project_members', 'project_created']
 
 
-class ListsSerializer(serializers.ModelSerializer):
+class ListsShowSerializer(serializers.ModelSerializer):
     class Meta:
         model = Lists
         fields = ['id', 'list_name', 'project', 'list_created']
 
 
-class CardsSerializer(serializers.ModelSerializer):
+class ListsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Lists
+        fields = ['id', 'list_name', 'list_created']
+
+class CardsShowSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cards
         fields = ['id', 'card_name', 'list', 'assigned', 'date_created', 'due_date']
+
+
+class CardsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Cards
+        fields = ['id', 'card_name', 'assigned', 'date_created', 'due_date']
+
+
+class UserSerializer(serializers.ModelSerializer):
+    creator = serializers.StringRelatedField(many=True)
+    cards = CardsShowSerializer(many=True)
+
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'fullname', 'creator', 'cards']
