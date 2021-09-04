@@ -9,6 +9,7 @@ from rest_framework_extensions.mixins import NestedViewSetMixin
 import requests
 import json
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser, IsAuthenticatedOrReadOnly
+from .permissions import IsProjectCreator_MemberOrReadOnly, IsListCreator_MemberOrReadOnly, IsCardCreator_MemberOrReadOnly
 
 import environ
 env = environ.Env()
@@ -61,7 +62,7 @@ class ProjectViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(project_creator=self.request.user)
 
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsProjectCreator_MemberOrReadOnly]
 
 
 class ListList(viewsets.ModelViewSet):
@@ -80,7 +81,7 @@ class ListViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
         project_instance = Projects.objects.get(id=id)
         serializer.save(project=project_instance)
 
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsListCreator_MemberOrReadOnly]
 
 
 class CardList(viewsets.ModelViewSet):
@@ -99,4 +100,4 @@ class CardViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
         list_instance = Lists.objects.get(id=id)
         serializer.save(list=list_instance)
 
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsCardCreator_MemberOrReadOnly]
