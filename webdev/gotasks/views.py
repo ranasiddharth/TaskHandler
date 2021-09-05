@@ -60,6 +60,7 @@ class ProjectViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
     serializer_class = ProjectsSerializer
 
     def perform_create(self, serializer):
+        serializer.validated_data['project_members'].append(self.request.user)
         serializer.save(project_creator=self.request.user)
 
     permission_classes = [IsAuthenticated, IsProjectCreator_MemberOrReadOnly]
@@ -75,7 +76,7 @@ class ListList(viewsets.ModelViewSet):
 class ListViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
     queryset = Lists.objects.all()
     serializer_class = ListsSerializer
-
+    
     def perform_create(self, serializer):
         id = self.kwargs.get("parent_lookup_project")
         project_instance = Projects.objects.get(id=id)
