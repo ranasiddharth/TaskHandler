@@ -3,6 +3,7 @@ from django.contrib.auth import login
 from django.http import HttpResponse, JsonResponse
 from rest_framework import serializers, viewsets
 from rest_framework.decorators import action
+from rest_framework.response import Response
 from gotasks.models import User, Projects, Lists, Cards
 from gotasks.serializers import ListsShowSerializer, UserSerializer, ProjectsSerializer, ListsSerializer, CardsSerializer, CardsShowSerializer
 from rest_framework_extensions.mixins import NestedViewSetMixin
@@ -42,7 +43,7 @@ def responseGet(request):
         if User.objects.filter(username=username).count()==0:
             User.objects.create(username=username, fullname=fullname, email=email)
         login(request, User.objects.get(username=username))
-        return redirect('http://127.0.0.1:8000/gotasks/projects')
+        return redirect('http://127.0.0.1:8000/gotasks/')
     else:
         return HttpResponse('Not Authenticated')
 
@@ -77,10 +78,18 @@ class ListViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
     queryset = Lists.objects.all()
     serializer_class = ListsSerializer
     
-    def perform_create(self, serializer):
+    def create(self, request, *args, **kwargs):
+        list_data = request.data
         id = self.kwargs.get("parent_lookup_project")
         project_instance = Projects.objects.get(id=id)
-        serializer.save(project=project_instance)
+
+        if request.user in project_instance.project_members.all():
+            obj = Lists.objects.create(list_name=list_data["list_name"], project=project_instance)
+            obj.save()
+            serializer = ListsSerializer(obj)
+            return Response(serializer.data) 
+        else:
+            return Response("405 Method Not allowed")
 
     permission_classes = [IsAuthenticated, IsListCreator_MemberOrReadOnly]
 
@@ -96,9 +105,18 @@ class CardViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
     queryset =  Cards.objects.all()
     serializer_class =  CardsSerializer
 
-    def perform_create(self, serializer):
+    def create(self, request, *args, **kwargs):
+        card_data = request.data
         id = self.kwargs.get("parent_lookup_list")
+        user = User.objects.get(id=card_data["assigned"])
         list_instance = Lists.objects.get(id=id)
-        serializer.save(list=list_instance)
+
+        if request.user in list_instance.project.project_members.all():
+            obj = Cards.objects.create(card_name=card_data["card_name"], list=list_instance, assigned=user, due_date=card_data["due_date"])
+            obj.save()
+            serializer = CardsSerializer(obj)
+            return Response(serializer.data) 
+        else:
+            return Response("405 Method Not allowed")
 
     permission_classes = [IsAuthenticated, IsCardCreator_MemberOrReadOnly]

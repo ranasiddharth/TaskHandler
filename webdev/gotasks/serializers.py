@@ -1,3 +1,5 @@
+from django.http.request import HttpRequest
+from django.http.response import HttpResponse, JsonResponse
 from rest_framework import response, serializers
 from gotasks.models import User, Projects, Lists, Cards
 
@@ -21,6 +23,7 @@ class ListsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Lists
         fields = ['id', 'list_name', 'list_created']
+
 
 class CardsShowSerializer(serializers.ModelSerializer):
     class Meta:
