@@ -8,6 +8,7 @@ class User(AbstractUser):
     fullname = models.CharField(max_length=100)
     email = models.EmailField(max_length=100)
     moderator = models.BooleanField(default=False)
+    is_banned = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.fullname}"

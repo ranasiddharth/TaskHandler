@@ -9,8 +9,8 @@ from gotasks.serializers import ListsShowSerializer, UserSerializer, ProjectsSer
 from rest_framework_extensions.mixins import NestedViewSetMixin
 import requests
 import json
-from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser, IsAuthenticatedOrReadOnly
-from .permissions import IsProjectCreator_MemberOrReadOnly, IsListCreator_MemberOrReadOnly, IsCardCreator_MemberOrReadOnly
+from rest_framework.permissions import IsAuthenticated
+from .permissions import IsProjectCreator_MemberOrReadOnly, IsListCreator_MemberOrReadOnly, IsCardCreator_MemberOrReadOnly, IsAdminPrivilege
 
 import environ
 env = environ.Env()
@@ -42,18 +42,30 @@ def responseGet(request):
     if str(role) == 'Maintainer':
         if User.objects.filter(username=username).count()==0:
             User.objects.create(username=username, fullname=fullname, email=email)
-        login(request, User.objects.get(username=username))
+        if User.objects.get(username=username).is_banned == False:
+            login(request, User.objects.get(username=username))
+        else:
+            return HttpResponse('You are not allowed to login')
         return redirect('http://127.0.0.1:8000/gotasks/')
     else:
         return HttpResponse('Not Authenticated')
 
 
-
 class UserViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    http_method_names = ['get']
-    permission_classes = [IsAuthenticated]
+    http_method_names = ['get', 'patch']
+
+    def partial_update(self, request, *args, **kwargs):
+        user_object = self.get_object()
+        data = request.data
+        user_object.moderator = data.get("moderator", user_object.moderator)
+        user_object.is_banned = data.get("is_banned", user_object.is_banned)
+        user_object.save()
+        serializer = UserSerializer(user_object)
+        return Response(serializer.data)
+
+    permission_classes = [IsAuthenticated, IsAdminPrivilege]
 
 
 class ProjectViewSet(NestedViewSetMixin, viewsets.ModelViewSet):

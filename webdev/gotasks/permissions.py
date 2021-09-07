@@ -3,6 +3,17 @@ from .models import Projects
 from rest_framework import permissions
 
 
+class IsAdminPrivilege(permissions.BasePermission):
+    """
+    Custom permission to only allow admins to change status of other users (update)
+    """
+    def has_object_permission(self, request, view, obj):
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        elif request.method == 'PATCH':
+            return request.user.moderator == True
+
+
 class IsProjectCreator_MemberOrReadOnly(permissions.BasePermission):
     """
     Custom permission to only allow members and creators of an project to edit it (delete and update).
