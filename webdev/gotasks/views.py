@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login
 from django.http import HttpResponse, JsonResponse
-from rest_framework import serializers, viewsets
+from rest_framework import serializers, viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from gotasks.models import User, Projects, Lists, Cards
@@ -45,10 +45,10 @@ def responseGet(request):
         if User.objects.get(username=username).is_banned == False:
             login(request, User.objects.get(username=username))
         else:
-            return HttpResponse('You are not allowed to login')
+            return redirect('https://channeli.in/')
         return redirect('http://127.0.0.1:8000/gotasks/')
     else:
-        return HttpResponse('Not Authenticated')
+        return redirect('https://channeli.in/')
 
 
 class UserViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
@@ -99,9 +99,9 @@ class ListViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
             obj = Lists.objects.create(list_name=list_data["list_name"], project=project_instance)
             obj.save()
             serializer = ListsSerializer(obj)
-            return Response(serializer.data) 
+            return Response(serializer.data, status=status.HTTP_201_CREATED) 
         else:
-            return Response("405 Method Not allowed")
+            return Response("You do not have permission to perform this action", status=status.HTTP_400_BAD_REQUEST)
 
     permission_classes = [IsAuthenticated, IsListCreator_MemberOrReadOnly]
 
@@ -124,11 +124,14 @@ class CardViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
         list_instance = Lists.objects.get(id=id)
 
         if request.user in list_instance.project.project_members.all():
-            obj = Cards.objects.create(card_name=card_data["card_name"], list=list_instance, assigned=user, due_date=card_data["due_date"])
-            obj.save()
-            serializer = CardsSerializer(obj)
-            return Response(serializer.data) 
+            if user in list_instance.project.project_members.all():
+                obj = Cards.objects.create(card_name=card_data["card_name"], list=list_instance, assigned=user, due_date=card_data["due_date"])
+                obj.save()
+                serializer = CardsSerializer(obj)
+                return Response(serializer.data, status=status.HTTP_201_CREATED) 
+            else:
+                return Response("Cards can be assigned to project members only", status=status.HTTP_400_BAD_REQUEST)
         else:
-            return Response("405 Method Not allowed")
+            return Response("You do not have permission to perform this action", status=status.HTTP_400_BAD_REQUEST)
 
     permission_classes = [IsAuthenticated, IsCardCreator_MemberOrReadOnly]

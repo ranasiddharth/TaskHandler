@@ -11,7 +11,7 @@ class User(AbstractUser):
     is_banned = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"{self.fullname}"
+        return f"{self.username}"
 
 class Projects(models.Model):
     project_name = models.CharField(max_length=100, unique=True, blank=False)
