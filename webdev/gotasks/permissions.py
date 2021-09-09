@@ -19,7 +19,7 @@ class IsProjectCreator_MemberOrReadOnly(permissions.BasePermission):
         if request.method in permissions.SAFE_METHODS:
             return True
 
-        return (request.user in obj.project_members.all()) or (request.user == obj.project_creator)
+        return (request.user in obj.project_members.all()) or (request.user == obj.project_creator) or (request.user.moderator)
 
 
 class IsListCreator_MemberOrReadOnly(permissions.BasePermission):
@@ -30,7 +30,7 @@ class IsListCreator_MemberOrReadOnly(permissions.BasePermission):
         if request.method in permissions.SAFE_METHODS:
             return True
 
-        return (request.user in obj.project.project_members.all()) or (request.user == obj.project.project_creator)
+        return (request.user in obj.project.project_members.all()) or (request.user == obj.project.project_creator) or (request.user.moderator)
 
 
 class IsCardCreator_MemberOrReadOnly(permissions.BasePermission):
@@ -41,4 +41,4 @@ class IsCardCreator_MemberOrReadOnly(permissions.BasePermission):
         if request.method in permissions.SAFE_METHODS:
             return True
 
-        return (request.user in obj.list.project.project_members.all()) or (request.user == obj.list.project.project_creator)
+        return (request.user in obj.list.project.project_members.all()) or (request.user == obj.list.project.project_creator) or (request.user.moderator)

@@ -13,16 +13,12 @@ class ProjectsSerializer(serializers.ModelSerializer):
         fields = ['id', 'project_name', 'project_wiki', 'project_creator', 'project_members', 'project_created']
 
 
-class ListsShowSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Lists
-        fields = ['id', 'list_name', 'project', 'list_created']
-
 
 class ListsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Lists
         fields = ['id', 'list_name', 'list_created']
+
 
 
 class CardsShowSerializer(serializers.ModelSerializer):
@@ -31,16 +27,35 @@ class CardsShowSerializer(serializers.ModelSerializer):
         fields = ['id', 'card_name', 'list', 'assigned', 'date_created', 'due_date']
 
 
+
 class CardsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cards
         fields = ['id', 'card_name', 'assigned', 'date_created', 'due_date']
 
 
+
 class UserSerializer(serializers.ModelSerializer):
-    creator = serializers.StringRelatedField(many=True)
-    cards = CardsShowSerializer(many=True)
+    # creator = serializers.StringRelatedField(many=True)
+    # cards = CardsShowSerializer(many=True)
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'fullname','moderator', 'is_banned', 'creator', 'cards']
+        fields = ['id', 'username', 'fullname','moderator', 'is_banned']
+        read_only_fields = ['id', 'username', 'fullname']
+
+
+
+class DashboardProjectSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Projects
+        fields = "__all__"
+
+
+
+class DashboardCardSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Cards
+        fields = "__all__"

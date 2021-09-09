@@ -1,5 +1,6 @@
 from os import name
 from django.urls import path
+from django.views.generic import base
 from gotasks import views
 from rest_framework.routers import DefaultRouter
 from rest_framework_extensions.routers import ExtendedSimpleRouter
@@ -7,9 +8,9 @@ from django.urls import path, include
 
 basic_router = DefaultRouter()
 basic_router.register('projects', views.ProjectViewSet)
-basic_router.register('users', views.UserViewSet)
-basic_router.register('lists', views.ListList)
-basic_router.register('cards', views.CardList)
+basic_router.register('users', views.UserViewSet, basename="users")
+basic_router.register('dashboard/cards', views.DashboardCardViewset, basename="dash-card")
+basic_router.register('dashboard/projects', views.DashboardProjectViewset, basename="dash-project")
 
 router = ExtendedSimpleRouter()
 (
@@ -20,5 +21,5 @@ urlpatterns = [
     path('gotasks/', include(router.urls)),
     path('gotasks/', include(basic_router.urls)),
     path('', views.responseGet),
-    path('login/', views.profile),
+    path('gotasks/login/', views.profile),
 ]
