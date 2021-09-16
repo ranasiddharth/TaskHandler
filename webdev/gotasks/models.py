@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from ckeditor.fields import RichTextField
 
 # Create your models here.
 
@@ -12,6 +13,7 @@ class User(AbstractUser):
 
     def __str__(self):
         return f"{self.username}"
+
 
 class Projects(models.Model):
     project_name = models.CharField(max_length=100, unique=True, blank=False)
@@ -26,6 +28,7 @@ class Projects(models.Model):
     def __str__(self):
         return f"{self.project_name}"
 
+
 class Lists(models.Model):
     list_name = models.CharField(max_length=100)
     project = models.ForeignKey(to=Projects, on_delete=models.CASCADE)
@@ -37,8 +40,10 @@ class Lists(models.Model):
     def __str__(self):
         return f"{self.list_name}"
 
+
 class Cards(models.Model):
     card_name = models.CharField(max_length=100)
+    description = RichTextField()
     list = models.ForeignKey(to=Lists, on_delete=models.CASCADE)
     assigned = models.ForeignKey(to=User, on_delete=models.CASCADE, related_name='cards')
     date_created = models.DateTimeField(auto_now_add=True)
@@ -49,3 +54,15 @@ class Cards(models.Model):
 
     def __str__(self):
         return f"{self.card_name}"
+        
+
+class Comment(models.Model):
+    body = models.CharField(max_length=200)
+    card = models.ForeignKey(Cards, on_delete=models.CASCADE, related_name="comments")
+    commentor = models.ForeignKey(User, on_delete=models.CASCADE, related_name="yourcomments")
+
+    def __str__(self):
+        return f"{self.body} - by {self.commentor}"
+
+    class Meta:
+        ordering = ['id']

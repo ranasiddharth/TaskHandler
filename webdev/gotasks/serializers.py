@@ -1,7 +1,7 @@
 from django.http.request import HttpRequest
 from django.http.response import HttpResponse, JsonResponse
 from rest_framework import response, serializers
-from gotasks.models import User, Projects, Lists, Cards
+from gotasks.models import Comment, User, Projects, Lists, Cards
 
 
 class ProjectsSerializer(serializers.ModelSerializer):
@@ -31,7 +31,15 @@ class CardsShowSerializer(serializers.ModelSerializer):
 class CardsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cards
-        fields = ['id', 'card_name', 'assigned', 'date_created', 'due_date']
+        fields = ['id', 'card_name', 'description', 'assigned', 'date_created', 'due_date']
+
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields =['id', 'body', 'commentor']
+        real_only_fields = ['id', 'commentor']
 
 
 

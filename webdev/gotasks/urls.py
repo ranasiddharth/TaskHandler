@@ -14,7 +14,7 @@ basic_router.register('dashboard/projects', views.DashboardProjectViewset, basen
 
 router = ExtendedSimpleRouter()
 (
-    router.register('projects', views.ProjectViewSet, basename='projects').register('lists', views.ListViewSet, basename='projects-lists', parents_query_lookups=['project']).register('cards', views.CardViewSet, basename='lists-cards', parents_query_lookups=['list__project', 'list'])
+    router.register('projects', views.ProjectViewSet, basename='projects').register('lists', views.ListViewSet, basename='projects-lists', parents_query_lookups=['project']).register('cards', views.CardViewSet, basename='lists-cards', parents_query_lookups=['list__project', 'list']).register('comments', views.CommentViewSet, basename='cards-comments', parents_query_lookups=['card__list__project', 'card__list', 'card'])
 )
 
 urlpatterns = [

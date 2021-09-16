@@ -2,13 +2,13 @@ from django.shortcuts import redirect
 from django.contrib.auth import login
 from rest_framework import serializers, views, viewsets, status
 from rest_framework.response import Response
-from gotasks.models import User, Projects, Lists, Cards
-from gotasks.serializers import UserSerializer, ProjectsSerializer, ListsSerializer, CardsSerializer, DashboardProjectSerializer, DashboardCardSerializer
+from gotasks.models import User, Projects, Lists, Cards, Comment
+from gotasks.serializers import UserSerializer, ProjectsSerializer, ListsSerializer, CardsSerializer, DashboardProjectSerializer, DashboardCardSerializer, CommentSerializer
 from rest_framework_extensions.mixins import NestedViewSetMixin
 import requests
 import json
 from rest_framework.permissions import IsAuthenticated
-from .permissions import IsProjectCreator_MemberOrReadOnly, IsListCreator_MemberOrReadOnly, IsCardCreator_MemberOrReadOnly, IsAdminPrivilege
+from .permissions import IsProjectCreator_MemberOrReadOnly, IsListCreator_MemberOrReadOnly, IsCardCreator_MemberOrReadOnly, IsAdminPrivilege, IsCommentCreator
 
 import environ
 env = environ.Env()
@@ -116,7 +116,7 @@ class CardViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
 
         if request.user.moderator or request.user in list_instance.project.project_members.all():
             if user in list_instance.project.project_members.all():
-                obj = Cards.objects.create(card_name=card_data["card_name"], list=list_instance, assigned=user, due_date=card_data["due_date"])
+                obj = Cards.objects.create(card_name=card_data["card_name"], description=card_data["description"], list=list_instance, assigned=user, due_date=card_data["due_date"])
                 obj.save()
                 serializer = CardsSerializer(obj)
                 return Response(serializer.data, status=status.HTTP_201_CREATED) 
@@ -126,6 +126,25 @@ class CardViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
             return Response("You do not have permission to perform this action", status=status.HTTP_403_FORBIDDEN)
 
     permission_classes = [IsAuthenticated, IsCardCreator_MemberOrReadOnly]
+
+
+
+class CommentViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+
+    def create(self, request, *args, **kwargs):
+        comment_data = request.data
+        id = self.kwargs.get("parent_lookup_card")
+        card_instance = Cards.objects.get(id=id)
+
+        obj = Comment.objects.create(body=comment_data["body"], commentor=request.user, card=card_instance)
+        obj.save()
+        serializer = CommentSerializer(obj)
+        return Response(serializer.data, status=status.HTTP_201_CREATED) 
+        
+
+    permission_classes = [IsAuthenticated, IsCommentCreator]
 
 
 
