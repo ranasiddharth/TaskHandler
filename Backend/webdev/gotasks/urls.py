@@ -22,4 +22,5 @@ urlpatterns = [
     path('gotasks/', include(basic_router.urls)),
     path('', views.responseGet),
     path('gotasks/login/', views.profile),
+    path('gotasks/logout/', views.log_out),
 ]

@@ -49,8 +49,8 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'fullname','moderator', 'is_banned']
-        read_only_fields = ['id', 'username', 'fullname']
+        fields = ['id', 'username', 'fullname', 'email','moderator', 'is_banned']
+        read_only_fields = ['id', 'username', 'fullname', 'email']
 
 
 
@@ -59,6 +59,7 @@ class DashboardProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Projects
         fields = "__all__"
+        depth = 1
 
 
 
