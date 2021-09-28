@@ -46,14 +46,47 @@ const Navbar = () => {
   );
 }
 
+export const ProjectItem = (props) => {
+
+  const classes = useCardStyles()
+
+  const fetchList = async(id) => {
+    await axios.get(`http://127.0.0.1:8000/gotasks/projects/${id}`, {withCredentials: true})
+    .then(res => {
+      console.log(res.data)
+      console.log(id)
+    }).catch(err=>{
+      console.log(err)
+    })
+  }
+
+  return(
+    <Card sx={{ minWidth: 275 }} variant="outlined" className={classes.cardattr}>
+        <CardContent>
+          <Typography variant="h5" component="div" gutterBottom>
+            Name: {props.project.project_name}
+          </Typography>
+          <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+            Description: {props.project.project_wiki}
+          </Typography>
+          <Typography variant="body2" gutterBottom>
+            Created by: {props.project.project_creator}
+          </Typography>
+        </CardContent>
+        <CardActions>
+            <Button size="small" onClick={()=>{fetchList(props.project.id)}}>Details</Button>
+        </CardActions>
+    </Card>
+  )
+
+}
 
 export const Projects = () => {
 
-  const classes = useCardStyles()
   const [projects, setProject] = useState([])
 
-  const fetchData = () => {
-    http.get("/gotasks/projects").then(
+  const fetchData = async() => {
+     await axios.get("http://127.0.0.1:8000/gotasks/projects", {withCredentials:true}).then(
       (res) => {
         setProject(res.data)
       }
@@ -66,34 +99,18 @@ export const Projects = () => {
     fetchData()
   }, [])
 
+
   return (
     <>
     <Navbar />
     <div>
     <br />
-    {/* <Button variant="contained" color="primary" onClick={handleOpen}>
-        Add Project
-    </Button> */}
 
-    
     {projects.map(project => {
       return (
-      <Card sx={{ minWidth: 275 }} variant="outlined" className={classes.cardattr}>
-        <CardContent>
-          <Typography variant="h5" component="div" gutterBottom>
-            Name: {project.project_name}
-          </Typography>
-          <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-            Description: {project.project_wiki}
-          </Typography>
-          <Typography variant="body2" gutterBottom>
-            Created by: {project.project_creator}
-          </Typography>
-        </CardContent>
-        <CardActions>
-            <Button size="small">Details</Button>
-        </CardActions>
-      </Card>
+      <>
+      <ProjectItem key={project.id} project={project} />
+      </>
       )
     })}
     </div>

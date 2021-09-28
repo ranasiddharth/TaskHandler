@@ -10,7 +10,7 @@ import Typography from '@material-ui/core/Typography';
 import useStyles from '../styles/LoginStyles.js'
 import { BeatingHeart } from 'beating-heart-emoji'
 import 'beating-heart-emoji/dist/index.css'
-import { Dashboard } from './Dashboard.js';
+import {Redirect} from 'react-router-dom'
 import Cookies from 'js-cookie';
 
 
@@ -35,42 +35,43 @@ export default function Login() {
     window.location.href='https://channeli.in/oauth/authorise/?client_id=RZ1hP1gezPy5j6fBffYBllW2PQvYxlQrx7IbikbG&redirect_uri=http://localhost:3000/gotasks/oauth/&state=RANDOM_STATE_STRING'
   }
 
-  if(Cookies.get('mytoken') !== undefined){
-    return(
-      <Dashboard />
+  if(Cookies.get('mytoken')){
+    return (
+    <Redirect to="/gotasks/dashboard" />
     )
   }
-
-  return (
-    <Grid container component="main" className={classes.root}>
-      <CssBaseline />
-      <Grid item xs={12} sm={12} md={6} className={classes.image}/>
-      <Grid item xs={12} sm={12} md={6} className={classes.signupdiv}>
-        <Grid item xs={11} sm={11} md={11} component={Paper} elevation={11} square className={classes.signupsubdiv}>
-          <div className={classes.paper}>
-            <Avatar className={classes.avatar}>
-              <VpnKeyIcon />
-            </Avatar>
-            <Typography component="h1" variant="h4" gutterBottom >
-              GoTasks
-            </Typography>
-            <Typography component="h1" variant="h5" gutterBottom>
-              Login Using Oauth 2.0
-            </Typography>
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                color="primary"
-                className={classes.submit}
-                onClick = {oauth}
-              >
-                Sign In
-              </Button>
-              <Copyright />
-          </div>
+  else{
+    return (
+      <Grid container component="main" className={classes.root}>
+        <CssBaseline />
+        <Grid item xs={12} sm={12} md={6} className={classes.image}/>
+        <Grid item xs={12} sm={12} md={6} className={classes.signupdiv}>
+          <Grid item xs={11} sm={11} md={11} component={Paper} elevation={11} square className={classes.signupsubdiv}>
+            <div className={classes.paper}>
+              <Avatar className={classes.avatar}>
+                <VpnKeyIcon />
+              </Avatar>
+              <Typography component="h1" variant="h4" gutterBottom >
+                GoTasks
+              </Typography>
+              <Typography component="h1" variant="h5" gutterBottom>
+                Login Using Oauth 2.0
+              </Typography>
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  className={classes.submit}
+                  onClick = {oauth}
+                >
+                  Sign In
+                </Button>
+                <Copyright />
+            </div>
+          </Grid>
         </Grid>
       </Grid>
-    </Grid>
-  );
+    );
+  }
 }

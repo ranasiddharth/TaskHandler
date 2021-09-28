@@ -1,4 +1,5 @@
 import http from "./axios.js";
+import axios from 'axios';
 import {AppBar, Toolbar} from '@material-ui/core'
 import useStyles from '../styles/Navbar.js'
 import Button from '@material-ui/core/Button';
@@ -39,8 +40,8 @@ export const Members = () => {
   const classes = useCardStyles()
   const [users, setUsers] = useState([])
 
-  const fetchData = () => {
-    http.get("/gotasks/users").then(
+  const fetchData = async() => {
+    await axios.get("http://127.0.0.1:8000/gotasks/users", {withCredentials:true}).then(
       (res) => {
         setUsers(res.data)
       }
@@ -60,7 +61,7 @@ export const Members = () => {
     <br />
     {users.map(user => {
       return (
-        <Card sx={{ minWidth: 275 }} variant="outlined" className={classes.cardattr}>
+        <Card sx={{ minWidth: 275 }} variant="outlined" className={classes.cardattr} key={user.id}>
         <CardContent>
           <Typography variant="h5" component="div" gutterBottom>
             Name: {user.fullname}

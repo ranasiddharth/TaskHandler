@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 from corsheaders.defaults import default_headers
 from pathlib import Path
 import environ
+import rest_framework
 # Initialise environment variables
 env = environ.Env()
 environ.Env.read_env()
@@ -60,21 +61,19 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-CSRF_COOKIE_SECURE = True
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SAMESITE = 'None'
-SESSION_COOKIE_SAMESITE = 'None'
+# CSRF_COOKIE_SECURE = True
+# SESSION_COOKIE_SECURE = True
+# CSRF_COOKIE_SAMESITE = 'None'
+# SESSION_COOKIE_SAMESITE = 'None'
 
-# CSRF_COOKIE_NAME = 'csrfCookie'
-# CORS_ALLOW_HEADERS = list(default_headers) + ['X-CSRFToken',]
 
 CORS_ALLOW_ALL_ORIGINS = False
 
 CORS_ALLOW_CREDENTIALS = True
 
-CORS_ALLOWED_ORIGINS = [
+CORS_ALLOWED_ORIGINS = (
     'http://localhost:3000',
-]
+)
 
 ROOT_URLCONF = 'webdev.urls'
 
@@ -110,6 +109,12 @@ DATABASES = {
         'PORT': '3306',
     }
 }
+
+# REST_FRAMEWORK = {
+#     'DEFAULT_AUTHENTICATION_CLASSES':(
+#         'rest_framework.authentication.SessionAuthentication',
+#     )
+# }
 
 
 # Password validation

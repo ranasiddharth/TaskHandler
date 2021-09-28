@@ -6,7 +6,8 @@ from rest_framework.response import Response
 from gotasks.models import User, Projects, Lists, Cards, Comment
 from gotasks.serializers import UserSerializer, ProjectsSerializer, ListsSerializer, CardsSerializer, DashboardProjectSerializer, DashboardCardSerializer, CommentSerializer
 from rest_framework.authtoken.views import Token
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, authentication_classes
+from django.contrib.auth.decorators import login_required
 from rest_framework_extensions.mixins import NestedViewSetMixin
 import requests
 import json
@@ -34,6 +35,8 @@ def responseGet(request):
     If user is maintainer, create user object, if absent, and login.
     """
     code = request.GET.get('code', '')
+    # data = json.loads(request.body.decode('utf-8'))
+    # auth_code = data['code']
     # print(code)
     payload = {
         'client_id': env('client_id'), 
@@ -60,29 +63,48 @@ def responseGet(request):
         if User.objects.get(username=username).is_banned == False:
             user = User.objects.get(username=username)
             token_obj = Token.objects.get(user=user)
-            res = Response({"sessionid": request.session._session_key, "csrftoken": csrf.get_token(request), "mytoken": token_obj.key}, status=status.HTTP_200_OK)
-            res.set_cookie(key='mytoken', value=token_obj.key, max_age = 30*24*60*60)
-            
+            # res = Response({"csrftoken": csrf.get_token(request), "mytoken": token_obj.key, "sessionid": request.session._session_key}, status=status.HTTP_200_OK)
+            res = Response("ok", status=status.HTTP_200_OK)
             login(request, User.objects.get(username=username))
-            res['Access-Control-Allow-Origin'] = 'http://localhost:3000'
-            res['Access-Control-Allow-Credentials'] = 'true'
+            # res['Access-Control-Allow-Origin'] = 'http://localhost:3000'
+            # res['Access-Control-Allow-Credentials'] = 'true'
             return res
         else:
             res = Response('You are banned', status=status.HTTP_400_BAD_REQUEST)
-            res['Access-Control-Allow-Origin'] = 'http://localhost:3000'
-            res['Access-Control-Allow-Credentials'] = 'true'
+            # res['Access-Control-Allow-Origin'] = 'http://localhost:3000'
+            # res['Access-Control-Allow-Credentials'] = 'true'
             return res
     else:
         res = Response('Only site maintainers can access this app', status=status.HTTP_400_BAD_REQUEST)
-        res['Access-Control-Allow-Origin'] = 'http://localhost:3000'
-        res['Access-Control-Allow-Credentials'] = 'true'
+        # res['Access-Control-Allow-Origin'] = 'http://localhost:3000'
+        # res['Access-Control-Allow-Credentials'] = 'true'
         return res
+
+
+@api_view(['GET'])
+def check_auth(request):
+    msg = {
+        "loggedin": False
+    }
+    if request.user.is_authenticated:
+        msg["loggedin"] = True
+        res = Response(msg, status=status.HTTP_200_OK)
+        # res['Access-Control-Allow-Origin'] = 'http://localhost:3000'
+        # res['Access-Control-Allow-Credentials'] = 'true'
+        return res
+    else:
+        res = Response(msg, status=status.HTTP_200_OK)
+        # res['Access-Control-Allow-Origin'] = 'http://localhost:3000'
+        # res['Access-Control-Allow-Credentials'] = 'true'
+        return res
+
 
 @api_view(['GET'])
 def log_out(request):
     logout(request)
     res = Response("Logged out successfully", status=status.HTTP_200_OK)
-    res.delete_cookie('mytoken')
+    # res['Access-Control-Allow-Origin'] = 'http://localhost:3000'
+    # res['Access-Control-Allow-Credentials'] = 'true'
     return res
 
 
@@ -99,7 +121,7 @@ class UserViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
         queryset = User.objects.all().exclude(id=userid)
         return queryset
 
-    authentication_classes = [TokenAuthentication, SessionAuthentication]
+    authentication_classes = [SessionAuthentication]
     permission_classes = [IsAuthenticated, IsAdminPrivilege]
 
 
@@ -112,6 +134,12 @@ class ProjectViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
     queryset = Projects.objects.all()
     serializer_class = ProjectsSerializer
 
+    # def dispatch(self, *args, **kwargs):
+    #     response = super(UserViewSet, self).dispatch(*args, **kwargs)
+    #     response['Access-Control-Allow-Origin']='http://localhost:3000'
+    #     response['Access-Control-Allow-Credentials']='true'
+    #     return response
+
     def perform_create(self, serializer):
         serializer.validated_data['project_members'].append(self.request.user)
         serializer.save(project_creator=self.request.user)
@@ -122,7 +150,7 @@ class ProjectViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
         serializer.validated_data['project_members'].append(leader)
         serializer.save()
 
-    authentication_classes = [TokenAuthentication, SessionAuthentication]
+    authentication_classes = [SessionAuthentication]
     permission_classes = [IsAuthenticated, IsProjectCreator_MemberOrReadOnly]
 
 
@@ -134,6 +162,12 @@ class ListViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
     """
     queryset = Lists.objects.all()
     serializer_class = ListsSerializer
+
+    # def dispatch(self, *args, **kwargs):
+    #     response = super(UserViewSet, self).dispatch(*args, **kwargs)
+    #     response['Access-Control-Allow-Origin']='http://localhost:3000'
+    #     response['Access-Control-Allow-Credentials']='true'
+    #     return response
     
     def create(self, request, *args, **kwargs):
         list_data = request.data
@@ -148,7 +182,7 @@ class ListViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
         else:
             return Response("You do not have permission to perform this action", status=status.HTTP_403_FORBIDDEN)
 
-    authentication_classes = [TokenAuthentication, SessionAuthentication]
+    authentication_classes = [SessionAuthentication]
     permission_classes = [IsAuthenticated, IsListCreator_MemberOrReadOnly]
 
 
@@ -160,6 +194,12 @@ class CardViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
     """
     queryset =  Cards.objects.all()
     serializer_class =  CardsSerializer
+
+    # def dispatch(self, *args, **kwargs):
+    #     response = super(UserViewSet, self).dispatch(*args, **kwargs)
+    #     response['Access-Control-Allow-Origin']='http://localhost:3000'
+    #     response['Access-Control-Allow-Credentials']='true'
+    #     return response
 
     def create(self, request, *args, **kwargs):
         card_data = request.data
@@ -196,7 +236,7 @@ class CardViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
         else:
             return Response("You do not have permission to perform this action", status=status.HTTP_403_FORBIDDEN)
 
-    authentication_classes = [TokenAuthentication, SessionAuthentication]
+    authentication_classes = [SessionAuthentication]
     permission_classes = [IsAuthenticated, IsCardCreator_MemberOrReadOnly]
 
 
@@ -209,6 +249,12 @@ class CommentViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
 
+    # def dispatch(self, *args, **kwargs):
+    #     response = super(UserViewSet, self).dispatch(*args, **kwargs)
+    #     response['Access-Control-Allow-Origin']='http://localhost:3000'
+    #     response['Access-Control-Allow-Credentials']='true'
+    #     return response
+
     def create(self, request, *args, **kwargs):
         comment_data = request.data
         id = self.kwargs.get("parent_lookup_card")
@@ -219,7 +265,7 @@ class CommentViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
         serializer = CommentSerializer(obj)
         return Response(serializer.data, status=status.HTTP_201_CREATED) 
         
-    authentication_classes = [TokenAuthentication, SessionAuthentication]
+    authentication_classes = [SessionAuthentication]
     permission_classes = [IsAuthenticated, IsCommentCreator]
 
 
@@ -231,12 +277,18 @@ class DashboardProjectViewset(viewsets.ModelViewSet):
     serializer_class = DashboardProjectSerializer
     http_method_names=['get']
 
+    # def dispatch(self, *args, **kwargs):
+    #     response = super(UserViewSet, self).dispatch(*args, **kwargs)
+    #     response['Access-Control-Allow-Origin']='http://localhost:3000'
+    #     response['Access-Control-Allow-Credentials']='true'
+    #     return response
+
     def get_queryset(self, *args, **kwargs):
         user = self.request.user
         queryset = Projects.objects.filter(project_members = user)
         return queryset
 
-    authentication_classes = [TokenAuthentication, SessionAuthentication]
+    authentication_classes = [SessionAuthentication]
     permission_classes = [IsAuthenticated]
 
 
@@ -248,10 +300,16 @@ class DashboardCardViewset(viewsets.ModelViewSet):
     serializer_class = DashboardCardSerializer
     http_method_names=['get']
 
+    # def dispatch(self, *args, **kwargs):
+    #     response = super(UserViewSet, self).dispatch(*args, **kwargs)
+    #     response['Access-Control-Allow-Origin']='http://localhost:3000'
+    #     response['Access-Control-Allow-Credentials']='true'
+    #     return response
+
     def get_queryset(self, *args, **kwargs):
         user = self.request.user
         queryset = Cards.objects.filter(assigned = user)
         return queryset
 
-    authentication_classes = [TokenAuthentication, SessionAuthentication]
+    authentication_classes = [SessionAuthentication]
     permission_classes = [IsAuthenticated]
