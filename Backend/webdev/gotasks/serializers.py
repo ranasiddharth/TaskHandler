@@ -20,7 +20,6 @@ class ListsSerializer(serializers.ModelSerializer):
         fields = ['id', 'list_name', 'list_created']
 
 
-
 class CardsShowSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cards
@@ -32,6 +31,7 @@ class CardsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cards
         fields = ['id', 'card_name', 'description', 'assigned', 'date_created', 'due_date']
+        # depth=1
 
 
 

@@ -11,6 +11,7 @@ import CardContent from "@material-ui/core/CardContent";
 import CardActions from '@material-ui/core/CardActions'
 import { Link } from 'react-router-dom'
 import {useState, useEffect} from 'react';
+import { useParams } from "react-router"
 import useCardStyles from '../styles/DashboardCard'
 import { ProjectDialog } from './ProjectDialog.js'
 import { Redirect } from 'react-router-dom';
@@ -34,7 +35,7 @@ const Navbar = () => {
       <AppBar position="static">
         <Toolbar className={classes.toolbar}>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            PROJECTS
+            LISTS
           </Typography>
           <div>
           <Button className={classes.buttonmargin}><Link to="/gotasks/dashboard" className={classes.linkcol}>DASHBOARD</Link></Button>
@@ -47,75 +48,74 @@ const Navbar = () => {
   );
 }
 
-export const ProjectItem = (props) => {
 
+export const ListItem = (props) => {
+
+  const { proj_id } = useParams()
   const classes = useCardStyles()
 
-  const projectDetails = (id) => {
+  const listDetails = (proj_id, list_id) => {
     // return (
     // <Redirect to={{pathname: `/gotasks/projects/${id}`}} />
     // )
     console.log("hello");
-    window.location.href=`http://localhost:3000/gotasks/projects/${id}`
+    window.location.href=`http://localhost:3000/gotasks/projects/${proj_id}/lists/${list_id}`
   }
 
   return(
     <Card sx={{ minWidth: 275 }} variant="outlined" className={classes.cardattr}>
         <CardContent>
           <Typography variant="h5" component="div" gutterBottom>
-            Name: {props.project.project_name}
+            Name: {props.list.list_name}
           </Typography>
           <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-            Description: {props.project.project_wiki}
+            Project: {props.list.project}
           </Typography>
-          <Typography variant="body2" gutterBottom>
-            Created by: {props.project.project_creator}
+          <Typography variant="body1" gutterBottom>
+            Created on: {props.list.list_created}
           </Typography>
         </CardContent>
         <CardActions>
-            <Button size="small" color="primary" variant="contained" onClick={(e)=>{
+            <Button size="small" variant="contained" color="primary" onClick={(e)=>{
               e.preventDefault(); 
-              projectDetails(props.project.id)}}>Details</Button>
+              listDetails(proj_id, props.list.id)}}>Details</Button>
         </CardActions>
     </Card>
   )
 
 }
 
-export const Projects = () => {
 
-  const [projects, setProject] = useState([])
 
-  const fetchData = () => {
-     http.get("/gotasks/projects").then(
-      (res) => {
-        setProject(res.data)
-      }
-    ).catch(err => {
-      console.log("error in receiving data")
+export const ProjectList = () => {
+
+  const { proj_id } = useParams()
+  const [lists, setLists] = useState([])
+
+  const fetchList = (id) => {
+    http.get(`/gotasks/projects/${id}/lists/`)
+    .then(res => {
+      console.log(res.data)
+      setLists(res.data)
+    }).catch(err=>{
+      console.log(err)
     })
   }
 
   useEffect(() => {
-    fetchData()
+    fetchList(proj_id)
   }, [])
 
-
-  return (
-    <>
-    <Navbar />
+  return(
     <div>
-    <br />
-
-    {projects.map(project => {
+      <Navbar />
+      {lists.map(list => {
       return (
       <>
-      <ProjectItem key={project.id} project={project} />
+      <ListItem key={list.id} list={list} />
       </>
       )
     })}
     </div>
-    </>
   )
 }
-

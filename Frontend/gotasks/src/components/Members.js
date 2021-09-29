@@ -40,8 +40,8 @@ export const Members = () => {
   const classes = useCardStyles()
   const [users, setUsers] = useState([])
 
-  const fetchData = async() => {
-    await axios.get("http://127.0.0.1:8000/gotasks/users", {withCredentials:true}).then(
+  const fetchData = () => {
+     http.get("/gotasks/users").then(
       (res) => {
         setUsers(res.data)
       }

@@ -22,8 +22,8 @@ const Navbar = () => {
   const [admin, setAdmin] = useState(false)
   const classes = useStyles()
 
-  useEffect(async() => {
-    await axios.get("http://127.0.0.1:8000/gotasks/users/", {withCredentials:true}).then(
+  useEffect(() => {
+    axios.get("http://127.0.0.1:8000/gotasks/users/", {withCredentials:true}).then(
       (res) => {
         if (res.status === 200){
           setAdmin(true)
@@ -57,6 +57,11 @@ const Project = (props) => {
   const projects = props.projectState
   const classes = useCardStyles()
 
+  const proj = (id) => {
+    console.log(id)
+    window.location.href=`http://localhost:3000/gotasks/projects/${id}`
+  }
+
   return(
     <div>
     <h1 className={classes.heading}>Projects</h1>
@@ -75,7 +80,7 @@ const Project = (props) => {
             </Typography>
           </CardContent>
           <CardActions>
-              <Button size="small">Details</Button>
+              <Button size="small" variant="contained" color="primary" onClick={()=>{proj(project.id)}}>Details</Button>
           </CardActions>
         </Card>
       )
@@ -89,6 +94,12 @@ const CardShow = (props) => {
 
   const cards = props.cardState
   const classes = useCardStyles()
+
+  const proj = (id) => {
+    console.log(id)
+    window.location.href=`http://localhost:3000/gotasks/projects/${id}`
+  }
+
   
   return(
     <div >
@@ -111,7 +122,7 @@ const CardShow = (props) => {
             </Typography>
           </CardContent>
           <CardActions>
-              <Button size="small">Details</Button>
+              <Button size="small" variant="contained" color="primary">Details</Button>
           </CardActions>
         </Card>
         )
@@ -128,8 +139,8 @@ export const Dashboard = () => {
   const [cards, setCards] = useState([])
 
   const fetchData = async() => {
-    const projectAPI = await axios.get("http://127.0.0.1:8000/gotasks/dashboard/projects", {withCredentials:true})
-    const cardAPI = await axios.get("http://127.0.0.1:8000/gotasks/dashboard/cards", {withCredentials:true})
+    const projectAPI = http.get("/gotasks/dashboard/projects")
+    const cardAPI = http.get("/gotasks/dashboard/cards")
     await axios.all([projectAPI, cardAPI]).then(
       ([project, card]) => {
         setProjects(project.data)
@@ -145,7 +156,7 @@ export const Dashboard = () => {
   }, [])
 
   const loggingout = () => {
-      axios.get("http://127.0.0.1:8000/gotasks/logout", {withCredentials:true}).then((resp)=>{
+      axios.get("http://127.0.0.1:8000/gotasks/logout", {withCredentials: true}).then((resp)=>{
         Cookies.remove('mytoken');
         Cookies.remove('sessionid');
         Cookies.remove('csrftoken');

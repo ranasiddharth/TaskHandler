@@ -7,7 +7,7 @@ import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import VpnKeyIcon from '@material-ui/icons/VpnKey';
 import Typography from '@material-ui/core/Typography';
-import useStyles from '../styles/LoginStyles.js'
+import useLoginStyles from '../styles/LoginStyles.js'
 import { BeatingHeart } from 'beating-heart-emoji'
 import 'beating-heart-emoji/dist/index.css'
 import {Redirect} from 'react-router-dom'
@@ -28,7 +28,7 @@ function Copyright() {
 
 export default function Login() {
 
-  const classes = useStyles();
+  const classes = useLoginStyles();
 
   const oauth = () => {
     // eslint-disable-next-line no-restricted-globals

@@ -19,7 +19,7 @@ export const Oauth = () => {
     const params = new URLSearchParams(location.search);
     const auth = params.get("code");
 
-      axios.get(`http://127.0.0.1:8000/?code=${auth}&state=RANDOM_STATE_STRING`)
+      axios.get(`http://127.0.0.1:8000/?code=${auth}&state=RANDOM_STATE_STRING`, {withCredentials: true})
       .then(response => {
         console.log("cookies set")
         Cookies.set('csrftoken', response.data['csrftoken'], {path:"/"})
