@@ -128,6 +128,7 @@ class UserShowViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserShowSerializer
     http_method_names='get'
+    
     authentication_classes = [TokenAuthentication, SessionAuthentication]
     permission_classes = [IsAuthenticated]
 

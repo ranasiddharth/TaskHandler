@@ -6,7 +6,7 @@ from gotasks.models import Comment, User, Projects, Lists, Cards
 
 class ProjectsSerializer(serializers.ModelSerializer):
     project_creator = serializers.ReadOnlyField(source='project_creator.fullname')
-    project_members = serializers.SlugRelatedField(many=True, queryset=User.objects.all(), slug_field='fullname')  
+    project_members = serializers.SlugRelatedField(many=True, queryset=User.objects.all(), slug_field='id')  
 
     class Meta:
         model = Projects

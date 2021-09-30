@@ -43,11 +43,16 @@ const Form = ({ handleClose }) => {
     var formData = new FormData();
     formData.append("project_name", name);
     formData.append("project_wiki", wiki);
-    formData.append("project_members", selected);
+    // formData.append("project_members", selected);
+    selected.map(select => {
+      formData.append("project_members", select)
+    })
+    // console.log(formData)
     const config = {
       headers: {
         "Content-Type": 'multipart/form-data',
-        "Authorisation": `Token ${Cookies.get("mytoken")}`
+        'X-CSRFToken': Cookies.get("csrftoken"),
+        'X-Requested-With': 'XMLHttpRequest'
       }
     }
     axios.post("http://127.0.0.1:8000/gotasks/projects/",
@@ -100,7 +105,7 @@ const Form = ({ handleClose }) => {
         >
           {members.map(({id, username, fullname}, index) => {
             return(
-            <MenuItem key={id} value={username}>
+            <MenuItem key={id} value={id}>
               {username}
             </MenuItem>
             )
