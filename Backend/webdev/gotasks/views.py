@@ -4,7 +4,7 @@ from django.contrib.auth import login, logout
 from rest_framework import serializers, views, viewsets, status
 from rest_framework.response import Response
 from gotasks.models import User, Projects, Lists, Cards, Comment
-from gotasks.serializers import UserSerializer, ProjectsSerializer, ListsSerializer, CardsSerializer, DashboardProjectSerializer, DashboardCardSerializer, CommentSerializer
+from gotasks.serializers import UserSerializer, ProjectsSerializer, ListsSerializer, CardsSerializer, DashboardProjectSerializer, DashboardCardSerializer, CommentSerializer, UserShowSerializer
 from rest_framework.authtoken.views import Token
 from rest_framework.decorators import api_view, authentication_classes
 from django.contrib.auth.decorators import login_required
@@ -123,6 +123,13 @@ class UserViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
     authentication_classes = [TokenAuthentication, SessionAuthentication]
     permission_classes = [IsAuthenticated, IsAdminPrivilege]
 
+
+class UserShowViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserShowSerializer
+    http_method_names='get'
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
+    permission_classes = [IsAuthenticated]
 
 
 class ProjectViewSet(NestedViewSetMixin, viewsets.ModelViewSet):

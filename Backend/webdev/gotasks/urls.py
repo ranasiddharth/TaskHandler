@@ -11,6 +11,7 @@ basic_router.register('projects', views.ProjectViewSet)
 basic_router.register('users', views.UserViewSet, basename="users")
 basic_router.register('dashboard/cards', views.DashboardCardViewset, basename="dash-card")
 basic_router.register('dashboard/projects', views.DashboardProjectViewset, basename="dash-project")
+basic_router.register('usershow', views.UserShowViewSet, basename="usershow")
 
 router = ExtendedSimpleRouter()
 (

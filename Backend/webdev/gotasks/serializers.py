@@ -53,6 +53,11 @@ class UserSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'username', 'fullname', 'email']
 
 
+class UserShowSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'fullname']
+
 
 class DashboardProjectSerializer(serializers.ModelSerializer):
 
