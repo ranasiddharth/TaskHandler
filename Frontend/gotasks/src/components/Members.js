@@ -1,5 +1,4 @@
 import http from "./axios.js";
-import axios from 'axios';
 import {AppBar, Toolbar} from '@material-ui/core'
 import useStyles from '../styles/Navbar.js'
 import Button from '@material-ui/core/Button';

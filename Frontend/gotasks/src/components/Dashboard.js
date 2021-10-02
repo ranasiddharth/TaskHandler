@@ -95,10 +95,10 @@ const CardShow = (props) => {
   const cards = props.cardState
   const classes = useCardStyles()
 
-  const proj = (id) => {
-    console.log(id)
-    window.location.href=`http://localhost:3000/gotasks/projects/${id}`
-  }
+  // const proj = (id) => {
+  //   console.log(id)
+  //   window.location.href=`http://localhost:3000/gotasks/projects/${id}`
+  // }
 
   
   return(

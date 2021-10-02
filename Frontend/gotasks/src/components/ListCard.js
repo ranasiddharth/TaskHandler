@@ -13,8 +13,8 @@ import { Link } from 'react-router-dom'
 import {useState, useEffect} from 'react';
 import { useParams } from "react-router"
 import useCardStyles from '../styles/DashboardCard'
-import { ProjectDialog } from './ProjectDialog.js'
 import { Redirect } from 'react-router-dom';
+import { AddProject } from './AddProject.js';
 
 
 const Navbar = () => {
@@ -40,7 +40,7 @@ const Navbar = () => {
           <div>
           <Button className={classes.buttonmargin}><Link to="/gotasks/dashboard" className={classes.linkcol}>DASHBOARD</Link></Button>
           <Button className={classes.buttoncol} onClick={handleOpen}>+ Add New</Button>
-          <ProjectDialog open={open} handleClose={handleClose} />
+          <AddProject open={open} handleClose={handleClose} />
           </div>
         </Toolbar>
       </AppBar>

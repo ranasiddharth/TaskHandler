@@ -1,7 +1,5 @@
-import react from 'react'
 import http from "./axios.js";
-import axios from 'axios'
-import {AppBar, Toolbar, Tabs, Tab} from '@material-ui/core'
+import {AppBar, Toolbar} from '@material-ui/core'
 import useStyles from '../styles/Navbar.js'
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
@@ -13,11 +11,10 @@ import { Link } from 'react-router-dom'
 import {useState, useEffect} from 'react';
 import { useParams } from "react-router"
 import useCardStyles from '../styles/DashboardCard'
-import { ProjectDialog } from './ProjectDialog.js'
-import { Redirect } from 'react-router-dom';
+import { AddList } from './AddList.js';
 
 
-const Navbar = () => {
+const Navbar = (props) => {
 
   const classes = useStyles()
   const [open, setOpen] = useState(false);
@@ -40,7 +37,7 @@ const Navbar = () => {
           <div>
           <Button className={classes.buttonmargin}><Link to="/gotasks/dashboard" className={classes.linkcol}>DASHBOARD</Link></Button>
           <Button className={classes.buttoncol} onClick={handleOpen}>+ Add New</Button>
-          <ProjectDialog open={open} handleClose={handleClose} />
+          <AddList getlists={props.lists} setGetlists={props.setLists} open={open} handleClose={handleClose} />
           </div>
         </Toolbar>
       </AppBar>
@@ -108,7 +105,7 @@ export const ProjectList = () => {
 
   return(
     <div>
-      <Navbar />
+      <Navbar lists={lists} setLists={setLists}/>
       {lists.map(list => {
       return (
       <>

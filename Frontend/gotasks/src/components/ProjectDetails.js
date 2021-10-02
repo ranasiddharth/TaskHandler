@@ -8,6 +8,7 @@ import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box'
 import { Link } from 'react-router-dom'
 import useLoginStyles from "../styles/LoginStyles.js"
+import { DeleteProject } from "./DeleteProject.js"
 
 
 const Navbar = (props) => {
@@ -32,6 +33,16 @@ const Navbar = (props) => {
 
 
 export const ProjectDetails = () => {
+
+  const [open, setOpen] = useState(false);
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   const classes = useLoginStyles()
   const { proj_id } = useParams()
@@ -89,8 +100,9 @@ export const ProjectDetails = () => {
               </Button>   
               <Button type="submit" fullWidth variant="contained" color="primary" className={classes.submit} > Update
               </Button>  
-              <Button type="submit" fullWidth variant="contained" color="primary" className={classes.submit} > Delete
+              <Button type="submit" fullWidth variant="contained" color="primary" className={classes.submit} onClick={handleOpen}> Delete
               </Button>  
+              <DeleteProject open={open} handleClose={handleClose} />
             </div>
           </Grid>
           </Grid>

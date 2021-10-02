@@ -3,12 +3,12 @@ import http from './axios.js'
 import { useState, useEffect } from "react"
 import { Button } from "@material-ui/core"
 import useStyles from '../styles/Navbar.js'
-import {AppBar, Toolbar, Tabs, Tab, Grid} from '@material-ui/core'
+import {AppBar, Toolbar, Grid} from '@material-ui/core'
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box'
 import { Link } from 'react-router-dom'
-import { ProjectDialog } from './ProjectDialog.js'
 import useLoginStyles from "../styles/LoginStyles.js"
+import { DeleteList } from "./DeleteList.js"
 
 
 const Navbar = () => {
@@ -33,6 +33,16 @@ const Navbar = () => {
 
 
 export const ProjectListDetails = () => {
+
+  const [open, setOpen] = useState(false);
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   const classes = useLoginStyles()
   const { proj_id, list_id } = useParams()
@@ -76,8 +86,9 @@ export const ProjectListDetails = () => {
               </Button>   
               <Button type="submit" fullWidth variant="contained" color="primary" className={classes.submit} > Update
               </Button>  
-              <Button type="submit" fullWidth variant="contained" color="primary" className={classes.submit} > Delete
+              <Button type="submit" fullWidth variant="contained" color="primary" className={classes.submit} onClick={handleOpen}> Delete
               </Button>  
+              <DeleteList open={open} handleClose={handleClose} />
             </div>
           </Grid>
           </Grid>

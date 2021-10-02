@@ -7,8 +7,8 @@ import {AppBar, Toolbar, Tabs, Tab, Grid} from '@material-ui/core'
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box'
 import { Link } from 'react-router-dom'
-import { ProjectDialog } from './ProjectDialog.js'
 import useLoginStyles from "../styles/LoginStyles.js"
+import { DeleteCard } from "./DeleteCard.js"
 
 
 const Navbar = () => {
@@ -33,6 +33,16 @@ const Navbar = () => {
 
 
 export const ListCardDetails = () => {
+
+  const [open, setOpen] = useState(false);
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   const classes = useLoginStyles()
   const { proj_id, list_id, card_id } = useParams()
@@ -74,8 +84,9 @@ export const ListCardDetails = () => {
               </Typography>
               <Button type="submit" fullWidth variant="contained" color="primary" className={classes.submit} > Update
               </Button>  
-              <Button type="submit" fullWidth variant="contained" color="primary" className={classes.submit} > Delete
+              <Button type="submit" fullWidth variant="contained" color="primary" className={classes.submit} onClick={handleOpen}> Delete
               </Button>  
+              <DeleteCard open={open} handleClose={handleClose} />
             </div>
           </Grid>
           </Grid>
