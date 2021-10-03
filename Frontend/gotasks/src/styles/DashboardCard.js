@@ -17,6 +17,21 @@ const useCardStyles = makeStyles((theme) => ({
   },
   mainGrid: {
     minHeight: "100vh",
+  },
+  cardActions: {
+    padding: "16px",
+  },
+  logoutOutdiv: {
+    textAlign: 'center',
+    padding: "20px",
+    margin: "20px",
+  },
+  logoutIndiv: {
+    width: "70%",
+    margin: "auto",
+    display: "flex",
+    justifyContent: "space-around",
+    alignItems: "center",
   }
 }));
 

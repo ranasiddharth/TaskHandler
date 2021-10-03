@@ -20,6 +20,7 @@ class ListsSerializer(serializers.ModelSerializer):
         fields = ['id', 'list_name', 'list_created']
 
 
+
 class CardsShowSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cards

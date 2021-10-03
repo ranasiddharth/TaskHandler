@@ -7,11 +7,15 @@ import Box from '@material-ui/core/Box'
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import CardActions from '@material-ui/core/CardActions'
+import AddBoxIcon from '@material-ui/icons/AddBox';
+import HomeIcon from '@material-ui/icons/Home';
 import { Link } from 'react-router-dom'
 import {useState, useEffect} from 'react';
 import useCardStyles from '../styles/DashboardCard'
 import { AddProject } from './AddProject.js'
-// import { Redirect } from 'react-router-dom';
+import { useHistory } from "react-router-dom";
+import axios from 'axios';
+import Cookies from 'js-cookie';
 
 
 const Navbar = (props) => {
@@ -36,8 +40,8 @@ const Navbar = (props) => {
             PROJECTS
           </Typography>
           <div>
-          <Button className={classes.buttonmargin}><Link to="/gotasks/dashboard" className={classes.linkcol}>DASHBOARD</Link></Button>
-          <Button className={classes.buttoncol} onClick={handleOpen}>+ Add New</Button>
+          <Button className={classes.buttonmargin} startIcon={<HomeIcon />} disableElevation><Link to="/gotasks/dashboard" className={classes.linkcol}>DASHBOARD</Link></Button>
+          <Button className={classes.buttoncol} onClick={handleOpen} startIcon={<AddBoxIcon />} disableElevation>Add New</Button>
           <AddProject getproj={props.projects} setGetproj={props.setProjects} open={open} handleClose={handleClose} />
           </div>
         </Toolbar>
@@ -48,14 +52,14 @@ const Navbar = (props) => {
 
 export const ProjectItem = (props) => {
 
-  const classes = useCardStyles()
+  const classes = useCardStyles();
+
+  const history = useHistory();
 
   const projectDetails = (id) => {
-    // return (
-    // <Redirect to={{pathname: `/gotasks/projects/${id}`}} />
-    // )
-    console.log("hello");
-    window.location.href=`http://localhost:3000/gotasks/projects/${id}`
+
+    history.push(`/gotasks/projects/${id}`)
+
   }
 
   return(
@@ -71,7 +75,7 @@ export const ProjectItem = (props) => {
             Created by: {props.project.project_creator}
           </Typography>
         </CardContent>
-        <CardActions>
+        <CardActions className={classes.cardActions}>
             <Button size="small" color="primary" variant="contained" onClick={(e)=>{
               e.preventDefault(); 
               projectDetails(props.project.id)}}>Details</Button>
@@ -84,6 +88,10 @@ export const ProjectItem = (props) => {
 export const Projects = () => {
 
   const [projects, setProjects] = useState([])
+
+  const classes = useCardStyles();
+
+  const history = useHistory();
 
   const fetchData = () => {
      http.get("/gotasks/projects").then(
@@ -100,6 +108,24 @@ export const Projects = () => {
   }, [])
 
 
+  const goback = () => {
+
+    history.goBack();
+
+  }
+
+  const loggingout = () => {
+      axios.get("http://127.0.0.1:8000/gotasks/logout", {withCredentials: true}).then((resp)=>{
+        Cookies.remove('mytoken');
+        Cookies.remove('sessionid');
+        Cookies.remove('csrftoken');
+        history.push('/');
+      }).catch((err)=>{
+        console.log("error while logging out")
+      })
+  }
+
+
   return (
     <>
     <Navbar projects={projects} setProjects={setProjects} />
@@ -113,6 +139,12 @@ export const Projects = () => {
       </>
       )
     })}
+    </div>
+    <div className={classes.logoutOutdiv}>
+      <div className={classes.logoutIndiv}>
+          <Button className={classes.buttonmargin} variant="outlined" style={{backgroundColor: '#12824C', color: '#FFFFFF'}} onClick={()=>{goback()}}>Back</Button>
+          <Button className={classes.buttonmargin} style={{backgroundColor: 'red', color: '#FFFFFF'}} onClick={()=>{loggingout()}}>Logout</Button>
+      </div>
     </div>
     </>
   )

@@ -4,6 +4,8 @@ import { TextField, Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core';
 import { useState } from 'react';
 import { useParams } from "react-router"
+import AddBoxIcon from '@material-ui/icons/AddBox';
+import CancelIcon from '@material-ui/icons/Cancel';
 import axios from 'axios'
 import Cookies from 'js-cookie'
 
@@ -88,10 +90,10 @@ const Form = ({ handleClose, getlists, setGetlists }) => {
             }}/>
 
       <div>
-        <Button variant="contained"  onClick={handleClose}>
+        <Button variant="contained"  onClick={handleClose} startIcon={<CancelIcon />} disableElevation>
           Cancel
         </Button>
-        <Button type="submit" variant="contained" color="primary">
+        <Button type="submit" variant="contained" color="primary" startIcon={<AddBoxIcon />} disableElevation>
           Add
         </Button>
       </div>

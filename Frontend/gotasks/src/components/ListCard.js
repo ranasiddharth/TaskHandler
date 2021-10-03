@@ -1,4 +1,4 @@
-import react from 'react'
+import Cookies from "js-cookie";
 import http from "./axios.js";
 import axios from 'axios'
 import {AppBar, Toolbar, Tabs, Tab} from '@material-ui/core'
@@ -9,15 +9,17 @@ import Box from '@material-ui/core/Box'
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import CardActions from '@material-ui/core/CardActions'
+import AddBoxIcon from '@material-ui/icons/AddBox';
+import HomeIcon from '@material-ui/icons/Home';
 import { Link } from 'react-router-dom'
 import {useState, useEffect} from 'react';
 import { useParams } from "react-router"
 import useCardStyles from '../styles/DashboardCard'
-import { Redirect } from 'react-router-dom';
-import { AddProject } from './AddProject.js';
+import { useHistory } from 'react-router-dom';
+import { AddCard } from './AddCard.js';
 
 
-const Navbar = () => {
+const Navbar = (props) => {
 
   const classes = useStyles()
   const [open, setOpen] = useState(false);
@@ -38,9 +40,9 @@ const Navbar = () => {
             CARDS
           </Typography>
           <div>
-          <Button className={classes.buttonmargin}><Link to="/gotasks/dashboard" className={classes.linkcol}>DASHBOARD</Link></Button>
-          <Button className={classes.buttoncol} onClick={handleOpen}>+ Add New</Button>
-          <AddProject open={open} handleClose={handleClose} />
+          <Button className={classes.buttonmargin} startIcon={<HomeIcon />} disableElevation><Link to="/gotasks/dashboard" className={classes.linkcol}>DASHBOARD</Link></Button>
+          <Button className={classes.buttoncol} onClick={handleOpen} startIcon={<AddBoxIcon />} disableElevation>Add New</Button>
+          <AddCard getcards={props.cards} setGetcards={props.setCards} open={open} handleClose={handleClose} />
           </div>
         </Toolbar>
       </AppBar>
@@ -52,14 +54,15 @@ const Navbar = () => {
 export const CardItem = (props) => {
 
   const { proj_id, list_id } = useParams()
+
   const classes = useCardStyles()
 
+  const history = useHistory();
+
   const cardDetails = (proj_id, list_id, card_id) => {
-    // return (
-    // <Redirect to={{pathname: `/gotasks/projects/${id}`}} />
-    // )
-    // console.log(props.card)
-    window.location.href=`http://localhost:3000/gotasks/projects/${proj_id}/lists/${list_id}/cards/${card_id}`
+
+    history.push(`/gotasks/projects/${proj_id}/lists/${list_id}/cards/${card_id}`);
+
   }
 
   return(
@@ -97,6 +100,8 @@ export const ListCard = () => {
 
   const { proj_id, list_id } = useParams()
   const [cards, setCards] = useState([])
+  const classes = useCardStyles()
+  const history = useHistory()
 
   const fetchCard = (proj_id, list_id) => {
     http.get(`/gotasks/projects/${proj_id}/lists/${list_id}/cards`)
@@ -112,9 +117,29 @@ export const ListCard = () => {
     fetchCard(proj_id, list_id)
   }, [])
 
+
+  const goback = () => {
+
+    history.goBack();
+
+  }
+
+  const loggingout = () => {
+      axios.get("http://127.0.0.1:8000/gotasks/logout", {withCredentials: true}).then((resp)=>{
+        Cookies.remove('mytoken');
+        Cookies.remove('sessionid');
+        Cookies.remove('csrftoken');
+        history.push('/');
+      }).catch((err)=>{
+        console.log("error while logging out")
+      })
+  }
+
+
   return(
+    <>
     <div>
-      <Navbar />
+      <Navbar cards={cards} setCards={setCards}/>
       {cards.map(card => {
       return (
       <>
@@ -123,6 +148,13 @@ export const ListCard = () => {
       )
     })}
     </div>
+    <div className={classes.logoutOutdiv}>
+      <div className={classes.logoutIndiv}>
+          <Button className={classes.buttonmargin} variant="outlined" style={{backgroundColor: '#12824C', color: '#FFFFFF'}} onClick={()=>{goback()}}>Back</Button>
+          <Button className={classes.buttonmargin} style={{backgroundColor: 'red', color: '#FFFFFF'}} onClick={()=>{loggingout()}}>Logout</Button>
+      </div>
+    </div>
+    </>
   )
 
 }

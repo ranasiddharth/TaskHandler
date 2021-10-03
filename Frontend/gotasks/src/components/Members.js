@@ -1,4 +1,6 @@
 import http from "./axios.js";
+import axios from 'axios';
+import Cookies from "js-cookie";
 import {AppBar, Toolbar} from '@material-ui/core'
 import useStyles from '../styles/Navbar.js'
 import Button from '@material-ui/core/Button';
@@ -8,9 +10,11 @@ import {useState, useEffect} from 'react';
 import { Link } from 'react-router-dom'
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
+import HomeIcon from '@material-ui/icons/Home';
 import useCardStyles from '../styles/DashboardCard'
 import DoneIcon from "@material-ui/icons/Done";
 import CancelRoundedIcon from "@material-ui/icons/CancelRounded";
+import { useHistory } from "react-router-dom";
 
 
 const Navbar = () => {
@@ -25,7 +29,7 @@ const Navbar = () => {
             APP MEMBERS
           </Typography>
           <div>
-          <Button className={classes.buttoncol}><Link to="/gotasks/dashboard" className={classes.linkcol}>DASHBOARD</Link></Button>
+          <Button className={classes.buttoncol} startIcon={<HomeIcon />} disableElevation><Link to="/gotasks/dashboard" className={classes.linkcol}>DASHBOARD</Link></Button>
           </div>
         </Toolbar>
       </AppBar>
@@ -37,6 +41,7 @@ const Navbar = () => {
 export const Members = () => {
 
   const classes = useCardStyles()
+  const history = useHistory();
   const [users, setUsers] = useState([])
 
   const fetchData = () => {
@@ -52,6 +57,23 @@ export const Members = () => {
   useEffect(() => {
     fetchData()
   }, [])
+
+  const goback = () => {
+
+    history.goBack();
+
+  }
+
+  const loggingout = () => {
+      axios.get("http://127.0.0.1:8000/gotasks/logout", {withCredentials: true}).then((resp)=>{
+        Cookies.remove('mytoken');
+        Cookies.remove('sessionid');
+        Cookies.remove('csrftoken');
+        history.push('/');
+      }).catch((err)=>{
+        console.log("error while logging out")
+      })
+  }
 
   return (
     <>
@@ -81,6 +103,12 @@ export const Members = () => {
       </Card>
       )
     })}
+    </div>
+    <div className={classes.logoutOutdiv}>
+      <div className={classes.logoutIndiv}>
+          <Button className={classes.buttonmargin} variant="outlined" style={{backgroundColor: '#12824C', color: '#FFFFFF'}} onClick={()=>{goback()}}>Back</Button>
+          <Button className={classes.buttonmargin} style={{backgroundColor: 'red', color: '#FFFFFF'}} onClick={()=>{loggingout()}}>Logout</Button>
+      </div>
     </div>
     </>
   )

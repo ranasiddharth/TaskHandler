@@ -3,8 +3,6 @@ import http from './axios.js'
 import Dialog from '@material-ui/core/Dialog';
 import { TextField, Button, MenuItem, Select, FormControl, InputLabel, Box } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core';
-import { CKEditor } from '@ckeditor/ckeditor5-react';
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { Checkbox } from '@material-ui/core';
 import { ListItemIcon, ListItemText } from '@material-ui/core';
 import AddBoxIcon from '@material-ui/icons/AddBox';
@@ -12,6 +10,7 @@ import CancelIcon from '@material-ui/icons/Cancel';
 import { useState, useEffect } from 'react';
 import axios from 'axios'
 import Cookies from 'js-cookie'
+import { useParams } from 'react-router';
 
 
 const useStyles = makeStyles(theme => ({
@@ -35,39 +34,45 @@ const useStyles = makeStyles(theme => ({
   },
   ckeditorwidth:{
     width: "100%"
+  },
+  datehead:{
+    textAlign: "left",
+    width: "100%",
+    marginBottom: '5px'
+  },
+  datepicker:{
+    width: "100%",
   }
 }));
 
 
-const Form = ({ handleClose, getproj, setGetproj }) => {
+const Form = ({ handleClose, getcards, setGetcards }) => {
+
+  const { proj_id, list_id } = useParams()
 
   const classes = useStyles()
-
   const [name, setName] = useState('');
-  const [wiki, setWiki] = useState('');
+  const [desc, setDesc] = useState('');
+  const [assigned, setAssigned] = useState({});
+  const [duedate, setDuedate] = useState(new Date());
   const [members, setMembers] = useState([]);
-  const [selected, setSelected] = useState([]);
+  // const [projmembers, setProjmembers] = useState([])
   // const [checkboxesState, setCheckboxesState] = useState(-1)
   const [errormsg, setErrormsg] = useState(false);
 
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(name, wiki, selected);
-    console.log(getproj)
+    console.log(name, desc, assigned, duedate);
+    console.log(getcards)
+
     var formData = new FormData();
-    formData.append("project_name", name);
-    formData.append("project_wiki", wiki);
 
-    selected.map(select => {
-      formData.append("project_members", select)
-    })
+    formData.append("card_name", name);
+    formData.append("description", desc);
+    formData.append("assigned", assigned);
+    formData.append("due_date", duedate);
 
-    // setGetproj(prevState => {
-    //     return {
-    //       ...prevState, 
-    //     }
-    // })
 
     const config = {
       headers: {
@@ -76,7 +81,8 @@ const Form = ({ handleClose, getproj, setGetproj }) => {
         'X-Requested-With': 'XMLHttpRequest'
       }
     }
-    axios.post("http://127.0.0.1:8000/gotasks/projects/",
+
+    axios.post(`http://127.0.0.1:8000/gotasks/projects/${proj_id}/lists/${list_id}/cards/`,
     formData, config)
     .then(res => {
       console.log(res.data)
@@ -87,11 +93,12 @@ const Form = ({ handleClose, getproj, setGetproj }) => {
     handleClose();
   };
 
-  useEffect(() => {
-    http.get("/gotasks/usershow").then(
+  useEffect(async() => {
+    await http.get(`/gotasks/usershow/`).then(
       (res) => {
         console.log(res.data)
         setMembers(res.data)
+        // console.log(members)
       }).catch(err => {
         console.log(err)
       })
@@ -111,8 +118,8 @@ const Form = ({ handleClose, getproj, setGetproj }) => {
 
 
   const validateName = () => {
-    for (let i=0; i<getproj.length; i++){
-      if(getproj[i].project_name === name){
+    for (let i=0; i<getcards.length; i++){
+      if(getcards[i].card_name === name){
         setErrormsg(true);
         break;
       }else{
@@ -128,47 +135,33 @@ const Form = ({ handleClose, getproj, setGetproj }) => {
           variant="filled" 
           fullWidth
           required value={name}
-          helperText={errormsg ? "Project name already exists !" : "Available"}
+          helperText={errormsg ? "Card name already exists !" : "Available"}
           onInput={(e) => {
             setName(e.target.value)
             validateName()
-            }}/>
+          }}
+      />
 
-      {/* <TextField 
+      <TextField 
           label="Description"
           variant="filled" 
           fullWidth
-          required value={wiki}
-          onChange={e => setWiki(e.target.value)}/> */}
-
-      <div className={classes.ckeditorwidth}>
-      <h4>Description</h4>
-      <br />
-      <CKEditor
-          editor={ ClassicEditor }
-          onReady={(editor) => {
-            // You can store the "editor" and use when it is needed.
-            // console.log('Editor is ready to use!', editor);
-          }}
-          data=""
-          onChange={(event, editor) => {
-            const data = editor.getData();
-            setWiki(data);
-            console.log(data);
-            console.log(wiki)
+          required value={desc}
+          onChange={(e) => {
+            setDesc(e.target.value)
           }}
       />
-      </div>
+
 
       <FormControl className={classes.formControl}>
-        <InputLabel> Members </InputLabel>
+        <InputLabel> Assign To </InputLabel>
         <Select 
-          multiple={true}
+          // defaultValue = ""
           fullWidth
           required
-          value={selected}
+          value={assigned}
           onChange = {(e) => 
-            setSelected(e.target.value)
+            setAssigned(e.target.value)
           }
         >
           {members.map(({id, username, fullname}, index) => {
@@ -184,6 +177,37 @@ const Form = ({ handleClose, getproj, setGetproj }) => {
         </Select>
       </FormControl>
 
+
+      <br/>
+      <div className={classes.datehead}>
+        <h4>Due Date</h4>
+      </div>
+
+      {/* <div className={classes.datepicker}> */}
+      {/* <DateTimePicker
+        required
+        className={classes.datepicker}
+        onChange={
+          (event) => 
+          handleDueDateChange(event)
+        } 
+        selected={duedate}
+      /> */}
+      <TextField 
+          variant="filled" 
+          type="datetime-local"
+          fullWidth
+          required 
+          value={duedate}
+          onChange={(e) => {
+            setDuedate(e.target.value)
+          }}
+      />
+      
+      {/* </div> */}
+      <br />
+
+
       <div>
         <Button variant="contained"  onClick={handleClose} startIcon={<CancelIcon />} disableElevation>
           Cancel
@@ -198,11 +222,11 @@ const Form = ({ handleClose, getproj, setGetproj }) => {
 }
 
 
-export const AddProject = ({ open, handleClose, getproj, setGetproj }) => {
+export const AddCard = ({ open, handleClose, getcards, setGetcards }) => {
 
   return (
     <Dialog width='100%' open={open} onClose={handleClose}>
-      <Form getproj={getproj} setGetproj={setGetproj} handleClose={handleClose} />
+      <Form getcards={getcards} setGetcards={setGetcards} handleClose={handleClose} />
     </Dialog>
   );
 

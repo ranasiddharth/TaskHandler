@@ -9,12 +9,15 @@ import CardContent from "@material-ui/core/CardContent";
 import CardActions from '@material-ui/core/CardActions'
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Grid from '@material-ui/core/Grid';
+import GroupIcon from '@material-ui/icons/Group';
+import WorkIcon from '@material-ui/icons/Work';
 import {useState, useEffect} from 'react';
 import {AppBar, Toolbar} from '@material-ui/core'
 import useStyles from '../styles/Navbar.js'
 import useCardStyles from '../styles/DashboardCard'
 import { Link } from 'react-router-dom'
 import Cookies from 'js-cookie'
+import { useHistory } from "react-router-dom";
 
 
 const Navbar = () => {
@@ -42,8 +45,8 @@ const Navbar = () => {
             DASHBOARD
           </Typography>
           <div>
-          <Button className={classes.buttonmargin}><Link to="/gotasks/projects" className={classes.linkcol}>Projects</Link></Button>
-          {admin ? <Button className={classes.buttoncol}><Link to="/gotasks/users" className={classes.linkcol}>Members</Link></Button> : ''}
+          <Button className={classes.buttonmargin} startIcon={<WorkIcon />} disableElevation><Link to="/gotasks/projects" className={classes.linkcol}>Projects</Link></Button>
+          {admin ? <Button className={classes.buttoncol} startIcon={<GroupIcon />} disableElevation><Link to="/gotasks/users" className={classes.linkcol}>Members</Link></Button> : ''}
           </div>
         </Toolbar>
       </AppBar>
@@ -55,11 +58,15 @@ const Navbar = () => {
 const Project = (props) => {
 
   const projects = props.projectState
+
   const classes = useCardStyles()
 
+  const history = useHistory();
+
   const proj = (id) => {
-    console.log(id)
-    window.location.href=`http://localhost:3000/gotasks/projects/${id}`
+
+    history.push(`/gotasks/projects/${id}`);
+
   }
 
   return(
@@ -79,8 +86,8 @@ const Project = (props) => {
               Created by: {project.project_creator.fullname}
             </Typography>
           </CardContent>
-          <CardActions>
-              <Button size="small" variant="contained" color="primary" onClick={()=>{proj(project.id)}}>Details</Button>
+          <CardActions className={classes.cardActions}>
+              <Button size="small" variant="contained" color="primary" onClick={()=>{proj(project.id)}} disableElevation>Details</Button>
           </CardActions>
         </Card>
       )
@@ -93,12 +100,17 @@ const Project = (props) => {
 const CardShow = (props) => {
 
   const cards = props.cardState
+
   const classes = useCardStyles()
 
-  // const proj = (id) => {
-  //   console.log(id)
-  //   window.location.href=`http://localhost:3000/gotasks/projects/${id}`
-  // }
+  const history = useHistory();
+
+  const getcard = (id) => {
+
+    // history.push(`/gotasks/cards/${id}`)
+    console.log(id)
+
+  }
 
   
   return(
@@ -121,8 +133,8 @@ const CardShow = (props) => {
               Due Date: {card.due_date}
             </Typography>
           </CardContent>
-          <CardActions>
-              <Button size="small" variant="contained" color="primary">Details</Button>
+          <CardActions className={classes.cardActions}>
+              <Button size="small" variant="contained" color="primary" onClick={() => {getcard(card.id)}} disableElevation>Details</Button>
           </CardActions>
         </Card>
         )
@@ -133,6 +145,8 @@ const CardShow = (props) => {
 
 
 export const Dashboard = () => {
+
+  const history = useHistory();
 
   const classes = useCardStyles()
   const [projects, setProjects] = useState([])
@@ -155,12 +169,18 @@ export const Dashboard = () => {
     fetchData()
   }, [])
 
+  const goback = () => {
+
+    history.goBack();
+
+  }
+
   const loggingout = () => {
       axios.get("http://127.0.0.1:8000/gotasks/logout", {withCredentials: true}).then((resp)=>{
         Cookies.remove('mytoken');
         Cookies.remove('sessionid');
         Cookies.remove('csrftoken');
-        window.location.href="http://localhost:3000/";
+        history.push('/');
       }).catch((err)=>{
         console.log("error while logging out")
       })
@@ -170,7 +190,6 @@ export const Dashboard = () => {
   return(
     <div> 
           <Navbar />
-          <Button className={classes.buttonmargin} onClick={()=>{loggingout()}}>Logout</Button>
           <Grid container component="main" className={classes.mainGrid}>
             <CssBaseline />
             <Grid item xs={12} sm={12} md={6}>
@@ -180,6 +199,12 @@ export const Dashboard = () => {
             <CardShow cardState = {cards} />
             </Grid>
           </Grid>
+          <div className={classes.logoutOutdiv}>
+            <div className={classes.logoutIndiv}>
+              <Button className={classes.buttonmargin} variant="outlined" style={{backgroundColor: '#12824C', color: '#FFFFFF'}} onClick={()=>{goback()}}>Back</Button>
+              <Button className={classes.buttonmargin} style={{backgroundColor: 'red', color: '#FFFFFF'}} onClick={()=>{loggingout()}}>Logout</Button>
+            </div>
+          </div>
     </div>
   )
 }

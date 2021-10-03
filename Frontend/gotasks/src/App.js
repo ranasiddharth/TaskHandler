@@ -12,6 +12,7 @@ import { ProjectList } from './components/ProjectList';
 import { ProjectListDetails } from './components/ProjectListDetails';
 import { ListCard } from './components/ListCard';
 import { ListCardDetails } from './components/ListCardDetails';
+// import { DashboardCardDetails } from './components/DashboardCardDetails';
 
 
 function App() {
@@ -49,6 +50,7 @@ function App() {
         <Route exact path='/gotasks/projects/:proj_id/lists/:list_id' component={ProjectListDetails} />
         <Route exact path='/gotasks/projects/:proj_id/lists/:list_id/cards' component={ListCard} />
         <Route exact path='/gotasks/projects/:proj_id/lists/:list_id/cards/:card_id' component={ListCardDetails} />
+        {/* <Route exact path='/gotasks/cards/:card_id' component={DashboardCardDetails} /> */}
         <Route exact path='/gotasks/users/' component={Members} />
       </Switch>
     </>

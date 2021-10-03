@@ -124,6 +124,7 @@ class UserViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, IsAdminPrivilege]
 
 
+
 class UserShowViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserShowSerializer
@@ -131,6 +132,7 @@ class UserShowViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
     
     authentication_classes = [TokenAuthentication, SessionAuthentication]
     permission_classes = [IsAuthenticated]
+
 
 
 class ProjectViewSet(NestedViewSetMixin, viewsets.ModelViewSet):

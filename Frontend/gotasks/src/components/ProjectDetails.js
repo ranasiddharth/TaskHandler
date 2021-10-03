@@ -1,14 +1,19 @@
 import { useParams } from "react-router"
 import http from './axios.js'
+import axios from 'axios';
+import Cookies from "js-cookie";
 import { useState, useEffect } from "react"
 import { Button, Grid } from "@material-ui/core"
 import useStyles from '../styles/Navbar.js'
 import {AppBar, Toolbar} from '@material-ui/core'
 import Typography from '@material-ui/core/Typography';
+import HomeIcon from '@material-ui/icons/Home';
 import Box from '@material-ui/core/Box'
 import { Link } from 'react-router-dom'
 import useLoginStyles from "../styles/LoginStyles.js"
 import { DeleteProject } from "./DeleteProject.js"
+import { useHistory } from "react-router-dom"
+import useCardStyles from "../styles/DashboardCard.js";
 
 
 const Navbar = (props) => {
@@ -23,7 +28,7 @@ const Navbar = (props) => {
             {props.name}
           </Typography>
           <div>
-          <Button className={classes.buttonmargin}><Link to="/gotasks/dashboard" className={classes.linkcol}>DASHBOARD</Link></Button>
+          <Button className={classes.buttonmargin} startIcon={<HomeIcon />} disableElevation><Link to="/gotasks/dashboard" className={classes.linkcol}>DASHBOARD</Link></Button>
           </div>
         </Toolbar>
       </AppBar>
@@ -35,6 +40,7 @@ const Navbar = (props) => {
 export const ProjectDetails = () => {
 
   const [open, setOpen] = useState(false);
+  const history = useHistory();
 
   const handleOpen = () => {
     setOpen(true);
@@ -45,6 +51,7 @@ export const ProjectDetails = () => {
   };
 
   const classes = useLoginStyles()
+  const classescard = useCardStyles();
   const { proj_id } = useParams()
   const [item, setItem] = useState([])
   const [proj_members, setProj_members] = useState([])
@@ -62,21 +69,41 @@ export const ProjectDetails = () => {
   }
 
   const listDetails = (id) => {
-    window.location.href=`http://localhost:3000/gotasks/projects/${id}/lists`
+
+    history.push(`/gotasks/projects/${id}/lists`);
+
   }
 
   useEffect(() => {
     fetchList(proj_id)
   }, [])
 
+  const goback = () => {
+
+    history.goBack();
+
+  }
+
+  const loggingout = () => {
+      axios.get("http://127.0.0.1:8000/gotasks/logout", {withCredentials: true}).then((resp)=>{
+        Cookies.remove('mytoken');
+        Cookies.remove('sessionid');
+        Cookies.remove('csrftoken');
+        history.push('/');
+      }).catch((err)=>{
+        console.log("error while logging out")
+      })
+  }
+
   return(
+    <>
     <div>
       <Navbar name={item.project_name}/>
       <Grid item xs={12} sm={12} md={12} className={classes.divMargin}>
           <Grid item xs={11} sm={11} md={11} elevation={11} square className={classes.signupsubdiv2}>
             <div className={classes.displayer}>
               <Typography component="h1" variant="h4" gutterBottom >
-                Project Name: {item.project_name}
+                Name: {item.project_name}
               </Typography>
               <Typography component="h1" variant="h6" gutterBottom>
                 Description: {item.project_wiki}
@@ -107,6 +134,13 @@ export const ProjectDetails = () => {
           </Grid>
           </Grid>
     </div>
+    <div className={classescard.logoutOutdiv}>
+        <div className={classescard.logoutIndiv}>
+            <Button className={classescard.buttonmargin} variant="outlined" style={{backgroundColor: '#12824C', color: '#FFFFFF'}} onClick={()=>{goback()}}>Back</Button>
+            <Button className={classescard.buttonmargin} style={{backgroundColor: 'red', color: '#FFFFFF'}} onClick={()=>{loggingout()}}>Logout</Button>
+        </div>
+      </div>
+    </>
   )
 
 }
