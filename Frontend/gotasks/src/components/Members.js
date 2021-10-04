@@ -44,8 +44,8 @@ export const Members = () => {
   const history = useHistory();
   const [users, setUsers] = useState([])
 
-  const fetchData = () => {
-     http.get("/gotasks/users").then(
+  const fetchData = async() => {
+     await http.get("/gotasks/users").then(
       (res) => {
         setUsers(res.data)
       }
@@ -75,6 +75,52 @@ export const Members = () => {
       })
   }
 
+
+  const handleadminchange = async(id, moderator) => {
+    let formData = {
+      "moderator": !moderator,
+    }
+    const config = {
+      headers: {
+        "Content-Type": 'application/json',
+        'X-CSRFToken': Cookies.get("csrftoken"),
+        'X-Requested-With': 'XMLHttpRequest'
+      }
+    }
+    await axios.patch(`http://127.0.0.1:8000/gotasks/users/${id}/`,
+    formData, config)
+    .then(res => {
+      console.log(res.data)
+    }).catch(err => {
+      console.log(err)
+    })
+
+    await fetchData();
+  }
+
+  const handlebanchange = async(id, banned) => {
+    let formData = {
+      "is_banned": !banned
+    }
+    const config = {
+      headers: {
+        "Content-Type": 'application/json',
+        'X-CSRFToken': Cookies.get("csrftoken"),
+        'X-Requested-With': 'XMLHttpRequest'
+      }
+    }
+    await axios.patch(`http://127.0.0.1:8000/gotasks/users/${id}/`,
+    formData, config)
+    .then(res => {
+      console.log(res.data)
+    }).catch(err => {
+      console.log(err)
+    })
+
+    await fetchData();
+  }
+  
+
   return (
     <>
     <Navbar />
@@ -95,9 +141,13 @@ export const Members = () => {
           </Typography>
           <Typography variant="body2" gutterBottom>
             <p>Moderator:</p>{user.moderator ? <DoneIcon />: <CancelRoundedIcon />}
+            {user.moderator ? <Button size="small" variant="outlined" style={{ marginLeft: '5px',color: 'red'}}  onClick={() => {handleadminchange(user.id, user.moderator)}}>Remove as admin</Button>: 
+            <Button size="small" variant="outlined" style={{marginLeft: '5px', color: 'green'}} onClick={() => {handleadminchange(user.id, user.moderator)}}>Make admin</Button>}
           </Typography>
           <Typography variant="body2" gutterBottom>
           <p>Banned:</p>{user.is_banned ? <DoneIcon />: <CancelRoundedIcon />}
+            {user.is_banned ? <Button size="small" variant="outlined" style={{marginLeft: '5px', color: 'green'}} onClick={() => {handlebanchange(user.id, user.is_banned)}}>Enable</Button>: 
+            <Button size="small" variant="outlined" style={{marginLeft: '5px', color: 'red'}}  onClick={() => {handlebanchange(user.id, user.is_banned)}}>Disable</Button>}
           </Typography>
         </CardContent>
       </Card>
