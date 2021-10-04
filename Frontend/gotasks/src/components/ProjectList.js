@@ -17,6 +17,7 @@ import { useParams } from "react-router"
 import useCardStyles from '../styles/DashboardCard'
 import { useHistory } from "react-router-dom";
 import { AddList } from './AddList.js';
+import moment from "moment";
 
 
 const Navbar = (props) => {
@@ -28,7 +29,9 @@ const Navbar = (props) => {
     setOpen(true);
   };
 
-  const handleClose = () => {
+  const handleClose = async() => {
+    // function call via props to handle the simultaneous frontend addition of lists
+    await props.fetchList();
     setOpen(false);
   };
 
@@ -42,7 +45,7 @@ const Navbar = (props) => {
           <div>
           <Button className={classes.buttonmargin} startIcon={<HomeIcon />} disableElevation><Link to="/gotasks/dashboard" className={classes.linkcol}>DASHBOARD</Link></Button>
           <Button className={classes.buttoncol} onClick={handleOpen} startIcon={<AddBoxIcon />} disableElevation>Add New</Button>
-          <AddList getlists={props.lists} setGetlists={props.setLists} open={open} handleClose={handleClose} />
+          <AddList getlists={props.lists} setGetlists={props.setLists} fetchList={props.fetchList} open={open} handleClose={handleClose} />
           </div>
         </Toolbar>
       </AppBar>
@@ -75,7 +78,7 @@ export const ListItem = (props) => {
             Project: {props.list.project}
           </Typography>
           <Typography variant="body1" gutterBottom>
-            Created on: {props.list.list_created}
+            Created on: {moment(props.list.list_created).format("dddd, MMMM Do YYYY, h:mm:ss a")}
           </Typography>
         </CardContent>
         <CardActions>
@@ -97,8 +100,8 @@ export const ProjectList = () => {
   const history = useHistory()
   const [lists, setLists] = useState([])
 
-  const fetchList = (id) => {
-    http.get(`/gotasks/projects/${id}/lists/`)
+  const fetchList = async() => {
+    http.get(`/gotasks/projects/${proj_id}/lists/`)
     .then(res => {
       console.log(res.data)
       setLists(res.data)
@@ -108,7 +111,7 @@ export const ProjectList = () => {
   }
 
   useEffect(() => {
-    fetchList(proj_id)
+    fetchList()
   }, [])
 
 
@@ -133,7 +136,7 @@ export const ProjectList = () => {
   return(
     <>
     <div>
-      <Navbar lists={lists} setLists={setLists}/>
+      <Navbar lists={lists} setLists={setLists} fetchList={fetchList}/>
       {lists.map(list => {
       return (
       <>

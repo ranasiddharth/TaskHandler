@@ -9,6 +9,7 @@ import {AppBar, Toolbar} from '@material-ui/core'
 import Typography from '@material-ui/core/Typography';
 import HomeIcon from '@material-ui/icons/Home';
 import Box from '@material-ui/core/Box'
+import moment from "moment";
 import { Link } from 'react-router-dom'
 import useLoginStyles from "../styles/LoginStyles.js"
 import { DeleteProject } from "./DeleteProject.js"
@@ -121,7 +122,7 @@ export const ProjectDetails = () => {
                 })}
               </Typography>
               <Typography component="h1" variant="h6" gutterBottom>
-                Created on: {item.project_created}
+                Created on: {moment(item.project_created).format("dddd, MMMM Do YYYY, h:mm:ss a")}
               </Typography>
               <Button type="submit" fullWidth variant="contained" color="primary" className={classes.submit} onClick={(e)=>{listDetails(proj_id)}} > Details
               </Button>   

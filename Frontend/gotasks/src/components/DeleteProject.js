@@ -3,6 +3,7 @@ import { Button, Typography, Box } from "@material-ui/core"
 import axios from 'axios';
 import http from './axios.js';
 import { useParams } from 'react-router';
+import { useHistory } from 'react-router-dom';
 import { useState, useEffect } from 'react'
 import DeleteIcon from '@material-ui/icons/Delete';
 import CancelIcon from '@material-ui/icons/Cancel';
@@ -11,10 +12,13 @@ import CancelIcon from '@material-ui/icons/Cancel';
 export const DeleteProject = ({ open, handleClose }) => {
 
   const {proj_id, list_id} = useParams()
+  const history = useHistory();
   const [err, setErr] = useState(false)
 
   const listlocation = () => {
-    window.location.href = `http://localhost:3000/gotasks/projects/`
+    // window.location.href = `http://localhost:3000/gotasks/projects/`
+    history.push(`/gotasks/projects/`)
+    
   }
 
   const Delete = () => {

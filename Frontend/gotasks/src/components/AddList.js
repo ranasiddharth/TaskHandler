@@ -31,14 +31,14 @@ const useStyles = makeStyles(theme => ({
 }));
 
 
-const Form = ({ handleClose, getlists, setGetlists }) => {
+const Form = ({ handleClose, getlists, setGetlists, fetchList }) => {
 
   const classes = useStyles()
   const { proj_id } = useParams()
   const [name, setName] = useState('');
   const [errormsg, setErrormsg] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
     console.log(name);
     var formData = new FormData();
@@ -52,7 +52,7 @@ const Form = ({ handleClose, getlists, setGetlists }) => {
         'X-Requested-With': 'XMLHttpRequest'
       }
     }
-    axios.post(`http://127.0.0.1:8000/gotasks/projects/${proj_id}/lists/`,
+    await axios.post(`http://127.0.0.1:8000/gotasks/projects/${proj_id}/lists/`,
     formData, config)
     .then(res => {
       console.log(res.data)
@@ -61,6 +61,7 @@ const Form = ({ handleClose, getlists, setGetlists }) => {
       console.log(err)
     })
 
+    // fetchList();
     handleClose();
   };
 
@@ -102,11 +103,11 @@ const Form = ({ handleClose, getlists, setGetlists }) => {
 }
 
 
-export const AddList = ({ open, handleClose, getlists, setGetlists }) => {
+export const AddList = ({ open, handleClose, getlists, setGetlists, fetchList }) => {
 
   return (
     <Dialog open={open} onClose={handleClose}>
-      <Form getlists={getlists} setGetlists={setGetlists} handleClose={handleClose} />
+      <Form getlists={getlists} setGetlists={setGetlists} fetchList={fetchList} handleClose={handleClose} />
     </Dialog>
   );
 

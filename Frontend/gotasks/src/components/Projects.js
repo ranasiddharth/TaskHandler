@@ -25,10 +25,11 @@ const Navbar = (props) => {
 
   const handleOpen = () => {
     setOpen(true);
-
   };
 
   const handleClose = () => {
+    // function call via props to handle the simultaneous frontend addition of project
+    props.fetchData();
     setOpen(false);
   };
 
@@ -42,7 +43,7 @@ const Navbar = (props) => {
           <div>
           <Button className={classes.buttonmargin} startIcon={<HomeIcon />} disableElevation><Link to="/gotasks/dashboard" className={classes.linkcol}>DASHBOARD</Link></Button>
           <Button className={classes.buttoncol} onClick={handleOpen} startIcon={<AddBoxIcon />} disableElevation>Add New</Button>
-          <AddProject getproj={props.projects} setGetproj={props.setProjects} open={open} handleClose={handleClose} />
+          <AddProject getproj={props.projects} setGetproj={props.setProjects} fetchData={props.fetchData} open={open} handleClose={handleClose} />
           </div>
         </Toolbar>
       </AppBar>
@@ -68,7 +69,7 @@ export const ProjectItem = (props) => {
           <Typography variant="h5" component="div" gutterBottom>
             Name: {props.project.project_name}
           </Typography>
-          <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+          <Typography sx={{ fontSize: 14 }} gutterBottom>
             Description: {props.project.project_wiki}
           </Typography>
           <Typography variant="body2" gutterBottom>
@@ -128,7 +129,7 @@ export const Projects = () => {
 
   return (
     <>
-    <Navbar projects={projects} setProjects={setProjects} />
+    <Navbar projects={projects} setProjects={setProjects} fetchData={fetchData}/>
     <div>
     <br />
 

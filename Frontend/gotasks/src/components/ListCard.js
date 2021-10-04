@@ -3,6 +3,7 @@ import http from "./axios.js";
 import axios from 'axios'
 import {AppBar, Toolbar, Tabs, Tab} from '@material-ui/core'
 import useStyles from '../styles/Navbar.js'
+import moment from "moment";
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box'
@@ -29,6 +30,8 @@ const Navbar = (props) => {
   };
 
   const handleClose = () => {
+    // function call via props to handle the simultaneous frontend addition of cards
+    props.fetchCard();
     setOpen(false);
   };
 
@@ -78,10 +81,10 @@ export const CardItem = (props) => {
             Assigned To: {props.card.assigned}
           </Typography>
           <Typography variant="body2" gutterBottom>
-            Created on: {props.card.date_created}
+            Created on: {moment(props.card.date_created).format("dddd, MMMM Do YYYY, h:mm:ss a")}
           </Typography>
           <Typography variant="body2" gutterBottom>
-            Due Date: {props.card.due_date}
+            Due Date: {moment(props.card.due_date).format("dddd, MMMM Do YYYY, h:mm:ss a")}
           </Typography>
         </CardContent>
         <CardActions>
@@ -103,7 +106,7 @@ export const ListCard = () => {
   const classes = useCardStyles()
   const history = useHistory()
 
-  const fetchCard = (proj_id, list_id) => {
+  const fetchCard = () => {
     http.get(`/gotasks/projects/${proj_id}/lists/${list_id}/cards`)
     .then(res => {
       console.log(res.data)
@@ -114,7 +117,7 @@ export const ListCard = () => {
   }
 
   useEffect(() => {
-    fetchCard(proj_id, list_id)
+    fetchCard()
   }, [])
 
 
@@ -139,7 +142,8 @@ export const ListCard = () => {
   return(
     <>
     <div>
-      <Navbar cards={cards} setCards={setCards}/>
+      <Navbar cards={cards} setCards={setCards} fetchCard={fetchCard}/>
+      {/* {cards.length===0 ? "No cards to display" : */}
       {cards.map(card => {
       return (
       <>
@@ -147,6 +151,7 @@ export const ListCard = () => {
       </>
       )
     })}
+  {/* } */}
     </div>
     <div className={classes.logoutOutdiv}>
       <div className={classes.logoutIndiv}>

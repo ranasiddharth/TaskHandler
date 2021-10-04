@@ -39,7 +39,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 
-const Form = ({ handleClose, getproj, setGetproj }) => {
+const Form = ({ handleClose, getproj, setGetproj, fetchData }) => {
 
   const classes = useStyles()
 
@@ -51,7 +51,7 @@ const Form = ({ handleClose, getproj, setGetproj }) => {
   const [errormsg, setErrormsg] = useState(false);
 
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
     console.log(name, wiki, selected);
     console.log(getproj)
@@ -76,7 +76,7 @@ const Form = ({ handleClose, getproj, setGetproj }) => {
         'X-Requested-With': 'XMLHttpRequest'
       }
     }
-    axios.post("http://127.0.0.1:8000/gotasks/projects/",
+    await axios.post("http://127.0.0.1:8000/gotasks/projects/",
     formData, config)
     .then(res => {
       console.log(res.data)
@@ -84,6 +84,7 @@ const Form = ({ handleClose, getproj, setGetproj }) => {
       console.log(err)
     })
 
+    // fetchData();
     handleClose();
   };
 
@@ -154,8 +155,8 @@ const Form = ({ handleClose, getproj, setGetproj }) => {
           onChange={(event, editor) => {
             const data = editor.getData();
             setWiki(data);
-            console.log(data);
-            console.log(wiki)
+            // console.log(data);
+            // console.log(wiki)
           }}
       />
       </div>
@@ -198,11 +199,11 @@ const Form = ({ handleClose, getproj, setGetproj }) => {
 }
 
 
-export const AddProject = ({ open, handleClose, getproj, setGetproj }) => {
+export const AddProject = ({ open, handleClose, getproj, setGetproj, fetchData }) => {
 
   return (
     <Dialog width='100%' open={open} onClose={handleClose}>
-      <Form getproj={getproj} setGetproj={setGetproj} handleClose={handleClose} />
+      <Form getproj={getproj} setGetproj={setGetproj} fetchData={fetchData} handleClose={handleClose} />
     </Dialog>
   );
 

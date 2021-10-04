@@ -46,7 +46,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 
-const Form = ({ handleClose, getcards, setGetcards }) => {
+const Form = ({ handleClose, getcards, setGetcards, fetchCard }) => {
 
   const { proj_id, list_id } = useParams()
 
@@ -61,7 +61,7 @@ const Form = ({ handleClose, getcards, setGetcards }) => {
   const [errormsg, setErrormsg] = useState(false);
 
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
     console.log(name, desc, assigned, duedate);
     console.log(getcards)
@@ -82,14 +82,16 @@ const Form = ({ handleClose, getcards, setGetcards }) => {
       }
     }
 
-    axios.post(`http://127.0.0.1:8000/gotasks/projects/${proj_id}/lists/${list_id}/cards/`,
+    await axios.post(`http://127.0.0.1:8000/gotasks/projects/${proj_id}/lists/${list_id}/cards/`,
     formData, config)
     .then(res => {
-      console.log(res.data)
+      console.log(res.data);
+      // fetchCard();
     }).catch(err => {
       console.log(err)
     })
 
+    // fetchCard();
     handleClose();
   };
 
@@ -222,11 +224,11 @@ const Form = ({ handleClose, getcards, setGetcards }) => {
 }
 
 
-export const AddCard = ({ open, handleClose, getcards, setGetcards }) => {
+export const AddCard = ({ open, handleClose, getcards, setGetcards, fetchCard }) => {
 
   return (
     <Dialog width='100%' open={open} onClose={handleClose}>
-      <Form getcards={getcards} setGetcards={setGetcards} handleClose={handleClose} />
+      <Form getcards={getcards} setGetcards={setGetcards} fetchCard={fetchCard} handleClose={handleClose} />
     </Dialog>
   );
 

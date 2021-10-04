@@ -14,6 +14,7 @@ import useLoginStyles from "../styles/LoginStyles.js"
 import { DeleteList } from "./DeleteList.js"
 import { useHistory } from "react-router-dom"
 import useCardStyles from "../styles/DashboardCard.js";
+import moment from "moment";
 
 
 const Navbar = () => {
@@ -110,7 +111,7 @@ export const ProjectListDetails = () => {
                 Project: {item.project}
               </Typography>
               <Typography component="h1" variant="h6" gutterBottom>
-                Created <i class="fas fa-dice-one    "></i>: {item.list_created}
+                Created: {moment(item.list_created).format("dddd, MMMM Do YYYY, h:mm:ss a")}
               </Typography>
               <Button type="submit" fullWidth variant="contained" color="primary" className={classes.submit} onClick={(e)=>{listDetails(proj_id, list_id)}} > Details
               </Button>   

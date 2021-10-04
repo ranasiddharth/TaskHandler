@@ -17,7 +17,8 @@ class ProjectsSerializer(serializers.ModelSerializer):
 class ListsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Lists
-        fields = ['id', 'list_name', 'list_created']
+        fields = ['id', 'list_name', 'list_created', 'project']
+        read_only_fields = ['project']
 
 
 
@@ -40,7 +41,7 @@ class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields =['id', 'body', 'commentor']
-        real_only_fields = ['id', 'commentor']
+        read_only_fields = ['id', 'commentor']
 
 
 

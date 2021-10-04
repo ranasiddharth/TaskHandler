@@ -4,6 +4,7 @@ import axios from 'axios';
 import http from './axios.js';
 import { useParams } from 'react-router';
 import { useState, useEffect } from 'react'
+import { useHistory } from 'react-router-dom';
 import DeleteIcon from '@material-ui/icons/Delete';
 import CancelIcon from '@material-ui/icons/Cancel';
 
@@ -11,10 +12,13 @@ import CancelIcon from '@material-ui/icons/Cancel';
 export const DeleteList = ({ open, handleClose }) => {
 
   const {proj_id, list_id} = useParams()
+  const history = useHistory()
   const [err, setErr] = useState(false)
 
   const listlocation = () => {
-    window.location.href = `http://localhost:3000/gotasks/projects/${proj_id}/lists/`
+    // window.location.href = `http://localhost:3000/gotasks/projects/${proj_id}/lists/`
+    history.push(`/gotasks/projects/${proj_id}/lists/`)
+    
   }
 
   const Delete = () => {
