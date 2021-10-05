@@ -72,13 +72,13 @@ export const ListItem = (props) => {
     <Card sx={{ minWidth: 275 }} variant="outlined" className={classes.cardattr}>
         <CardContent>
           <Typography variant="h5" component="div" gutterBottom>
-            Name: {props.list.list_name}
+          <strong>Name:</strong> {props.list.list_name}
           </Typography>
           <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-            Project: {props.list.project}
+            <strong>Project:</strong> {props.list.project}
           </Typography>
           <Typography variant="body1" gutterBottom>
-            Created on: {moment(props.list.list_created).format("dddd, MMMM Do YYYY, h:mm:ss a")}
+          <strong>Created on:</strong> {moment(props.list.list_created).format("dddd, MMMM Do YYYY, h:mm:ss a")}
           </Typography>
         </CardContent>
         <CardActions>

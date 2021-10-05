@@ -1,10 +1,6 @@
 import http from "./axios.js";
-import {AppBar, Toolbar} from '@material-ui/core'
+import {AppBar, Toolbar, Button, Typography, Box, Card} from '@material-ui/core'
 import useStyles from '../styles/Navbar.js'
-import Button from '@material-ui/core/Button';
-import Typography from '@material-ui/core/Typography';
-import Box from '@material-ui/core/Box'
-import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import CardActions from '@material-ui/core/CardActions'
 import AddBoxIcon from '@material-ui/icons/AddBox';
@@ -16,6 +12,7 @@ import { AddProject } from './AddProject.js'
 import { useHistory } from "react-router-dom";
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import "../styles/ListTags.css"
 
 
 const Navbar = (props) => {
@@ -67,13 +64,18 @@ export const ProjectItem = (props) => {
     <Card sx={{ minWidth: 275 }} variant="outlined" className={classes.cardattr}>
         <CardContent>
           <Typography variant="h5" component="div" gutterBottom>
-            Name: {props.project.project_name}
+          <strong>Name:</strong> {props.project.project_name}
           </Typography>
           <Typography sx={{ fontSize: 14 }} gutterBottom>
-            Description: {props.project.project_wiki}
+            <strong>Description:</strong>
           </Typography>
+          <div>
+          <Typography sx={{ fontSize: 14 }} gutterBottom dangerouslySetInnerHTML={{__html: props.project.project_wiki}}>
+          
+          </Typography>
+          </div>
           <Typography variant="body2" gutterBottom>
-            Created by: {props.project.project_creator}
+          <strong>Created by:</strong> {props.project.project_creator}
           </Typography>
         </CardContent>
         <CardActions className={classes.cardActions}>

@@ -3,18 +3,16 @@ import http from './axios.js'
 import axios from 'axios';
 import Cookies from "js-cookie";
 import { useState, useEffect } from "react"
-import { Button } from "@material-ui/core"
 import useStyles from '../styles/Navbar.js'
-import {AppBar, Toolbar, Grid} from '@material-ui/core'
-import Typography from '@material-ui/core/Typography';
+import {AppBar, Toolbar, Grid, Button, Typography, Box} from '@material-ui/core'
 import HomeIcon from '@material-ui/icons/Home';
-import Box from '@material-ui/core/Box'
 import { Link } from 'react-router-dom'
 import useLoginStyles from "../styles/LoginStyles.js"
 import { DeleteList } from "./DeleteList.js"
 import { useHistory } from "react-router-dom"
 import useCardStyles from "../styles/DashboardCard.js";
 import moment from "moment";
+import { EditList } from "./EditList.js";
 
 
 const Navbar = () => {
@@ -50,6 +48,17 @@ export const ProjectListDetails = () => {
 
   const handleClose = () => {
     setOpen(false);
+  };
+
+  const [updateopen, setUpdateOpen] = useState(false);
+
+  const handleUpdateOpen = () => {
+    setUpdateOpen(true);
+  };
+
+  const handleUpdateClose = () => {
+     fetchList(proj_id, list_id);
+    setUpdateOpen(false);
   };
 
   const classes = useLoginStyles()
@@ -105,18 +114,19 @@ export const ProjectListDetails = () => {
           <Grid item xs={11} sm={11} md={11} elevation={11} square className={classes.signupsubdiv2}>
             <div className={classes.displayer}>
               <Typography component="h1" variant="h4" gutterBottom >
-                List Name: {item.list_name}
+              <strong>List Name:</strong> {item.list_name}
               </Typography>
               <Typography component="h1" variant="h6" gutterBottom>
-                Project: {item.project}
+              <strong>Project:</strong> {item.project}
               </Typography>
               <Typography component="h1" variant="h6" gutterBottom>
-                Created: {moment(item.list_created).format("dddd, MMMM Do YYYY, h:mm:ss a")}
+              <strong>Created:</strong> {moment(item.list_created).format("dddd, MMMM Do YYYY, h:mm:ss a")}
               </Typography>
               <Button type="submit" fullWidth variant="contained" color="primary" className={classes.submit} onClick={(e)=>{listDetails(proj_id, list_id)}} > Details
               </Button>   
-              <Button type="submit" fullWidth variant="contained" color="primary" className={classes.submit} > Update
+              <Button type="submit" fullWidth variant="contained" color="primary" className={classes.submit} onClick={handleUpdateOpen}> Update
               </Button>  
+              <EditList updateopen={updateopen} handleUpdateClose={handleUpdateClose}/>
               <Button type="submit" fullWidth variant="contained" color="primary" className={classes.submit} onClick={handleOpen}> Delete
               </Button>  
               <DeleteList open={open} handleClose={handleClose} />

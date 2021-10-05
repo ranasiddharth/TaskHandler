@@ -95,19 +95,19 @@ export const ListCardDetails = () => {
           <Grid item xs={11} sm={11} md={11} elevation={11} square className={classes.signupsubdiv2}>
             <div className={classes.displayer}>
               <Typography component="h1" variant="h4" gutterBottom >
-                Card Name: {item.card_name}
+              <strong>Card Name:</strong> {item.card_name}
               </Typography>
               <Typography component="h1" variant="h6" gutterBottom>
-                Description: {item.description}
+                <strong>Description:</strong> {item.description}
               </Typography>
               <Typography component="h1" variant="h6" gutterBottom>
-                Assigned To: {item.assigned}
+                <strong>Assigned To:</strong> {item.assigned}
               </Typography>
               <Typography component="h1" variant="h6" gutterBottom>
-                Created on: {item.date_created}
+                <strong>Created on:</strong> {item.date_created}
               </Typography>
               <Typography component="h1" variant="h6" gutterBottom>
-                Due date: {item.due_date}
+                <strong>Due date:</strong> {item.due_date}
               </Typography>
               <Button type="submit" fullWidth variant="contained" color="primary" className={classes.submit} > Update
               </Button>  

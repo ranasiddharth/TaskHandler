@@ -5,6 +5,7 @@ import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box'
 import Card from "@material-ui/core/Card";
+import moment from "moment";
 import CardContent from "@material-ui/core/CardContent";
 import CardActions from '@material-ui/core/CardActions'
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -18,6 +19,7 @@ import useCardStyles from '../styles/DashboardCard'
 import { Link } from 'react-router-dom'
 import Cookies from 'js-cookie'
 import { useHistory } from "react-router-dom";
+import "../styles/ListTags.css"
 
 
 const Navbar = () => {
@@ -77,13 +79,18 @@ const Project = (props) => {
         <Card sx={{ minWidth: 275 }} variant="outlined" className={classes.cardattr} key={project.id}>
           <CardContent>
             <Typography variant="h5" component="div" gutterBottom>
-              Name: {project.project_name}
+            <strong>Name:</strong> {project.project_name}
             </Typography>
-            <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-              Description: {project.project_wiki}
+            <Typography sx={{ fontSize: 14 }} gutterBottom>
+            <strong>Description:</strong>
+          </Typography>
+            <div>
+            <Typography sx={{ fontSize: 14 }} gutterBottom dangerouslySetInnerHTML={{__html: project.project_wiki}}>
+              
             </Typography>
+            </div>
             <Typography variant="body2" gutterBottom>
-              Created by: {project.project_creator.fullname}
+              <strong>Created by:</strong> {project.project_creator.fullname}
             </Typography>
           </CardContent>
           <CardActions className={classes.cardActions}>
@@ -121,16 +128,16 @@ const CardShow = (props) => {
         <Card sx={{ minWidth: 275 }} variant="outlined" className={classes.cardattr} key={card.id}>
           <CardContent>
             <Typography variant="h5" component="div" gutterBottom>
-              Name: {card.card_name}
+              <strong>Name:</strong> {card.card_name}
             </Typography>
-            <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-              Description: {card.description}
+            <Typography sx={{ fontSize: 14 }} gutterBottom>
+              <strong>Description:</strong> {card.description}
             </Typography>
             <Typography variant="body2" gutterBottom>
-              Created on: {card.date_created}
+              <strong>Created on:</strong> {moment(card.date_created).format("dddd, MMMM Do YYYY, h:mm:ss a")}
             </Typography>
             <Typography variant="body2">
-              Due Date: {card.due_date}
+              <strong>Due Date:</strong> {moment(card.due_date).format("dddd, MMMM Do YYYY, h:mm:ss a")}
             </Typography>
           </CardContent>
           <CardActions className={classes.cardActions}>

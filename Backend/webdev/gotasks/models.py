@@ -17,7 +17,7 @@ class User(AbstractUser):
 
 class Projects(models.Model):
     project_name = models.CharField(max_length=100, unique=True, blank=False)
-    project_wiki = models.CharField(max_length=250, blank=False, null=False)
+    project_wiki = RichTextField()
     project_creator = models.ForeignKey(to=User, on_delete=models.CASCADE, related_name='creator')
     project_members = models.ManyToManyField(User)
     project_created = models.DateTimeField(auto_now_add=True)
@@ -43,7 +43,7 @@ class Lists(models.Model):
 
 class Cards(models.Model):
     card_name = models.CharField(max_length=100)
-    description = RichTextField()
+    description = models.CharField(max_length=250, blank=False, null=False)
     list = models.ForeignKey(to=Lists, on_delete=models.CASCADE)
     assigned = models.ForeignKey(to=User, on_delete=models.CASCADE, related_name='cards')
     date_created = models.DateTimeField(auto_now_add=True)

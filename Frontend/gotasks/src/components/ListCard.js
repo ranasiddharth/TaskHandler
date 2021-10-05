@@ -72,19 +72,19 @@ export const CardItem = (props) => {
     <Card sx={{ minWidth: 275 }} variant="outlined" className={classes.cardattr}>
         <CardContent>
           <Typography variant="h5" component="div" gutterBottom>
-            Name: {props.card.card_name}
+          <strong>Name:</strong> {props.card.card_name}
           </Typography>
           <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-            Description: {props.card.description}
+          <strong>Description:</strong> {props.card.description}
           </Typography>
           <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-            Assigned To: {props.card.assigned}
+          <strong>Assigned To:</strong> {props.card.assigned}
           </Typography>
           <Typography variant="body2" gutterBottom>
-            Created on: {moment(props.card.date_created).format("dddd, MMMM Do YYYY, h:mm:ss a")}
+          <strong>Created on:</strong> {moment(props.card.date_created).format("dddd, MMMM Do YYYY, h:mm:ss a")}
           </Typography>
           <Typography variant="body2" gutterBottom>
-            Due Date: {moment(props.card.due_date).format("dddd, MMMM Do YYYY, h:mm:ss a")}
+          <strong>Due Date:</strong> {moment(props.card.due_date).format("dddd, MMMM Do YYYY, h:mm:ss a")}
           </Typography>
         </CardContent>
         <CardActions>

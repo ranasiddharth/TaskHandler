@@ -3,18 +3,16 @@ import http from './axios.js'
 import axios from 'axios';
 import Cookies from "js-cookie";
 import { useState, useEffect } from "react"
-import { Button, Grid } from "@material-ui/core"
+import { Button, Grid, Box, Typography, AppBar, Toolbar } from "@material-ui/core"
 import useStyles from '../styles/Navbar.js'
-import {AppBar, Toolbar} from '@material-ui/core'
-import Typography from '@material-ui/core/Typography';
 import HomeIcon from '@material-ui/icons/Home';
-import Box from '@material-ui/core/Box'
 import moment from "moment";
 import { Link } from 'react-router-dom'
 import useLoginStyles from "../styles/LoginStyles.js"
 import { DeleteProject } from "./DeleteProject.js"
 import { useHistory } from "react-router-dom"
 import useCardStyles from "../styles/DashboardCard.js";
+import "../styles/ListTags.css"
 
 
 const Navbar = (props) => {
@@ -103,17 +101,22 @@ export const ProjectDetails = () => {
       <Grid item xs={12} sm={12} md={12} className={classes.divMargin}>
           <Grid item xs={11} sm={11} md={11} elevation={11} square className={classes.signupsubdiv2}>
             <div className={classes.displayer}>
-              <Typography component="h1" variant="h4" gutterBottom >
-                Name: {item.project_name}
+              <Typography component="h1" variant="h4" gutterBottom>
+                <strong>Name:</strong> {item.project_name}
               </Typography>
               <Typography component="h1" variant="h6" gutterBottom>
-                Description: {item.project_wiki}
+                <strong>Description:</strong>
+              </Typography>
+              <div>
+              <Typography component="h1" variant="h6" gutterBottom dangerouslySetInnerHTML={{__html: item.project_wiki}}>
+                
+              </Typography>
+              </div>
+              <Typography component="h1" variant="h6" gutterBottom>
+              <strong>Creator:</strong> {item.project_creator}
               </Typography>
               <Typography component="h1" variant="h6" gutterBottom>
-                Creator: {item.project_creator}
-              </Typography>
-              <Typography component="h1" variant="h6" gutterBottom>
-                Members: {proj_members.map((member)=>{
+              <strong>Members:</strong> {proj_members.map((member)=>{
                   return (
                     <li>
                     {member}
@@ -122,7 +125,7 @@ export const ProjectDetails = () => {
                 })}
               </Typography>
               <Typography component="h1" variant="h6" gutterBottom>
-                Created on: {moment(item.project_created).format("dddd, MMMM Do YYYY, h:mm:ss a")}
+              <strong>Created on:</strong> {moment(item.project_created).format("dddd, MMMM Do YYYY, h:mm:ss a")}
               </Typography>
               <Button type="submit" fullWidth variant="contained" color="primary" className={classes.submit} onClick={(e)=>{listDetails(proj_id)}} > Details
               </Button>   
