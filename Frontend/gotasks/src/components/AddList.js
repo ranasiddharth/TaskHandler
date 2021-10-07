@@ -55,7 +55,7 @@ const Form = ({ handleClose, getlists, setGetlists, fetchList }) => {
     await axios.post(`http://127.0.0.1:8000/gotasks/projects/${proj_id}/lists/`,
     formData, config)
     .then(res => {
-      console.log(res.data)
+      // console.log(res.data)
       
     }).catch(err => {
       console.log(err)

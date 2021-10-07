@@ -6,7 +6,7 @@ from gotasks.models import Comment, User, Projects, Lists, Cards
 
 class ProjectsSerializer(serializers.ModelSerializer):
     project_creator = serializers.ReadOnlyField(source='project_creator.fullname')
-    project_members = serializers.SlugRelatedField(many=True, queryset=User.objects.all(), slug_field='id')  
+    project_members = serializers.SlugRelatedField(many=True, queryset=User.objects.all(), slug_field='fullname')  
 
     class Meta:
         model = Projects
@@ -15,6 +15,8 @@ class ProjectsSerializer(serializers.ModelSerializer):
 
 
 class ListsSerializer(serializers.ModelSerializer):
+    project = serializers.ReadOnlyField(source='project.project_name')
+
     class Meta:
         model = Lists
         fields = ['id', 'list_name', 'list_created', 'project']
@@ -30,10 +32,11 @@ class CardsShowSerializer(serializers.ModelSerializer):
 
 
 class CardsSerializer(serializers.ModelSerializer):
+    assigned = serializers.SlugRelatedField(queryset=User.objects.all(), slug_field='fullname')  
+
     class Meta:
         model = Cards
         fields = ['id', 'card_name', 'description', 'assigned', 'date_created', 'due_date']
-        # depth=1
 
 
 

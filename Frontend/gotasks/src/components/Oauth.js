@@ -4,6 +4,8 @@ import axios from 'axios';
 import { Loading } from './Loading';
 import Cookies from 'js-cookie'
 import { Redirect } from 'react-router';
+import NotMaintainer from './NotMaintainer';
+import Banned from './Banned';
 
 
 export const Oauth = () => {
@@ -16,6 +18,7 @@ export const Oauth = () => {
   }
 
   const [loggedIn, setLoggedIn] = useState(false)
+  const [banned, setBanned] = useState(false)
   // const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -26,18 +29,26 @@ export const Oauth = () => {
 
       axios.get(`http://127.0.0.1:8000/?code=${auth}&state=RANDOM_STATE_STRING`, {withCredentials: true})
       .then(response => {
+        console.log(response)
         if(response.status === 200){
           console.log("cookies set")
           Cookies.set('csrftoken', response.data['csrftoken'], {path:"/"})
           Cookies.set('sessionid', response.data['sessionid'], {path:"/"})
           Cookies.set('mytoken', response.data['mytoken'], {path:"/"})
           setLoggedIn(true)
-          // setLoading(false)
-        }else{
-          setLoggedIn(false)
+          setBanned(false)
         }
-      }).catch(err => {
-        setLoggedIn(false)
+      }).catch(error => {
+        if(error.response.status === 400){
+          if(error.response.data === "Only site maintainers can access this app"){
+            setBanned(false)
+            setLoggedIn(false)
+          }
+          else{
+            setBanned(true)
+            setLoggedIn(false)
+          }
+        }
         console.log("error occured while authenticating");
       })
 
@@ -45,7 +56,7 @@ export const Oauth = () => {
 
   return (
     <div>
-        {loggedIn ? dashboard() : <Loading />}
+        {(loggedIn && !banned) ? dashboard() : ((!loggedIn && !banned) ? <NotMaintainer />: <Banned />)}
     </div>
   )
 }

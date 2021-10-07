@@ -10,14 +10,17 @@ import {useState, useEffect} from 'react';
 import useCardStyles from '../styles/DashboardCard'
 import { AddProject } from './AddProject.js'
 import { useHistory } from "react-router-dom";
+// import LogoutIcon from '@material-ui/icons/ExitToApp';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import "../styles/ListTags.css"
+import { Loading } from "./Loading.js";
 
 
 const Navbar = (props) => {
 
   const classes = useStyles()
+  // const history = useHistory()
   const [open, setOpen] = useState(false);
 
   const handleOpen = () => {
@@ -30,6 +33,17 @@ const Navbar = (props) => {
     setOpen(false);
   };
 
+  // const loggingout = () => {
+  //   axios.get("http://127.0.0.1:8000/gotasks/logout", {withCredentials: true}).then((resp)=>{
+  //     Cookies.remove('mytoken');
+  //     Cookies.remove('sessionid');
+  //     Cookies.remove('csrftoken');
+  //     history.push('/');
+  //   }).catch((err)=>{
+  //     console.log("error while logging out")
+  //   })
+  // }
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
@@ -41,6 +55,7 @@ const Navbar = (props) => {
           <Button className={classes.buttonmargin} startIcon={<HomeIcon />} disableElevation><Link to="/gotasks/dashboard" className={classes.linkcol}>DASHBOARD</Link></Button>
           <Button className={classes.buttoncol} onClick={handleOpen} startIcon={<AddBoxIcon />} disableElevation>Add New</Button>
           <AddProject getproj={props.projects} setGetproj={props.setProjects} fetchData={props.fetchData} open={open} handleClose={handleClose} />
+          {/* <Button className={classes.buttoncol} startIcon={<LogoutIcon />} onClick={()=>{loggingout()}}disableElevation>Logout</Button> */}
           </div>
         </Toolbar>
       </AppBar>
@@ -88,9 +103,10 @@ export const ProjectItem = (props) => {
 
 }
 
-export const Projects = () => {
+export const Projects = (props) => {
 
   const [projects, setProjects] = useState([])
+  const [fetched, setFetched] = useState(false)
 
   const classes = useCardStyles();
 
@@ -100,6 +116,7 @@ export const Projects = () => {
      http.get("/gotasks/projects").then(
       (res) => {
         setProjects(res.data)
+        setFetched(true)
       }
     ).catch(err => {
       console.log("error in receiving data")
@@ -107,49 +124,38 @@ export const Projects = () => {
   }
 
   useEffect(() => {
+    if(!props.loginStatus){
+      history.push("/");
+    }
     fetchData()
   }, [])
 
 
-  const goback = () => {
-
-    history.goBack();
-
-  }
-
-  const loggingout = () => {
-      axios.get("http://127.0.0.1:8000/gotasks/logout", {withCredentials: true}).then((resp)=>{
-        Cookies.remove('mytoken');
-        Cookies.remove('sessionid');
-        Cookies.remove('csrftoken');
-        history.push('/');
-      }).catch((err)=>{
-        console.log("error while logging out")
-      })
-  }
-
-
-  return (
-    <>
-    <Navbar projects={projects} setProjects={setProjects} fetchData={fetchData}/>
-    <div>
-    <br />
-
-    {projects.map(project => {
-      return (
+  if(!fetched === true){
+    return (
       <>
-      <ProjectItem key={project.id} project={project} />
+      <Navbar projects={projects} setProjects={setProjects} fetchData={fetchData}/>
+      <Loading />
       </>
-      )
-    })}
-    </div>
-    <div className={classes.logoutOutdiv}>
-      <div className={classes.logoutIndiv}>
-          <Button className={classes.buttonmargin} variant="outlined" style={{backgroundColor: '#12824C', color: '#FFFFFF'}} onClick={()=>{goback()}}>Back</Button>
-          <Button className={classes.buttonmargin} style={{backgroundColor: 'red', color: '#FFFFFF'}} onClick={()=>{loggingout()}}>Logout</Button>
+    )
+  }
+  else{
+    return (
+      <>
+      <Navbar projects={projects} setProjects={setProjects} fetchData={fetchData}/>
+      <div>
+      <br />
+
+      {projects.map(project => {
+        return (
+        <>
+        <ProjectItem key={project.id} project={project} />
+        </>
+        )
+      })}
       </div>
-    </div>
-    </>
-  )
+      </>
+    )
+  }
 }
 

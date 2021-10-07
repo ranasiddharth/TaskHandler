@@ -195,7 +195,7 @@ class CardViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         card_data = request.data
         id = self.kwargs.get("parent_lookup_list")
-        user = User.objects.get(id=card_data["assigned"])
+        user = User.objects.get(fullname=card_data["assigned"])
         list_instance = Lists.objects.get(id=id)
 
         if request.user.moderator or request.user in list_instance.project.project_members.all():
@@ -210,15 +210,17 @@ class CardViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
             return Response("You do not have permission to perform this action", status=status.HTTP_403_FORBIDDEN)
 
     def update(self, request, *args, **kwargs):
-        card_object = Cards.objects.get()
+        card_object = Cards.objects.get(id=self.kwargs.get("pk"))
         card_data = request.data
         id = self.kwargs.get("parent_lookup_list")
         list_instance = Lists.objects.get(id=id)
+        assigned_instance = User.objects.get(fullname=card_data["assigned"])
 
         if request.user.moderator or request.user in list_instance.project.project_members.all():
             card_object.card_name = card_data["card_name"]
             card_object.description = card_data["description"]
             card_object.list = list_instance
+            card_object.assigned = assigned_instance
             card_object.due_date = card_data["due_date"]
             card_object.save()
             serializer = CardsSerializer(card_object)

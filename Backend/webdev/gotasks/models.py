@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from ckeditor.fields import RichTextField
+from django.db.models.constraints import UniqueConstraint
 
 # Create your models here.
 
@@ -36,6 +37,7 @@ class Lists(models.Model):
 
     class Meta:
         ordering = ['list_created']
+        unique_together = ('list_name', 'project')
 
     def __str__(self):
         return f"{self.list_name}"
@@ -51,6 +53,7 @@ class Cards(models.Model):
 
     class Meta:
         ordering = ['due_date']
+        unique_together = ('card_name', 'list')
 
     def __str__(self):
         return f"{self.card_name}"

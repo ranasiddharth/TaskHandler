@@ -13,6 +13,7 @@ import { useHistory } from "react-router-dom"
 import useCardStyles from "../styles/DashboardCard.js";
 import moment from "moment";
 import { EditList } from "./EditList.js";
+import { Loading } from "./Loading.js";
 
 
 const Navbar = () => {
@@ -24,7 +25,7 @@ const Navbar = () => {
       <AppBar position="static">
         <Toolbar className={classes.toolbar}>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            LISTS
+            LIST
           </Typography>
           <div>
           <Button className={classes.buttonmargin} startIcon={<HomeIcon />} disableElevation><Link to="/gotasks/dashboard" className={classes.linkcol}>DASHBOARD</Link></Button>
@@ -36,7 +37,7 @@ const Navbar = () => {
 }
 
 
-export const ProjectListDetails = () => {
+export const ProjectListDetails = (props) => {
 
   const history = useHistory();
 
@@ -57,12 +58,13 @@ export const ProjectListDetails = () => {
   };
 
   const handleUpdateClose = () => {
-     fetchList(proj_id, list_id);
+    fetchList(proj_id, list_id);
     setUpdateOpen(false);
   };
 
   const classes = useLoginStyles()
   const classescard = useCardStyles()
+  const [fetched, setFetched] = useState(false)
   const { proj_id, list_id } = useParams()
   const [item, setItem] = useState([])
 
@@ -70,8 +72,9 @@ export const ProjectListDetails = () => {
     http.get(`/gotasks/projects/${proj_id}/lists/${list_id}`)
     .then(res => {
       // console.log(id)
-      console.log(res.data)
+      // console.log(res.data)
       setItem(res.data)
+      setFetched(true)
     }).catch(err=>{
       console.log(err)
     })
@@ -84,62 +87,51 @@ export const ProjectListDetails = () => {
   }
 
   useEffect(() => {
+    if(!props.loginStatus){
+      history.push("/");
+    }
     fetchList(proj_id, list_id)
   }, [])
 
 
-  const goback = () => {
-
-    history.goBack();
-
+  if(!fetched === true){
+    return(
+      <>
+        <Navbar />
+        <Loading />
+      </>
+    )
   }
-
-  const loggingout = () => {
-      axios.get("http://127.0.0.1:8000/gotasks/logout", {withCredentials: true}).then((resp)=>{
-        Cookies.remove('mytoken');
-        Cookies.remove('sessionid');
-        Cookies.remove('csrftoken');
-        history.push('/');
-      }).catch((err)=>{
-        console.log("error while logging out")
-      })
-  }
-
-
-  return(
-    <>
-    <div>
-      <Navbar />
-      <Grid item xs={12} sm={12} md={12} className={classes.divMargin}>
-          <Grid item xs={11} sm={11} md={11} elevation={11} square className={classes.signupsubdiv2}>
-            <div className={classes.displayer}>
-              <Typography component="h1" variant="h4" gutterBottom >
-              <strong>List Name:</strong> {item.list_name}
-              </Typography>
-              <Typography component="h1" variant="h6" gutterBottom>
-              <strong>Project:</strong> {item.project}
-              </Typography>
-              <Typography component="h1" variant="h6" gutterBottom>
-              <strong>Created:</strong> {moment(item.list_created).format("dddd, MMMM Do YYYY, h:mm:ss a")}
-              </Typography>
-              <Button type="submit" fullWidth variant="contained" color="primary" className={classes.submit} onClick={(e)=>{listDetails(proj_id, list_id)}} > Details
-              </Button>   
-              <Button type="submit" fullWidth variant="contained" color="primary" className={classes.submit} onClick={handleUpdateOpen}> Update
-              </Button>  
-              <EditList updateopen={updateopen} handleUpdateClose={handleUpdateClose}/>
-              <Button type="submit" fullWidth variant="contained" color="primary" className={classes.submit} onClick={handleOpen}> Delete
-              </Button>  
-              <DeleteList open={open} handleClose={handleClose} />
-            </div>
-          </Grid>
-          </Grid>
-    </div>
-    <div className={classescard.logoutOutdiv}>
-      <div className={classescard.logoutIndiv}>
-          <Button className={classescard.buttonmargin} variant="outlined" style={{backgroundColor: '#12824C', color: '#FFFFFF'}} onClick={()=>{goback()}}>Back</Button>
-          <Button className={classescard.buttonmargin} style={{backgroundColor: 'red', color: '#FFFFFF'}} onClick={()=>{loggingout()}}>Logout</Button>
+  else{
+    return(
+      <>
+      <div>
+        <Navbar />
+        <Grid item xs={12} sm={12} md={12} className={classes.divMargin}>
+            <Grid item xs={11} sm={11} md={11} elevation={11} className={classes.signupsubdiv2}>
+              <div className={classes.displayer}>
+                <Typography component="h1" variant="h4" gutterBottom >
+                <strong>List Name:</strong> {item.list_name}
+                </Typography>
+                <Typography component="h1" variant="h6" gutterBottom>
+                <strong>Project:</strong> {item.project}
+                </Typography>
+                <Typography component="h1" variant="h6" gutterBottom>
+                <strong>Created:</strong> {moment(item.list_created).format("dddd, MMMM Do YYYY, h:mm:ss a")}
+                </Typography>
+                <Button type="submit" fullWidth variant="contained" color="primary" className={classes.submit} onClick={(e)=>{listDetails(proj_id, list_id)}} > Details
+                </Button>   
+                <Button type="submit" fullWidth variant="contained" color="primary" className={classes.submit} onClick={handleUpdateOpen}> Update
+                </Button>  
+                <EditList updateopen={updateopen} handleUpdateClose={handleUpdateClose}/>
+                <Button type="submit" fullWidth variant="contained" color="primary" className={classes.submit} onClick={handleOpen}> Delete
+                </Button>  
+                <DeleteList open={open} handleClose={handleClose} />
+              </div>
+            </Grid>
+            </Grid>
       </div>
-    </div>
-    </>
-  )
+      </>
+    )
+  }
 }

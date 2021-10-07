@@ -46,7 +46,7 @@ export default function Login() {
         <CssBaseline />
         <Grid item xs={12} sm={12} md={6} className={classes.image}/>
         <Grid item xs={12} sm={12} md={6} className={classes.signupdiv}>
-          <Grid item xs={11} sm={11} md={11} component={Paper} elevation={11} square className={classes.signupsubdiv}>
+          <Grid item xs={11} sm={11} md={11} component={Paper} elevation={11} className={classes.signupsubdiv}>
             <div className={classes.paper}>
               <Avatar className={classes.avatar}>
                 <VpnKeyIcon />

@@ -46,9 +46,9 @@ const useStyles = makeStyles(theme => ({
 }));
 
 
-const Form = ({ handleClose, getcards, setGetcards, fetchCard }) => {
+const Form = ({ handleUpdateClose }) => {
 
-  const { proj_id, list_id } = useParams()
+  const { proj_id, list_id, card_id } = useParams()
 
   const classes = useStyles()
   const [name, setName] = useState('');
@@ -61,9 +61,9 @@ const Form = ({ handleClose, getcards, setGetcards, fetchCard }) => {
   const [errormsg, setErrormsg] = useState(false);
 
 
-  const handleSubmit = async(e) => {
+  const handleUpdateSubmit = async(e) => {
     e.preventDefault();
-    // console.log(name, desc, assigned, duedate);
+    console.log(name, desc, assigned, duedate);
     // console.log(getcards)
 
     var formData = new FormData();
@@ -82,24 +82,40 @@ const Form = ({ handleClose, getcards, setGetcards, fetchCard }) => {
       }
     }
 
-    await axios.post(`http://127.0.0.1:8000/gotasks/projects/${proj_id}/lists/${list_id}/cards/`,
+    await axios.put(`http://127.0.0.1:8000/gotasks/projects/${proj_id}/lists/${list_id}/cards/${card_id}/`,
     formData, config)
     .then(res => {
-      // console.log(res.data);
+      console.log(res.data);
       // fetchCard();
     }).catch(err => {
       console.log(err)
     })
 
     // fetchCard();
-    handleClose();
+    handleUpdateClose();
   };
 
   useEffect(async() => {
+
     await http.get(`/gotasks/projects/${proj_id}`).then(
       (res) => {
         // console.log(res.data.project_members)
         setMembers(res.data.project_members)
+        // console.log("hello",members)
+      }).catch(err => {
+        console.log(err)
+      });
+
+    await http.get(`/gotasks/projects/${proj_id}/lists/${list_id}/cards/${card_id}/`)
+    .then(
+      (res) => {
+        // console.log(res.data.project_members)
+        setAssigned(res.data.assigned)
+        setName(res.data.card_name)
+        setDesc(res.data.description)
+        setDuedate(new Date(res.data.due_date))
+        // console.log(res.data.due_date)
+        console.log(new Date(res.data.due_date))
         // console.log("hello",members)
       }).catch(err => {
         console.log(err)
@@ -119,19 +135,19 @@ const Form = ({ handleClose, getcards, setGetcards, fetchCard }) => {
   // };
 
 
-  const validateName = () => {
-    for (let i=0; i<getcards.length; i++){
-      if(getcards[i].card_name === name){
-        setErrormsg(true);
-        break;
-      }else{
-        setErrormsg(false);
-      }
-    }
-  }
+  // const validateName = () => {
+  //   for (let i=0; i<getcards.length; i++){
+  //     if(getcards[i].card_name === name){
+  //       setErrormsg(true);
+  //       break;
+  //     }else{
+  //       setErrormsg(false);
+  //     }
+  //   }
+  // }
 
   return (
-    <form className={classes.root} onSubmit={handleSubmit}>
+    <form className={classes.root} onSubmit={handleUpdateSubmit}>
       <TextField 
           label="Name" 
           variant="filled" 
@@ -140,7 +156,7 @@ const Form = ({ handleClose, getcards, setGetcards, fetchCard }) => {
           helperText={errormsg ? "Card name already exists !" : "Available"}
           onInput={(e) => {
             setName(e.target.value)
-            validateName()
+            // validateName()
           }}
       />
 
@@ -185,16 +201,6 @@ const Form = ({ handleClose, getcards, setGetcards, fetchCard }) => {
         <h4>Due Date</h4>
       </div>
 
-      {/* <div className={classes.datepicker}> */}
-      {/* <DateTimePicker
-        required
-        className={classes.datepicker}
-        onChange={
-          (event) => 
-          handleDueDateChange(event)
-        } 
-        selected={duedate}
-      /> */}
       <TextField 
           variant="filled" 
           type="datetime-local"
@@ -206,12 +212,11 @@ const Form = ({ handleClose, getcards, setGetcards, fetchCard }) => {
           }}
       />
       
-      {/* </div> */}
       <br />
 
 
       <div>
-        <Button variant="contained"  onClick={handleClose} startIcon={<CancelIcon />} disableElevation>
+        <Button variant="contained"  onClick={handleUpdateClose} startIcon={<CancelIcon />} disableElevation>
           Cancel
         </Button>
         <Button type="submit" variant="contained" color="primary" startIcon={<AddBoxIcon />} disableElevation>
@@ -224,11 +229,11 @@ const Form = ({ handleClose, getcards, setGetcards, fetchCard }) => {
 }
 
 
-export const AddCard = ({ open, handleClose, getcards, setGetcards, fetchCard }) => {
+export const EditCard = ({ updateopen, handleUpdateClose }) => {
 
   return (
-    <Dialog width='100%' open={open} onClose={handleClose}>
-      <Form getcards={getcards} setGetcards={setGetcards} fetchCard={fetchCard} handleClose={handleClose} />
+    <Dialog width='100%' open={updateopen} onClose={handleUpdateClose}>
+      <Form handleUpdateClose={handleUpdateClose} />
     </Dialog>
   );
 

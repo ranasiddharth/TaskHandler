@@ -18,6 +18,7 @@ import useCardStyles from '../styles/DashboardCard'
 import { useHistory } from "react-router-dom";
 import { AddList } from './AddList.js';
 import moment from "moment";
+import { Loading } from "./Loading.js";
 
 
 const Navbar = (props) => {
@@ -93,64 +94,55 @@ export const ListItem = (props) => {
 
 
 
-export const ProjectList = () => {
+export const ProjectList = (props) => {
 
   const { proj_id } = useParams()
   const classes = useCardStyles()
+  const [fetched, setFetched] = useState(false)
   const history = useHistory()
   const [lists, setLists] = useState([])
 
   const fetchList = async() => {
     http.get(`/gotasks/projects/${proj_id}/lists/`)
     .then(res => {
-      console.log(res.data)
+      // console.log(res.data)
       setLists(res.data)
+      setFetched(true)
     }).catch(err=>{
       console.log(err)
     })
   }
 
   useEffect(() => {
+    if(!props.loginStatus){
+      history.push("/");
+    }
     fetchList()
   }, [])
 
 
-  const goback = () => {
-
-    history.goBack();
-
-  }
-
-  const loggingout = () => {
-      axios.get("http://127.0.0.1:8000/gotasks/logout", {withCredentials: true}).then((resp)=>{
-        Cookies.remove('mytoken');
-        Cookies.remove('sessionid');
-        Cookies.remove('csrftoken');
-        history.push('/');
-      }).catch((err)=>{
-        console.log("error while logging out")
-      })
-  }
-
-
-  return(
-    <>
-    <div>
-      <Navbar lists={lists} setLists={setLists} fetchList={fetchList}/>
-      {lists.map(list => {
-      return (
+  if(!fetched === true){
+    return(
       <>
-      <ListItem key={list.id} list={list} />
+        <Navbar lists={lists} setLists={setLists} fetchList={fetchList}/>
+        <Loading />
       </>
-      )
-    })}
-    </div>
-    <div className={classes.logoutOutdiv}>
-      <div className={classes.logoutIndiv}>
-          <Button className={classes.buttonmargin} variant="outlined" style={{backgroundColor: '#12824C', color: '#FFFFFF'}} onClick={()=>{goback()}}>Back</Button>
-          <Button className={classes.buttonmargin} style={{backgroundColor: 'red', color: '#FFFFFF'}} onClick={()=>{loggingout()}}>Logout</Button>
+    )
+  }
+  else{
+    return(
+      <>
+      <div>
+        <Navbar lists={lists} setLists={setLists} fetchList={fetchList}/>
+        {lists.map(list => {
+        return (
+        <>
+        <ListItem key={list.id} list={list} />
+        </>
+        )
+      })}
       </div>
-    </div>
-    </>
-  )
+      </>
+    )
+  }
 }

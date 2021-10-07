@@ -9,13 +9,15 @@ import HomeIcon from '@material-ui/icons/Home';
 import moment from "moment";
 import { Link } from 'react-router-dom'
 import useLoginStyles from "../styles/LoginStyles.js"
+import { EditProject } from "./EditProject.jsx";
 import { DeleteProject } from "./DeleteProject.js"
 import { useHistory } from "react-router-dom"
 import useCardStyles from "../styles/DashboardCard.js";
 import "../styles/ListTags.css"
+import { Loading } from "./Loading.js";
 
 
-const Navbar = (props) => {
+const Navbar = () => {
 
   const classes = useStyles()
   
@@ -24,7 +26,7 @@ const Navbar = (props) => {
       <AppBar position="static">
         <Toolbar className={classes.toolbar}>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            {props.name}
+            PROJECT
           </Typography>
           <div>
           <Button className={classes.buttonmargin} startIcon={<HomeIcon />} disableElevation><Link to="/gotasks/dashboard" className={classes.linkcol}>DASHBOARD</Link></Button>
@@ -36,10 +38,17 @@ const Navbar = (props) => {
 }
 
 
-export const ProjectDetails = () => {
+export const ProjectDetails = (props) => {
+
+  const history = useHistory();
+  const classes = useLoginStyles()
+  const [fetched, setFetched] = useState(false);
+  const classescard = useCardStyles();
+  const { proj_id } = useParams()
+  const [item, setItem] = useState([])
+  const [proj_members, setProj_members] = useState([])
 
   const [open, setOpen] = useState(false);
-  const history = useHistory();
 
   const handleOpen = () => {
     setOpen(true);
@@ -49,11 +58,18 @@ export const ProjectDetails = () => {
     setOpen(false);
   };
 
-  const classes = useLoginStyles()
-  const classescard = useCardStyles();
-  const { proj_id } = useParams()
-  const [item, setItem] = useState([])
-  const [proj_members, setProj_members] = useState([])
+
+  const [updateopen, setUpdateOpen] = useState(false);
+
+  const handleUpdateOpen = () => {
+    setUpdateOpen(true);
+  };
+
+  const handleUpdateClose = () => {
+    fetchList(proj_id);
+    setUpdateOpen(false);
+  };
+
 
   const fetchList = (id) => {
     http.get(`/gotasks/projects/${id}`)
@@ -62,6 +78,7 @@ export const ProjectDetails = () => {
       console.log(res.data)
       setItem(res.data)
       setProj_members(res.data.project_members)
+      setFetched(true)
     }).catch(err=>{
       console.log(err)
     })
@@ -74,77 +91,69 @@ export const ProjectDetails = () => {
   }
 
   useEffect(() => {
+    if(!props.loginStatus){
+      history.push("/");
+    }
     fetchList(proj_id)
   }, [])
 
-  const goback = () => {
 
-    history.goBack();
 
+  if(!fetched === true){
+    return(
+      <>
+        <Navbar />
+        <Loading />
+      </>
+    )
   }
-
-  const loggingout = () => {
-      axios.get("http://127.0.0.1:8000/gotasks/logout", {withCredentials: true}).then((resp)=>{
-        Cookies.remove('mytoken');
-        Cookies.remove('sessionid');
-        Cookies.remove('csrftoken');
-        history.push('/');
-      }).catch((err)=>{
-        console.log("error while logging out")
-      })
-  }
-
-  return(
-    <>
-    <div>
-      <Navbar name={item.project_name}/>
-      <Grid item xs={12} sm={12} md={12} className={classes.divMargin}>
-          <Grid item xs={11} sm={11} md={11} elevation={11} square className={classes.signupsubdiv2}>
-            <div className={classes.displayer}>
-              <Typography component="h1" variant="h4" gutterBottom>
-                <strong>Name:</strong> {item.project_name}
-              </Typography>
-              <Typography component="h1" variant="h6" gutterBottom>
-                <strong>Description:</strong>
-              </Typography>
-              <div>
-              <Typography component="h1" variant="h6" gutterBottom dangerouslySetInnerHTML={{__html: item.project_wiki}}>
-                
-              </Typography>
+  else{
+    return(
+      <>
+      <div>
+        <Navbar />
+        <Grid item xs={12} sm={12} md={12} className={classes.divMargin}>
+            <Grid item xs={11} sm={11} md={11} elevation={11} className={classes.signupsubdiv2}>
+              <div className={classes.displayer}>
+                <Typography component="h1" variant="h4" gutterBottom>
+                  <strong>Name:</strong> {item.project_name}
+                </Typography>
+                <Typography component="h1" variant="h6" gutterBottom>
+                  <strong>Description:</strong>
+                </Typography>
+                <div>
+                <Typography component="h1" variant="h6" gutterBottom dangerouslySetInnerHTML={{__html: item.project_wiki}}>
+                  
+                </Typography>
+                </div>
+                <Typography component="h1" variant="h6" gutterBottom>
+                <strong>Creator:</strong> {item.project_creator}
+                </Typography>
+                <Typography component="h1" variant="h6" gutterBottom>
+                <strong>Members:</strong> {proj_members.map((member)=>{
+                    return (
+                      <li>
+                      {member}
+                      </li>
+                    )
+                  })}
+                </Typography>
+                <Typography component="h1" variant="h6" gutterBottom>
+                <strong>Created on:</strong> {moment(item.project_created).format("dddd, MMMM Do YYYY, h:mm:ss a")}
+                </Typography>
+                <Button type="submit" fullWidth variant="contained" color="primary" className={classes.submit} onClick={(e)=>{listDetails(proj_id)}} > Details
+                </Button>   
+                <Button type="submit" fullWidth variant="contained" color="primary" className={classes.submit} onClick={handleUpdateOpen} > Update
+                </Button>  
+                <EditProject updateopen={updateopen} handleUpdateClose={handleUpdateClose}/>
+                <Button type="submit" fullWidth variant="contained" color="primary" className={classes.submit} onClick={handleOpen}> Delete
+                </Button>  
+                <DeleteProject open={open} handleClose={handleClose} />
               </div>
-              <Typography component="h1" variant="h6" gutterBottom>
-              <strong>Creator:</strong> {item.project_creator}
-              </Typography>
-              <Typography component="h1" variant="h6" gutterBottom>
-              <strong>Members:</strong> {proj_members.map((member)=>{
-                  return (
-                    <li>
-                    {member}
-                    </li>
-                  )
-                })}
-              </Typography>
-              <Typography component="h1" variant="h6" gutterBottom>
-              <strong>Created on:</strong> {moment(item.project_created).format("dddd, MMMM Do YYYY, h:mm:ss a")}
-              </Typography>
-              <Button type="submit" fullWidth variant="contained" color="primary" className={classes.submit} onClick={(e)=>{listDetails(proj_id)}} > Details
-              </Button>   
-              <Button type="submit" fullWidth variant="contained" color="primary" className={classes.submit} > Update
-              </Button>  
-              <Button type="submit" fullWidth variant="contained" color="primary" className={classes.submit} onClick={handleOpen}> Delete
-              </Button>  
-              <DeleteProject open={open} handleClose={handleClose} />
-            </div>
-          </Grid>
-          </Grid>
-    </div>
-    <div className={classescard.logoutOutdiv}>
-        <div className={classescard.logoutIndiv}>
-            <Button className={classescard.buttonmargin} variant="outlined" style={{backgroundColor: '#12824C', color: '#FFFFFF'}} onClick={()=>{goback()}}>Back</Button>
-            <Button className={classescard.buttonmargin} style={{backgroundColor: 'red', color: '#FFFFFF'}} onClick={()=>{loggingout()}}>Logout</Button>
-        </div>
+            </Grid>
+            </Grid>
       </div>
-    </>
-  )
-
+      </>
+    )
+  }
 }

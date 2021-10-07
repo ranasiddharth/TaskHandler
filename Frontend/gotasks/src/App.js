@@ -7,6 +7,8 @@ import {Projects} from './components/Projects.js'
 import {Members} from './components/Members.js'
 import {useState, useEffect} from 'react'
 import axios from 'axios'
+import { useHistory } from 'react-router-dom';
+import NotFound from './components/NotFound';
 import { ProjectDetails } from './components/ProjectDetails';
 import { ProjectList } from './components/ProjectList';
 import { ProjectListDetails } from './components/ProjectListDetails';
@@ -17,6 +19,7 @@ import { ListCardDetails } from './components/ListCardDetails';
 function App() {
 
   const [loggedin, setLoggedin] = useState(false)
+  const history = useHistory()
 
   const checkLoginStatus = () => {
     axios.get("http://127.0.0.1:8000/gotasks/login_check/", {withCredentials:true})
@@ -29,8 +32,12 @@ function App() {
         setLoggedin(false)
       }
     }).catch(error => {
-      console.log("cookie not set in backend", error)
+      console.log("login check failed, try again", error)
     })
+  }
+
+  const logoutprops = () => {
+    setLoggedin(false);
   }
 
   useEffect(()=>{
@@ -40,17 +47,37 @@ function App() {
   return (
     <>
       <Switch>
-        <Route exact path='/' component={Login} />
-        <Route exact path='/gotasks/oauth/' component={Oauth} />
-        <Route exact path='/gotasks/dashboard/' component={Dashboard} />
-        <Route exact path='/gotasks/projects/' component={Projects} />
-        <Route exact path='/gotasks/projects/:proj_id' component={ProjectDetails} />
-        <Route exact path='/gotasks/projects/:proj_id/lists' component={ProjectList} />
-        <Route exact path='/gotasks/projects/:proj_id/lists/:list_id' component={ProjectListDetails} />
-        <Route exact path='/gotasks/projects/:proj_id/lists/:list_id/cards' component={ListCard} />
-        <Route exact path='/gotasks/projects/:proj_id/lists/:list_id/cards/:card_id' component={ListCardDetails} />
-        {/* <Route exact path='/gotasks/cards/:card_id' component={DashboardCardDetails} /> */}
-        <Route exact path='/gotasks/users/' component={Members} />
+        <Route exact path='/' >
+          <Login />
+        </Route>
+        <Route exact path='/gotasks/oauth/' >
+          <Oauth />
+        </Route>
+        <Route exact path='/gotasks/dashboard/' >
+          <Dashboard loginStatus={loggedin} logoutprops={logoutprops}/>
+        </Route>
+        <Route exact path='/gotasks/projects/' >
+          <Projects loginStatus={loggedin} />
+        </Route>
+        <Route exact path='/gotasks/projects/:proj_id' >
+          <ProjectDetails loginStatus={loggedin}/>
+        </Route>
+        <Route exact path='/gotasks/projects/:proj_id/lists' >
+          <ProjectList loginStatus={loggedin} />
+        </Route>
+        <Route exact path='/gotasks/projects/:proj_id/lists/:list_id' >
+          <ProjectListDetails loginStatus={loggedin} />
+        </Route>
+        <Route exact path='/gotasks/projects/:proj_id/lists/:list_id/cards' >
+          <ListCard loginStatus={loggedin} />
+        </Route>
+        <Route exact path='/gotasks/projects/:proj_id/lists/:list_id/cards/:card_id' >
+          <ListCardDetails loginStatus={loggedin}/>
+        </Route>
+        <Route exact path='/gotasks/users/' >
+          <Members loginStatus={loggedin}/>
+        </Route>
+        <Route component={NotFound} />
       </Switch>
     </>
   );

@@ -12,6 +12,7 @@ import CancelIcon from '@material-ui/icons/Cancel';
 import { useState, useEffect } from 'react';
 import axios from 'axios'
 import Cookies from 'js-cookie'
+import { useParams } from 'react-router';
 
 
 const useStyles = makeStyles(theme => ({
@@ -39,9 +40,10 @@ const useStyles = makeStyles(theme => ({
 }));
 
 
-const Form = ({ handleClose, getproj, setGetproj, fetchData }) => {
+const Form = ({ handleUpdateClose }) => {
 
   const classes = useStyles()
+  const { proj_id } = useParams()
 
   const [name, setName] = useState('');
   const [wiki, setWiki] = useState('');
@@ -51,10 +53,11 @@ const Form = ({ handleClose, getproj, setGetproj, fetchData }) => {
   const [errormsg, setErrormsg] = useState(false);
 
 
-  const handleSubmit = async(e) => {
+  const handleUpdateSubmit = async(e) => {
+
     e.preventDefault();
     console.log(name, wiki, selected);
-    console.log(getproj)
+
     var formData = new FormData();
     formData.append("project_name", name);
     formData.append("project_wiki", wiki);
@@ -63,12 +66,6 @@ const Form = ({ handleClose, getproj, setGetproj, fetchData }) => {
       formData.append("project_members", select)
     })
 
-    // setGetproj(prevState => {
-    //     return {
-    //       ...prevState, 
-    //     }
-    // })
-
     const config = {
       headers: {
         "Content-Type": 'multipart/form-data',
@@ -76,26 +73,38 @@ const Form = ({ handleClose, getproj, setGetproj, fetchData }) => {
         'X-Requested-With': 'XMLHttpRequest'
       }
     }
-    await axios.post("http://127.0.0.1:8000/gotasks/projects/",
+    await axios.put(`http://127.0.0.1:8000/gotasks/projects/${proj_id}/`,
     formData, config)
     .then(res => {
-      // console.log(res.data)
+      console.log(res.data)
     }).catch(err => {
       console.log(err)
     })
 
     // fetchData();
-    handleClose();
+    handleUpdateClose();
   };
 
-  useEffect(() => {
-    http.get("/gotasks/usershow").then(
+  useEffect(async() => {
+
+    await http.get(`/gotasks/usershow/`).then(
       (res) => {
         // console.log(res.data)
         setMembers(res.data)
       }).catch(err => {
         console.log(err)
-      })
+    });
+
+    await http.get(`/gotasks/projects/${proj_id}/`).then(
+      (res) => {
+        // console.log(res.data)
+        setName(res.data.project_name)
+        setWiki(res.data.project_wiki)
+        setSelected(res.data.project_members)
+      }).catch(err => {
+        console.log(err)
+    });
+    
   }, [])
 
 
@@ -111,19 +120,19 @@ const Form = ({ handleClose, getproj, setGetproj, fetchData }) => {
   // };
 
 
-  const validateName = () => {
-    for (let i=0; i<getproj.length; i++){
-      if(getproj[i].project_name === name){
-        setErrormsg(true);
-        break;
-      }else{
-        setErrormsg(false);
-      }
-    }
-  }
+  // const validateName = () => {
+  //   for (let i=0; i<getproj.length; i++){
+  //     if(getproj[i].project_name === name){
+  //       setErrormsg(true);
+  //       break;
+  //     }else{
+  //       setErrormsg(false);
+  //     }
+  //   }
+  // }
 
   return (
-    <form className={classes.root} onSubmit={handleSubmit}>
+    <form className={classes.root} onSubmit={handleUpdateSubmit}>
       <TextField 
           label="Name" 
           variant="filled" 
@@ -132,7 +141,7 @@ const Form = ({ handleClose, getproj, setGetproj, fetchData }) => {
           helperText={errormsg ? "Project name already exists !" : "Available"}
           onInput={(e) => {
             setName(e.target.value)
-            validateName()
+            // validateName()
             }}/>
 
       {/* <TextField 
@@ -147,11 +156,12 @@ const Form = ({ handleClose, getproj, setGetproj, fetchData }) => {
       <br />
       <CKEditor
           editor={ ClassicEditor }
+          data=""
           onReady={(editor) => {
             // You can store the "editor" and use when it is needed.
             // console.log('Editor is ready to use!', editor);
           }}
-          data=""
+          data={wiki}
           onChange={(event, editor) => {
             const data = editor.getData();
             setWiki(data);
@@ -186,7 +196,7 @@ const Form = ({ handleClose, getproj, setGetproj, fetchData }) => {
       </FormControl>
 
       <div>
-        <Button variant="contained"  onClick={handleClose} startIcon={<CancelIcon />} disableElevation>
+        <Button variant="contained"  onClick={handleUpdateClose} startIcon={<CancelIcon />} disableElevation>
           Cancel
         </Button>
         <Button type="submit" variant="contained" color="primary" startIcon={<AddBoxIcon />} disableElevation>
@@ -199,11 +209,11 @@ const Form = ({ handleClose, getproj, setGetproj, fetchData }) => {
 }
 
 
-export const AddProject = ({ open, handleClose, getproj, setGetproj, fetchData }) => {
+export const EditProject = ({ updateopen, handleUpdateClose }) => {
 
   return (
-    <Dialog width='100%' open={open} onClose={handleClose}>
-      <Form getproj={getproj} setGetproj={setGetproj} fetchData={fetchData} handleClose={handleClose} />
+    <Dialog width='100%' open={updateopen} onClose={handleUpdateClose}>
+      <Form handleUpdateClose={handleUpdateClose} />
     </Dialog>
   );
 
