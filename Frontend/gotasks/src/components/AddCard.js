@@ -59,6 +59,8 @@ const Form = ({ handleClose, getcards, setGetcards, fetchCard }) => {
   // const [projmembers, setProjmembers] = useState([])
   // const [checkboxesState, setCheckboxesState] = useState(-1)
   const [errormsg, setErrormsg] = useState(false);
+  const [err, setErr] = useState(false)
+  const [duperr, setDuperr] = useState(false)
 
 
   const handleSubmit = async(e) => {
@@ -87,12 +89,24 @@ const Form = ({ handleClose, getcards, setGetcards, fetchCard }) => {
     .then(res => {
       // console.log(res.data);
       // fetchCard();
+      setErr(false)
+      setDuperr(false)
+      console.log("post successful")
+      handleClose();
     }).catch(err => {
+      if(err.response.status === 403){
+        setErr(true)
+        console.log("post unauthorized")
+      }
+      if(err.response.status === 500){
+        setDuperr(true);
+        console.log("post same name card")
+      }
       console.log(err)
     })
 
     // fetchCard();
-    handleClose();
+    // handleClose();
   };
 
   useEffect(async() => {
@@ -132,6 +146,8 @@ const Form = ({ handleClose, getcards, setGetcards, fetchCard }) => {
 
   return (
     <form className={classes.root} onSubmit={handleSubmit}>
+      <h3 style={{color:"red"}}>{err ? "Card creation unsuccessful ! Available for only admins and project members." : ""}</h3>
+      <h3 style={{color:"red"}}>{duperr ? "Card with this name already exists" : ""}</h3>
       <TextField 
           label="Name" 
           variant="filled" 
@@ -211,7 +227,11 @@ const Form = ({ handleClose, getcards, setGetcards, fetchCard }) => {
 
 
       <div>
-        <Button variant="contained"  onClick={handleClose} startIcon={<CancelIcon />} disableElevation>
+        <Button variant="contained"  onClick={()=>{
+          setErr(false);
+          setDuperr(false);
+          handleClose()
+        }} startIcon={<CancelIcon />} disableElevation>
           Cancel
         </Button>
         <Button type="submit" variant="contained" color="primary" startIcon={<AddBoxIcon />} disableElevation>

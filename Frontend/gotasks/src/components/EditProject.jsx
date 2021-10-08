@@ -51,6 +51,8 @@ const Form = ({ handleUpdateClose }) => {
   const [selected, setSelected] = useState([]);
   // const [checkboxesState, setCheckboxesState] = useState(-1)
   const [errormsg, setErrormsg] = useState(false);
+  const [err, setErr] = useState(false)
+  const [duperr, setDuperr] = useState(false)
 
 
   const handleUpdateSubmit = async(e) => {
@@ -76,13 +78,25 @@ const Form = ({ handleUpdateClose }) => {
     await axios.put(`http://127.0.0.1:8000/gotasks/projects/${proj_id}/`,
     formData, config)
     .then(res => {
-      console.log(res.data)
+      // console.log(res.data)
+      setErr(false)
+      setDuperr(false)
+      console.log("edit successful")
+      handleUpdateClose();
     }).catch(err => {
+      if(err.response.status === 403){
+        setErr(true)
+        console.log("edit unauthorized")
+      }
+      if(err.response.status === 400){
+        setDuperr(true);
+        console.log("edit same name project")
+      }
       console.log(err)
     })
 
     // fetchData();
-    handleUpdateClose();
+    // handleUpdateClose();
   };
 
   useEffect(async() => {
@@ -133,6 +147,8 @@ const Form = ({ handleUpdateClose }) => {
 
   return (
     <form className={classes.root} onSubmit={handleUpdateSubmit}>
+      <h3 style={{color:"red"}}>{err ? "Updation of project unsuccessful! Available for only admins and project members." : ""}</h3>
+      <h3 style={{color:"red"}}>{duperr ? "Project with this name already exists" : ""}</h3>
       <TextField 
           label="Name" 
           variant="filled" 
@@ -196,7 +212,11 @@ const Form = ({ handleUpdateClose }) => {
       </FormControl>
 
       <div>
-        <Button variant="contained"  onClick={handleUpdateClose} startIcon={<CancelIcon />} disableElevation>
+        <Button variant="contained"  onClick={()=>{
+          setErr(false);
+          setDuperr(false);
+          handleUpdateClose()
+        }} startIcon={<CancelIcon />} disableElevation>
           Cancel
         </Button>
         <Button type="submit" variant="contained" color="primary" startIcon={<AddBoxIcon />} disableElevation>

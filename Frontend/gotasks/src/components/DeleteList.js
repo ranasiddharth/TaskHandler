@@ -49,9 +49,10 @@ export const DeleteList = ({ open, handleClose }) => {
       <Typography variant="h6" component="div" gutterBottom>
         Are you sure you want to delete this list ?
       </Typography>
-      <h1>{err ? "Delete Unsuccessful" : ""}</h1>
+      <h3 style={{color:"red"}}>{err ? "Deletion of list unsuccessful! Available for only admins and project members." : ""}</h3>
       <Box 
-      p="20px" 
+      pt="20px" 
+      pb="20px"
       width="100%"      
       display="flex"
       justifyContent="space-evenly"

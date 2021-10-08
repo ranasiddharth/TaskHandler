@@ -37,6 +37,8 @@ const Form = ({ handleClose, getlists, setGetlists, fetchList }) => {
   const { proj_id } = useParams()
   const [name, setName] = useState('');
   const [errormsg, setErrormsg] = useState(false);
+  const [err, setErr] = useState(false)
+  const [duperr, setDuperr] = useState(false)
 
   const handleSubmit = async(e) => {
     e.preventDefault();
@@ -56,13 +58,24 @@ const Form = ({ handleClose, getlists, setGetlists, fetchList }) => {
     formData, config)
     .then(res => {
       // console.log(res.data)
-      
+      setErr(false)
+      setDuperr(false)
+      console.log("post successful")
+      handleClose();
     }).catch(err => {
+      if(err.response.status === 403){
+        setErr(true)
+        console.log("post unauthorized")
+      }
+      if(err.response.status === 500){
+        setDuperr(true);
+        console.log("post same name list")
+      }
       console.log(err)
     })
 
     // fetchList();
-    handleClose();
+    // handleClose();
   };
 
 
@@ -79,6 +92,8 @@ const Form = ({ handleClose, getlists, setGetlists, fetchList }) => {
 
   return (
     <form className={classes.root} onSubmit={handleSubmit}>
+      <h3 style={{color:"red"}}>{err ? "List creation unsuccessful ! Available for only admins and project members." : ""}</h3>
+      <h3 style={{color:"red"}}>{duperr ? "List with this name already exists" : ""}</h3>
       <TextField 
           label="Name" 
           variant="filled" 
@@ -91,7 +106,11 @@ const Form = ({ handleClose, getlists, setGetlists, fetchList }) => {
             }}/>
 
       <div>
-        <Button variant="contained"  onClick={handleClose} startIcon={<CancelIcon />} disableElevation>
+        <Button variant="contained"  onClick={()=>{
+          setErr(false);
+          setDuperr(false);
+          handleClose()
+        }} startIcon={<CancelIcon />} disableElevation>
           Cancel
         </Button>
         <Button type="submit" variant="contained" color="primary" startIcon={<AddBoxIcon />} disableElevation>

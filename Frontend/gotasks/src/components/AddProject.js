@@ -49,6 +49,7 @@ const Form = ({ handleClose, getproj, setGetproj, fetchData }) => {
   const [selected, setSelected] = useState([]);
   // const [checkboxesState, setCheckboxesState] = useState(-1)
   const [errormsg, setErrormsg] = useState(false);
+  const [err, setErr] = useState(false)
 
 
   const handleSubmit = async(e) => {
@@ -80,12 +81,19 @@ const Form = ({ handleClose, getproj, setGetproj, fetchData }) => {
     formData, config)
     .then(res => {
       // console.log(res.data)
+      setErr(false)
+      console.log("post successful")
+      handleClose();
     }).catch(err => {
+      if(err.response.status === 400){
+        setErr(true)
+        console.log("post same name unsuccessful")
+      }
       console.log(err)
     })
 
     // fetchData();
-    handleClose();
+    // handleClose();
   };
 
   useEffect(() => {
@@ -124,6 +132,7 @@ const Form = ({ handleClose, getproj, setGetproj, fetchData }) => {
 
   return (
     <form className={classes.root} onSubmit={handleSubmit}>
+      <h3 style={{color:"red"}}>{err ? "Project with this name already exists" : ""}</h3>
       <TextField 
           label="Name" 
           variant="filled" 
@@ -186,7 +195,10 @@ const Form = ({ handleClose, getproj, setGetproj, fetchData }) => {
       </FormControl>
 
       <div>
-        <Button variant="contained"  onClick={handleClose} startIcon={<CancelIcon />} disableElevation>
+        <Button variant="contained"  onClick={()=>{
+          setErr(false);
+          handleClose()
+        }} startIcon={<CancelIcon />} disableElevation>
           Cancel
         </Button>
         <Button type="submit" variant="contained" color="primary" startIcon={<AddBoxIcon />} disableElevation>

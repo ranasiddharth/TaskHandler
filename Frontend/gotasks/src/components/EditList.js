@@ -38,6 +38,8 @@ const Form = ({ handleUpdateClose }) => {
   const { proj_id, list_id } = useParams()
   const [name, setName] = useState('');
   const [errormsg, setErrormsg] = useState(false);
+  const [err, setErr] = useState(false)
+  const [duperr, setDuperr] = useState(false)
 
   const handleUpdateSubmit = async(e) => {
     e.preventDefault();
@@ -57,13 +59,24 @@ const Form = ({ handleUpdateClose }) => {
     formData, config)
     .then(res => {
       console.log(res.data)
-      
+      setErr(false)
+      setDuperr(false)
+      console.log("edit successful")
+      handleUpdateClose();
     }).catch(err => {
+      if(err.response.status === 403){
+        setErr(true)
+        console.log("edit unauthorized")
+      }
+      if(err.response.status === 500){
+        setDuperr(true);
+        console.log("edit same name list")
+      }
       console.log(err)
     })
 
     // fetchList();
-    handleUpdateClose();
+    // handleUpdateClose();
   };
 
 
@@ -91,6 +104,8 @@ const Form = ({ handleUpdateClose }) => {
 
   return (
     <form className={classes.root} onSubmit={handleUpdateSubmit}>
+      <h3 style={{color:"red"}}>{err ? "Updation of list unsuccessful! Available for only admins and project members." : ""}</h3>
+      <h3 style={{color:"red"}}>{duperr ? "List with this name already exists" : ""}</h3>
       <TextField 
           label="Name" 
           variant="filled" 
@@ -103,7 +118,11 @@ const Form = ({ handleUpdateClose }) => {
             }}/>
 
       <div>
-        <Button variant="contained"  onClick={handleUpdateClose} startIcon={<CancelIcon />} disableElevation>
+        <Button variant="contained"  onClick={()=>{
+          setErr(false);
+          setDuperr(false);
+          handleUpdateClose()
+        }} startIcon={<CancelIcon />} disableElevation>
           Cancel
         </Button>
         <Button type="submit" variant="contained" color="primary" startIcon={<AddBoxIcon />} disableElevation>
