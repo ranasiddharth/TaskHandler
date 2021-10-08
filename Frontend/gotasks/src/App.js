@@ -18,13 +18,12 @@ import { ListCardDetails } from './components/ListCardDetails';
 
 function App() {
 
-  const [loggedin, setLoggedin] = useState(false)
   const history = useHistory()
-
+  const [loggedin, setLoggedin] = useState(false)
   const checkLoginStatus = () => {
     axios.get("http://127.0.0.1:8000/gotasks/login_check/", {withCredentials:true})
     .then(response => {
-      // console.log(response)
+      console.log(response)
       if (response.data.loggedin === true && loggedin === false){
         setLoggedin(true)
       }
@@ -36,12 +35,9 @@ function App() {
     })
   }
 
-  const logoutprops = () => {
-    setLoggedin(false);
-  }
-
   useEffect(()=>{
     checkLoginStatus();
+    // console.log(loggedin)
   })
 
   return (
@@ -54,7 +50,7 @@ function App() {
           <Oauth />
         </Route>
         <Route exact path='/gotasks/dashboard/' >
-          <Dashboard loginStatus={loggedin} logoutprops={logoutprops}/>
+          <Dashboard loginStatus={loggedin} />
         </Route>
         <Route exact path='/gotasks/projects/' >
           <Projects loginStatus={loggedin} />

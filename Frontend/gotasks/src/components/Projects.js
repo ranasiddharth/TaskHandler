@@ -124,7 +124,7 @@ export const Projects = (props) => {
   }
 
   useEffect(() => {
-    if(!props.loginStatus){
+    if(!props.loginStatus === true){
       history.push("/");
     }
     fetchData()

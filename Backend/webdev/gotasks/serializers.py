@@ -78,3 +78,4 @@ class DashboardCardSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cards
         fields = "__all__"
+        depth=1

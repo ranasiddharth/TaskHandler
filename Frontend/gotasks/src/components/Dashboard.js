@@ -121,10 +121,9 @@ const CardShow = (props) => {
 
   const history = useHistory();
 
-  const getcard = (id) => {
+  const getcard = (id1, id2, id3) => {
 
-    // history.push(`/gotasks/cards/${id}`)
-    console.log(id)
+    history.push(`/gotasks/projects/${id1}/lists/${id2}/cards/${id3}`)
 
   }
 
@@ -150,7 +149,7 @@ const CardShow = (props) => {
             </Typography>
           </CardContent>
           <CardActions className={classes.cardActions}>
-              <Button size="small" variant="contained" color="primary" onClick={() => {getcard(card.id)}} disableElevation>Details</Button>
+              <Button size="small" variant="contained" color="primary" onClick={() => {getcard(card.list.project, card.list.id, card.id)}} disableElevation>Details</Button>
           </CardActions>
         </Card>
         )
