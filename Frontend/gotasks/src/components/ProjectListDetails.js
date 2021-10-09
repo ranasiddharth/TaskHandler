@@ -14,27 +14,28 @@ import useCardStyles from "../styles/DashboardCard.js";
 import moment from "moment";
 import { EditList } from "./EditList.js";
 import { Loading } from "./Loading.js";
+import Header from "./Header.js";
 
 
-const Navbar = () => {
+// const Navbar = () => {
 
-  const classes = useStyles()
+//   const classes = useStyles()
 
-  return (
-    <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static">
-        <Toolbar className={classes.toolbar}>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            LIST
-          </Typography>
-          <div>
-          <Button className={classes.buttonmargin} startIcon={<HomeIcon />} disableElevation><Link to="/gotasks/dashboard" className={classes.linkcol}>DASHBOARD</Link></Button>
-          </div>
-        </Toolbar>
-      </AppBar>
-    </Box>
-  );
-}
+//   return (
+//     <Box sx={{ flexGrow: 1 }}>
+//       <AppBar position="static">
+//         <Toolbar className={classes.toolbar}>
+//           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+//             LIST
+//           </Typography>
+//           <div>
+//           <Button className={classes.buttonmargin} startIcon={<HomeIcon />} disableElevation><Link to="/gotasks/dashboard" className={classes.linkcol}>DASHBOARD</Link></Button>
+//           </div>
+//         </Toolbar>
+//       </AppBar>
+//     </Box>
+//   );
+// }
 
 
 export const ProjectListDetails = (props) => {
@@ -97,7 +98,7 @@ export const ProjectListDetails = (props) => {
   if(!fetched === true){
     return(
       <>
-        <Navbar />
+        <Header />
         <Loading />
       </>
     )
@@ -106,7 +107,7 @@ export const ProjectListDetails = (props) => {
     return(
       <>
       <div>
-        <Navbar />
+        <Header />
         <Grid item xs={12} sm={12} md={12} className={classes.divMargin}>
             <Grid item xs={11} sm={11} md={11} elevation={11} className={classes.signupsubdiv2}>
               <div className={classes.displayer}>

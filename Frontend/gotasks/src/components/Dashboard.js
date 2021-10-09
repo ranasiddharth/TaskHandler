@@ -16,13 +16,14 @@ import { Link } from 'react-router-dom'
 import { Loading } from "./Loading.js";
 import { useHistory } from "react-router-dom";
 import "../styles/ListTags.css"
+// import Header from "./Header.js";
 
 
 const Navbar = () => {
 
+  const classes = useStyles()
   const [admin, setAdmin] = useState(false)
   const history = useHistory()
-  const classes = useStyles()
 
   const loggingout = () => {
     axios.get("http://127.0.0.1:8000/gotasks/logout", {withCredentials: true}).then((resp)=>{
@@ -56,7 +57,7 @@ const Navbar = () => {
           </Typography>
           <div>
           <Button className={classes.buttonmargin} startIcon={<WorkIcon />} disableElevation><Link to="/gotasks/projects" className={classes.linkcol}>Projects</Link></Button>
-          {admin ? <Button className={classes.buttonmargin} startIcon={<GroupIcon />} disableElevation><Link to="/gotasks/users" className={classes.linkcol}>Members</Link></Button> : ''}
+          <Button disabled={!admin} className={classes.buttonmargin} startIcon={<GroupIcon />} disableElevation><Link to="/gotasks/users" className={classes.linkcol}>Members</Link></Button>
           <Button className={classes.buttoncol} startIcon={<LogoutIcon />} onClick={()=>{loggingout()}}disableElevation>Logout</Button>
           </div>
         </Toolbar>

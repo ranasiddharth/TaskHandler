@@ -18,6 +18,9 @@ const useStyles = makeStyles((theme) => ({
   buttonmargin: {
     marginRight: theme.spacing(4),
     backgroundColor: "white"
+  },
+  phonelistitems: {
+    marginLeft: "0px"
   }
 }));
 

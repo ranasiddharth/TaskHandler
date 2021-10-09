@@ -16,27 +16,28 @@ import DoneIcon from "@material-ui/icons/Done";
 import CancelRoundedIcon from "@material-ui/icons/CancelRounded";
 import { useHistory } from "react-router-dom";
 import { Loading } from "./Loading.js";
+import Header from "./Header.js";
 
 
-const Navbar = () => {
+// const Navbar = () => {
 
-  const classes = useStyles()
+//   const classes = useStyles()
 
-  return (
-    <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static">
-        <Toolbar className={classes.toolbar}>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            APP MEMBERS
-          </Typography>
-          <div>
-          <Button className={classes.buttoncol} startIcon={<HomeIcon />} disableElevation><Link to="/gotasks/dashboard" className={classes.linkcol}>DASHBOARD</Link></Button>
-          </div>
-        </Toolbar>
-      </AppBar>
-    </Box>
-  );
-}
+//   return (
+//     <Box sx={{ flexGrow: 1 }}>
+//       <AppBar position="static">
+//         <Toolbar className={classes.toolbar}>
+//           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+//             APP MEMBERS
+//           </Typography>
+//           <div>
+//           <Button className={classes.buttoncol} startIcon={<HomeIcon />} disableElevation><Link to="/gotasks/dashboard" className={classes.linkcol}>DASHBOARD</Link></Button>
+//           </div>
+//         </Toolbar>
+//       </AppBar>
+//     </Box>
+//   );
+// }
 
 
 export const Members = (props) => {
@@ -114,7 +115,7 @@ export const Members = (props) => {
   if(!fetched === true){
     return(
       <>
-        <Navbar />
+        <Header />
         <Loading />
       </>
     )
@@ -122,7 +123,7 @@ export const Members = (props) => {
   else{
     return (
       <>
-      <Navbar />
+      <Header />
       <div>
       <br />
       {users.map(user => {
