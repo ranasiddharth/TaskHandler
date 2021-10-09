@@ -14,6 +14,7 @@ export const DeleteCard = ({ open, handleClose }) => {
   const {proj_id, list_id, card_id} = useParams()
   const history = useHistory()
   const [err, setErr] = useState(false)
+  const [mailer, setMailer] = useState(false);
 
   const listlocation = () => {
     // window.location.href = `http://localhost:3000/gotasks/projects/${proj_id}/lists/${list_id}/cards/`
@@ -22,15 +23,18 @@ export const DeleteCard = ({ open, handleClose }) => {
   }
 
   const Delete = () => {
+    setMailer(true);
     http.delete(`/gotasks/projects/${proj_id}/lists/${list_id}/cards/${card_id}`)
     .then(() => {
       setErr(false)
+      setMailer(false)
       console.log("delete successful")
       handleClose();
       listlocation();
     })
     .catch((err)=>{
       setErr(true);
+      setMailer(false)
       console.log("delete unsuccessful")
     });
   }
@@ -50,6 +54,7 @@ export const DeleteCard = ({ open, handleClose }) => {
         Are you sure you want to delete this card ?
       </Typography>
       <h3 style={{color:"red"}}>{err ? "Deletion of card unsuccessful! Available for only admins and project members." : ""}</h3>
+      <h3 style={{color:"red"}}>{mailer ? "Sending deletion mail to assignee...." : ""}</h3>
       <Box 
       pt="20px" 
       pb="20px"
@@ -60,6 +65,7 @@ export const DeleteCard = ({ open, handleClose }) => {
       >
       <Button onClick={()=>{
         setErr(false);
+        setMailer(false);
         handleClose()
       }} 
       variant="outlined" startIcon={<CancelIcon />} disableElevation>Cancel</Button>

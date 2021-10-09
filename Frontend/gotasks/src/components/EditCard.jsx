@@ -61,12 +61,14 @@ const Form = ({ handleUpdateClose }) => {
   const [errormsg, setErrormsg] = useState(false);
   const [err, setErr] = useState(false)
   const [duperr, setDuperr] = useState(false)
+  const [mailer, setMailer] = useState(false)
 
 
   const handleUpdateSubmit = async(e) => {
     e.preventDefault();
     console.log(name, desc, assigned, duedate);
     // console.log(getcards)
+    setMailer(true);
 
     var formData = new FormData();
 
@@ -90,16 +92,19 @@ const Form = ({ handleUpdateClose }) => {
       console.log(res.data);
       setErr(false)
       setDuperr(false)
+      setMailer(false)
       console.log("edit successful")
       handleUpdateClose();
       // fetchCard();
     }).catch(err => {
       if(err.response.status === 403){
         setErr(true)
+        setMailer(false)
         console.log("edit unauthorized")
       }
       if(err.response.status === 500){
         setDuperr(true);
+        setMailer(false)
         console.log("edit same name card")
       }
       console.log("edit unsuccessful")
@@ -165,6 +170,7 @@ const Form = ({ handleUpdateClose }) => {
     <form className={classes.root} onSubmit={handleUpdateSubmit}>
       <h3 style={{color:"red"}}>{err ? "Updation of card unsuccessful! Available for only admins and project members." : ""}</h3>
       <h3 style={{color:"red"}}>{duperr ? "Card with this name already exists" : ""}</h3>
+      <h3 style={{color:"black"}}>{mailer ? "Sending email to assignee...." : ""}</h3>
       <TextField 
           label="Name" 
           variant="filled" 
@@ -236,6 +242,7 @@ const Form = ({ handleUpdateClose }) => {
         <Button variant="contained"  onClick={()=>{
           setErr(false);
           setDuperr(false);
+          setMailer(false);
           handleUpdateClose()
         }} startIcon={<CancelIcon />} disableElevation>
           Cancel

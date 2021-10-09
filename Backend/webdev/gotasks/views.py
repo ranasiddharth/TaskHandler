@@ -15,6 +15,9 @@ from django.middleware import csrf
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from .permissions import IsProjectCreator_MemberOrReadOnly, IsListCreator_MemberOrReadOnly, IsCardCreator_MemberOrReadOnly, IsAdminPrivilege, IsCommentCreator
+from django.conf import settings
+from django.core.mail import send_mail
+
 
 import environ
 env = environ.Env()
@@ -202,6 +205,11 @@ class CardViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
             if user in list_instance.project.project_members.all():
                 obj = Cards.objects.create(card_name=card_data["card_name"], description=card_data["description"], list=list_instance, assigned=user, due_date=card_data["due_date"])
                 obj.save()
+                subject = 'Gotasks App Card Assignment'
+                message = f'Hi {card_data["assigned"]}, you have been assigned the card {card_data["card_name"]} inside the list name {list_instance.list_name} under the project name {list_instance.project}. Due date of the card is {card_data["due_date"]}'
+                email_from = settings.EMAIL_HOST_USER
+                recipient_list = [user.email, ]
+                send_mail( subject, message, email_from, recipient_list )
                 serializer = CardsSerializer(obj)
                 return Response(serializer.data, status=status.HTTP_201_CREATED) 
             else:
@@ -223,9 +231,32 @@ class CardViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
             card_object.assigned = assigned_instance
             card_object.due_date = card_data["due_date"]
             card_object.save()
+            subject = 'Gotasks App Card Assignment'
+            message = f'Hi {card_data["assigned"]}, you have been assigned the card {card_data["card_name"]} inside the list name {list_instance.list_name} under the project name {list_instance.project}. Due date of the card is {card_data["due_date"]}'
+            email_from = settings.EMAIL_HOST_USER
+            recipient_list = [assigned_instance.email, ]
+            send_mail( subject, message, email_from, recipient_list )
             serializer = CardsSerializer(card_object)
             return Response(serializer.data)
             
+        else:
+            return Response("You do not have permission to perform this action", status=status.HTTP_403_FORBIDDEN)
+
+    def destroy(self, request, *args, **kwargs):
+        card_data = self.get_object()
+        id = self.kwargs.get("parent_lookup_list")
+        list_instance = Lists.objects.get(id=id)
+        assigned_instance = card_data.assigned
+
+        if request.user.moderator or request.user in list_instance.project.project_members.all():
+            subject = 'Gotasks App Card Assignment'
+            message = f'Hi {card_data.assigned.fullname}, the card {card_data.card_name} inside the list name {list_instance.list_name} under the project name {list_instance.project} has been deleted.'
+            email_from = settings.EMAIL_HOST_USER
+            recipient_list = [assigned_instance.email, ]
+            send_mail( subject, message, email_from, recipient_list )
+            card_data.delete()
+            return Response("message: card has been deleted")
+
         else:
             return Response("You do not have permission to perform this action", status=status.HTTP_403_FORBIDDEN)
 
