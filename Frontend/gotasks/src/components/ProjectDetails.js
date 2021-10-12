@@ -6,6 +6,9 @@ import { useState, useEffect } from "react"
 import { Button, Grid, Box, Typography, AppBar, Toolbar } from "@material-ui/core"
 import useStyles from '../styles/Navbar.js'
 import HomeIcon from '@material-ui/icons/Home';
+import DeleteIcon from '@material-ui/icons/Delete';
+import UpdateIcon from '@material-ui/icons/Update';
+import ViewListIcon from '@material-ui/icons/ViewList';
 import moment from "moment";
 import { Link } from 'react-router-dom'
 import useLoginStyles from "../styles/LoginStyles.js"
@@ -142,14 +145,16 @@ export const ProjectDetails = (props) => {
                 <Typography component="h1" variant="h6" gutterBottom>
                 <strong>Created on:</strong> {moment(item.project_created).format("dddd, MMMM Do YYYY, h:mm:ss a")}
                 </Typography>
-                <Button type="submit" fullWidth variant="contained" color="primary" className={classes.submit} onClick={(e)=>{listDetails(proj_id)}} > Details
+                <div className={classes.buttonsdiv}>
+                <Button type="submit" variant="contained" color="primary" startIcon={<ViewListIcon />} className={classes.submit} onClick={(e)=>{listDetails(proj_id)}} > Lists
                 </Button>   
-                <Button type="submit" fullWidth variant="contained" color="primary" className={classes.submit} onClick={handleUpdateOpen} > Update
+                <Button type="submit" variant="contained" color="primary" startIcon={<UpdateIcon />} className={classes.submit} onClick={handleUpdateOpen} > Update
                 </Button>  
                 <EditProject updateopen={updateopen} handleUpdateClose={handleUpdateClose}/>
-                <Button type="submit" fullWidth variant="contained" color="primary" className={classes.submit} onClick={handleOpen}> Delete
+                <Button type="submit" variant="contained" startIcon={<DeleteIcon />} className={classes.submit} onClick={handleOpen} style={{color: "white", backgroundColor: "#D70040"}}> Delete
                 </Button>  
                 <DeleteProject open={open} handleClose={handleClose} />
+                </div>
               </div>
             </Grid>
             </Grid>

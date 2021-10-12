@@ -165,11 +165,20 @@ export const Dashboard = (props) => {
   const history = useHistory();
 
   const classes = useCardStyles()
+  const [user, setUser] = useState({})
   const [fetched, setFetched] = useState(false)
   const [projects, setProjects] = useState([])
   const [cards, setCards] = useState([])
+  // const [username, setUsername] = useState("")
 
   const fetchData = () => {
+    http.get("/gotasks/loggeduser/")
+    .then(res => {
+      setUser(res.data[0])
+      console.log(res.data)
+    })
+    .catch(err => console.log(err))
+
     const projectAPI = http.get("/gotasks/dashboard/projects")
     const cardAPI = http.get("/gotasks/dashboard/cards")
     axios.all([projectAPI, cardAPI]).then(
@@ -181,7 +190,6 @@ export const Dashboard = (props) => {
       .catch(err => {
       console.log("error in retrieving data")
     })
-
   }
 
   useEffect(() => {
@@ -221,6 +229,7 @@ export const Dashboard = (props) => {
     return(
       <div> 
               <Navbar />
+              <h3 style={{textAlign: "center", margin: "20px", marginBottom: "0px"}}>Welcome {user.fullname} !</h3>
               <Grid container component="main" className={classes.mainGrid}>
                 <CssBaseline />
                 <Grid item xs={12} sm={12} md={6}>

@@ -150,7 +150,7 @@ export const CardItem = (props) => {
           <strong>Due Date:</strong> {moment(props.card.due_date).format("dddd, MMMM Do YYYY, h:mm:ss a")}
           </Typography>
         </CardContent>
-        <CardActions>
+        <CardActions className={classes.cardActions}>
             <Button size="small" variant="contained" color="primary" onClick={(e)=>{
               e.preventDefault(); 
               cardDetails(proj_id, list_id, props.card.id)}}>Details</Button>

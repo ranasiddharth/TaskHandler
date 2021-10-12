@@ -125,6 +125,9 @@ const Form = ({ handleClose, getcards, setGetcards, fetchCard }) => {
       })
   }, [])
 
+  useEffect(()=>{
+    validateName();
+  }, [name])
 
   // const [checkedState, setCheckedState] = useState(
   //   new Array(members.length).fill(false)
@@ -159,7 +162,7 @@ const Form = ({ handleClose, getcards, setGetcards, fetchCard }) => {
           variant="filled" 
           fullWidth
           required value={name}
-          helperText={errormsg ? "Card name already exists !" : "Available"}
+          helperText={errormsg ? <h4 style={{color:"red"}}>Card name already exists !</h4> : <h4 style={{color:"green"}}>Available !</h4>}
           onInput={(e) => {
             setName(e.target.value)
             validateName()

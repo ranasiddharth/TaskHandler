@@ -62,7 +62,7 @@ export default function Login() {
                   fullWidth
                   variant="contained"
                   color="primary"
-                  className={classes.submit}
+                  className={classes.loginbutton}
                   onClick = {oauth}
                 >
                   Sign In

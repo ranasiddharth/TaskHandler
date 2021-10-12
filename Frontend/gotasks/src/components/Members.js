@@ -140,12 +140,12 @@ export const Members = (props) => {
               Email: {user.email}
             </Typography>
             <Typography variant="body2" gutterBottom>
-              <p>Moderator:</p>{user.moderator ? <DoneIcon />: <CancelRoundedIcon />}
+              <p>Moderator:</p>{user.moderator ? <DoneIcon style={{position:"relative", top:"8.5px"}}/>: <CancelRoundedIcon style={{position:"relative", top:"8.5px"}}/>}
               {user.moderator ? <Button size="small" variant="outlined" style={{ marginLeft: '5px',color: 'red'}}  onClick={() => {handleadminchange(user.id, user.moderator)}}>Remove as admin</Button>: 
               <Button size="small" variant="outlined" style={{marginLeft: '5px', color: 'green'}} onClick={() => {handleadminchange(user.id, user.moderator)}}>Make admin</Button>}
             </Typography>
             <Typography variant="body2" gutterBottom>
-            <p>Banned:</p>{user.is_banned ? <DoneIcon />: <CancelRoundedIcon />}
+            <p>Banned:</p>{user.is_banned ? <DoneIcon style={{position:"relative", top:"8.5px"}}/>: <CancelRoundedIcon style={{position:"relative", top:"8.5px"}}/>}
               {user.is_banned ? <Button size="small" variant="outlined" style={{marginLeft: '5px', color: 'green'}} onClick={() => {handlebanchange(user.id, user.is_banned)}}>Enable</Button>: 
               <Button size="small" variant="outlined" style={{marginLeft: '5px', color: 'red'}}  onClick={() => {handlebanchange(user.id, user.is_banned)}}>Disable</Button>}
             </Typography>

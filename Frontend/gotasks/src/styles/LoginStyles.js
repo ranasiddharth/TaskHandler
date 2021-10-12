@@ -59,7 +59,30 @@ const useLoginStyles = makeStyles((theme) => ({
   },
   submit: {
     margin: theme.spacing(3, 0, 2),
+    [theme.breakpoints.down(500)]: {
+      width: "100%!important",
+    },
+    [theme.breakpoints.up(500)]: {
+      width: "110px",
+    }
   },
+  loginbutton: {
+    margin: theme.spacing(3, 0, 2),
+  },
+  buttonsdiv: {
+    [theme.breakpoints.down(500)]: {
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "space-evenly",
+      alignItems: "center",
+    },
+    [theme.breakpoints.up(500)]: {
+      display: "flex",
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+    },
+  }
 }));
 
 export default useLoginStyles

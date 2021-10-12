@@ -220,8 +220,8 @@ class CardViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
     def update(self, request, *args, **kwargs):
         card_object = Cards.objects.get(id=self.kwargs.get("pk"))
         card_data = request.data
-        id = self.kwargs.get("parent_lookup_list")
-        list_instance = Lists.objects.get(id=id)
+        # id = self.kwargs.get("parent_lookup_list")
+        list_instance = Lists.objects.get(id=card_data["list"])
         assigned_instance = User.objects.get(fullname=card_data["assigned"])
 
         if request.user.moderator or request.user in list_instance.project.project_members.all():
@@ -315,6 +315,22 @@ class DashboardCardViewset(viewsets.ModelViewSet):
     def get_queryset(self, *args, **kwargs):
         user = self.request.user
         queryset = Cards.objects.filter(assigned = user)
+        return queryset
+
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
+    permission_classes = [IsAuthenticated]
+
+
+class LoggedinViewSet(viewsets.ModelViewSet):
+    """
+    Shows the current logged in user details.
+    """
+    serializer_class = UserShowSerializer
+    http_method_names=['get']
+
+    def get_queryset(self, *args, **kwargs):
+        user = self.request.user.id
+        queryset = User.objects.filter(id = user)
         return queryset
 
     authentication_classes = [TokenAuthentication, SessionAuthentication]

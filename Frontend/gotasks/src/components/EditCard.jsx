@@ -10,7 +10,7 @@ import CancelIcon from '@material-ui/icons/Cancel';
 import { useState, useEffect } from 'react';
 import axios from 'axios'
 import Cookies from 'js-cookie'
-import { useParams } from 'react-router';
+import { useHistory, useParams } from 'react-router';
 
 
 const useStyles = makeStyles(theme => ({
@@ -49,6 +49,7 @@ const useStyles = makeStyles(theme => ({
 const Form = ({ handleUpdateClose }) => {
 
   const { proj_id, list_id, card_id } = useParams()
+  const history = useHistory()
 
   const classes = useStyles()
   const [name, setName] = useState('');
@@ -56,6 +57,8 @@ const Form = ({ handleUpdateClose }) => {
   const [assigned, setAssigned] = useState('');
   const [duedate, setDuedate] = useState(new Date());
   const [members, setMembers] = useState([]);
+  const [lists, setLists] = useState([]);
+  const [selectedlist, setSelectedlist] = useState(null)
   // const [projmembers, setProjmembers] = useState([])
   // const [checkboxesState, setCheckboxesState] = useState(-1)
   const [errormsg, setErrormsg] = useState(false);
@@ -75,6 +78,7 @@ const Form = ({ handleUpdateClose }) => {
     formData.append("card_name", name);
     formData.append("description", desc);
     formData.append("assigned", assigned);
+    formData.append("list", selectedlist)
     formData.append("due_date", duedate);
 
 
@@ -95,6 +99,7 @@ const Form = ({ handleUpdateClose }) => {
       setMailer(false)
       console.log("edit successful")
       handleUpdateClose();
+      history.push(`/gotasks/projects/${proj_id}/lists/${selectedlist}/cards/${card_id}`)
       // fetchCard();
     }).catch(err => {
       if(err.response.status === 403){
@@ -126,16 +131,27 @@ const Form = ({ handleUpdateClose }) => {
         console.log(err)
       });
 
+    await http.get(`/gotasks/projects/${proj_id}/lists/`)
+    .then(
+      (res) => {
+        setLists(res.data)
+      }).catch(err => {
+        console.log(err)
+      })
+
     await http.get(`/gotasks/projects/${proj_id}/lists/${list_id}/cards/${card_id}/`)
     .then(
       (res) => {
         // console.log(res.data.project_members)
         setAssigned(res.data.assigned)
+        // setSelectedlist(res.data.)
         setName(res.data.card_name)
         setDesc(res.data.description)
         setDuedate(new Date(res.data.due_date))
+        setSelectedlist(res.data.list)
         // console.log(res.data.due_date)
         console.log(new Date(res.data.due_date))
+        console.log(res.data.list)
         // console.log("hello",members)
       }).catch(err => {
         console.log(err)
@@ -218,6 +234,33 @@ const Form = ({ handleUpdateClose }) => {
         </Select>
       </FormControl>
 
+      <br />
+
+      <FormControl className={classes.formControl}>
+        <InputLabel> List </InputLabel>
+        <Select 
+          // defaultValue = ""
+          fullWidth
+          required
+          value={selectedlist || ''}
+          onChange = {(e) => {
+            setSelectedlist(e.target.value)
+            console.log(e.target.value)
+          }
+          }
+        >
+          {lists.map((list, index) => {
+            return(
+            <MenuItem key={index} value={list.id}>
+              
+              {/* <Checkbox checked={checkedState[index]} onChange={handleCheckBox(index)} /> */}
+              {list.list_name}
+							{/* <ListItemText primary={option.username} /> */}
+            </MenuItem>
+            )
+          })}
+        </Select>
+      </FormControl>
 
       <br/>
       <div className={classes.datehead}>

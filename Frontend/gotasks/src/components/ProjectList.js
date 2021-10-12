@@ -145,7 +145,7 @@ export const ListItems = (props) => {
           <strong>Created on:</strong> {moment(props.list.list_created).format("dddd, MMMM Do YYYY, h:mm:ss a")}
           </Typography>
         </CardContent>
-        <CardActions>
+        <CardActions className={classes.cardActions}>
             <Button size="small" variant="contained" color="primary" onClick={(e)=>{
               e.preventDefault(); 
               listDetails(proj_id, props.list.id)}}>Details</Button>

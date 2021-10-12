@@ -12,6 +12,9 @@ import { DeleteList } from "./DeleteList.js"
 import { useHistory } from "react-router-dom"
 import useCardStyles from "../styles/DashboardCard.js";
 import moment from "moment";
+import DeleteIcon from '@material-ui/icons/Delete';
+import UpdateIcon from '@material-ui/icons/Update';
+import ViewListIcon from '@material-ui/icons/ViewList';
 import { EditList } from "./EditList.js";
 import { Loading } from "./Loading.js";
 import Header from "./Header.js";
@@ -120,14 +123,16 @@ export const ProjectListDetails = (props) => {
                 <Typography component="h1" variant="h6" gutterBottom>
                 <strong>Created:</strong> {moment(item.list_created).format("dddd, MMMM Do YYYY, h:mm:ss a")}
                 </Typography>
-                <Button type="submit" fullWidth variant="contained" color="primary" className={classes.submit} onClick={(e)=>{listDetails(proj_id, list_id)}} > Details
+                <div className={classes.buttonsdiv}>
+                <Button type="submit" fullWidth variant="contained" color="primary" startIcon={<ViewListIcon />} className={classes.submit} onClick={(e)=>{listDetails(proj_id, list_id)}} > Cards
                 </Button>   
-                <Button type="submit" fullWidth variant="contained" color="primary" className={classes.submit} onClick={handleUpdateOpen}> Update
+                <Button type="submit" fullWidth variant="contained" color="primary" startIcon={<UpdateIcon />} className={classes.submit} onClick={handleUpdateOpen}> Update
                 </Button>  
                 <EditList updateopen={updateopen} handleUpdateClose={handleUpdateClose}/>
-                <Button type="submit" fullWidth variant="contained" color="primary" className={classes.submit} onClick={handleOpen}> Delete
+                <Button type="submit" fullWidth variant="contained" startIcon={<DeleteIcon />} className={classes.submit} onClick={handleOpen} style={{color: "white", backgroundColor: "#D70040"}}> Delete
                 </Button>  
                 <DeleteList open={open} handleClose={handleClose} />
+                </div>
               </div>
             </Grid>
             </Grid>

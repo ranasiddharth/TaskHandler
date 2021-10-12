@@ -10,6 +10,8 @@ import HomeIcon from '@material-ui/icons/Home';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box'
 import { Link } from 'react-router-dom'
+import DeleteIcon from '@material-ui/icons/Delete';
+import UpdateIcon from '@material-ui/icons/Update';
 import useLoginStyles from "../styles/LoginStyles.js"
 import useCardStyles from "../styles/DashboardCard.js"
 import { DeleteCard } from "./DeleteCard.js"
@@ -122,12 +124,14 @@ export const ListCardDetails = (props) => {
                 <Typography component="h1" variant="h6" gutterBottom>
                   <strong>Due date:</strong> {moment(item.due_date).format("dddd, MMMM Do YYYY, h:mm:ss a")}
                 </Typography>
-                <Button type="submit" fullWidth variant="contained" color="primary" className={classes.submit} onClick={handleUpdateOpen}> Update
+                <div className={classes.buttonsdiv}>
+                <Button type="submit" fullWidth variant="contained" startIcon={<UpdateIcon />} color="primary" className={classes.submit} onClick={handleUpdateOpen}> Update
                 </Button>  
                 <EditCard updateopen={updateopen} handleUpdateClose={handleUpdateClose}/>
-                <Button type="submit" fullWidth variant="contained" color="primary" className={classes.submit} onClick={handleOpen}> Delete
+                <Button type="submit" fullWidth variant="contained" startIcon={<DeleteIcon />} className={classes.submit} onClick={handleOpen} style={{color: "white", backgroundColor: "#D70040"}}> Delete
                 </Button>  
                 <DeleteCard open={open} handleClose={handleClose} />
+                </div>
               </div>
             </Grid>
             </Grid>

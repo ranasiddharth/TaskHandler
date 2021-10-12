@@ -12,6 +12,7 @@ import CancelIcon from '@material-ui/icons/Cancel';
 import { useState, useEffect } from 'react';
 import axios from 'axios'
 import Cookies from 'js-cookie'
+// import useStateWithCallback from 'use-state-with-callback'
 
 
 const useStyles = makeStyles(theme => ({
@@ -106,6 +107,10 @@ const Form = ({ handleClose, getproj, setGetproj, fetchData }) => {
       })
   }, [])
 
+  useEffect(() => {
+    validateName();
+  }, [name])
+
 
   // const [checkedState, setCheckedState] = useState(
   //   new Array(members.length).fill(false)
@@ -121,14 +126,17 @@ const Form = ({ handleClose, getproj, setGetproj, fetchData }) => {
 
   const validateName = () => {
     for (let i=0; i<getproj.length; i++){
+      // console.log(getproj[i].project_name);
       if(getproj[i].project_name === name){
         setErrormsg(true);
+        // console.log(getproj[i].project_name);
         break;
       }else{
         setErrormsg(false);
       }
     }
   }
+
 
   return (
     <form className={classes.root} onSubmit={handleSubmit}>
@@ -138,11 +146,11 @@ const Form = ({ handleClose, getproj, setGetproj, fetchData }) => {
           variant="filled" 
           fullWidth
           required value={name}
-          helperText={errormsg ? "Project name already exists !" : "Available"}
-          onInput={(e) => {
-            setName(e.target.value)
-            validateName()
-            }}/>
+          helperText={errormsg ? <h4 style={{color:"red"}}>Project name already exists !</h4> : <h4 style={{color:"green"}}>Available !</h4>}
+          onChange={(e) => {
+            setName(e.target.value);
+            // validateName();
+          }}/>
 
       {/* <TextField 
           label="Description"

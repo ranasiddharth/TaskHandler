@@ -2,7 +2,7 @@ import React from 'react';
 import Dialog from '@material-ui/core/Dialog';
 import { TextField, Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams } from "react-router"
 import AddBoxIcon from '@material-ui/icons/AddBox';
 import CancelIcon from '@material-ui/icons/Cancel';
@@ -78,6 +78,9 @@ const Form = ({ handleClose, getlists, setGetlists, fetchList }) => {
     // handleClose();
   };
 
+  useEffect(() => {
+    validateName();
+  }, [name])
 
   const validateName = () => {
     for (let i=0; i<getlists.length; i++){
@@ -99,10 +102,10 @@ const Form = ({ handleClose, getlists, setGetlists, fetchList }) => {
           variant="filled" 
           fullWidth
           required value={name}
-          helperText={errormsg ? "List name already exists !" : "Available"}
+          helperText={errormsg ? <h4 style={{color:"red"}}>List name already exists !</h4> : <h4 style={{color:"green"}}>Available !</h4>}
           onInput={(e) => {
             setName(e.target.value)
-            validateName()
+            // validateName()
             }}/>
 
       <div>
