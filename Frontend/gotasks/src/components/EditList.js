@@ -5,6 +5,7 @@ import { makeStyles } from '@material-ui/core';
 import { useState, useEffect } from 'react';
 import { useParams } from "react-router"
 import AddBoxIcon from '@material-ui/icons/AddBox';
+import UpdateIcon from '@material-ui/icons/Update';
 import CancelIcon from '@material-ui/icons/Cancel';
 import axios from 'axios'
 import http from './axios.js'
@@ -111,7 +112,7 @@ const Form = ({ handleUpdateClose }) => {
           variant="filled" 
           fullWidth
           required value={name}
-          helperText={errormsg ? "List name already exists !" : "Available"}
+          // helperText={errormsg ? "List name already exists !" : "Available"}
           onInput={(e) => {
             setName(e.target.value)
             // validateName()
@@ -125,7 +126,7 @@ const Form = ({ handleUpdateClose }) => {
         }} startIcon={<CancelIcon />} disableElevation>
           Cancel
         </Button>
-        <Button type="submit" variant="contained" color="primary" startIcon={<AddBoxIcon />} disableElevation>
+        <Button type="submit" variant="contained" color="primary" startIcon={<UpdateIcon />} disableElevation>
           Add
         </Button>
       </div>

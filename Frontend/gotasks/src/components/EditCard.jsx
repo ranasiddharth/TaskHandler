@@ -6,6 +6,7 @@ import { makeStyles } from '@material-ui/core';
 import { Checkbox } from '@material-ui/core';
 import { ListItemIcon, ListItemText } from '@material-ui/core';
 import AddBoxIcon from '@material-ui/icons/AddBox';
+import UpdateIcon from '@material-ui/icons/Update';
 import CancelIcon from '@material-ui/icons/Cancel';
 import { useState, useEffect } from 'react';
 import axios from 'axios'
@@ -55,12 +56,10 @@ const Form = ({ handleUpdateClose }) => {
   const [name, setName] = useState('');
   const [desc, setDesc] = useState('');
   const [assigned, setAssigned] = useState('');
-  const [duedate, setDuedate] = useState(new Date());
+  const [duedate, setDuedate] = useState('');
   const [members, setMembers] = useState([]);
   const [lists, setLists] = useState([]);
   const [selectedlist, setSelectedlist] = useState(null)
-  // const [projmembers, setProjmembers] = useState([])
-  // const [checkboxesState, setCheckboxesState] = useState(-1)
   const [errormsg, setErrormsg] = useState(false);
   const [err, setErr] = useState(false)
   const [duperr, setDuperr] = useState(false)
@@ -93,7 +92,7 @@ const Form = ({ handleUpdateClose }) => {
     await axios.put(`http://127.0.0.1:8000/gotasks/projects/${proj_id}/lists/${list_id}/cards/${card_id}/`,
     formData, config)
     .then(res => {
-      console.log(res.data);
+      // console.log(res.data);
       setErr(false)
       setDuperr(false)
       setMailer(false)
@@ -142,17 +141,11 @@ const Form = ({ handleUpdateClose }) => {
     await http.get(`/gotasks/projects/${proj_id}/lists/${list_id}/cards/${card_id}/`)
     .then(
       (res) => {
-        // console.log(res.data.project_members)
         setAssigned(res.data.assigned)
-        // setSelectedlist(res.data.)
         setName(res.data.card_name)
         setDesc(res.data.description)
-        setDuedate(new Date(res.data.due_date))
+        setDuedate(res.data.due_date.slice(0, -1))
         setSelectedlist(res.data.list)
-        // console.log(res.data.due_date)
-        console.log(new Date(res.data.due_date))
-        console.log(res.data.list)
-        // console.log("hello",members)
       }).catch(err => {
         console.log(err)
       })
@@ -192,7 +185,7 @@ const Form = ({ handleUpdateClose }) => {
           variant="filled" 
           fullWidth
           required value={name}
-          helperText={errormsg ? "Card name already exists !" : "Available"}
+          // helperText={errormsg ? "Card name already exists !" : "Available"}
           onInput={(e) => {
             setName(e.target.value)
             // validateName()
@@ -263,13 +256,14 @@ const Form = ({ handleUpdateClose }) => {
       </FormControl>
 
       <br/>
-      <div className={classes.datehead}>
+      {/* <div className={classes.datehead}>
         <h4>Due Date</h4>
-      </div>
+      </div> */}
 
       <TextField 
           variant="filled" 
           type="datetime-local"
+          label="Due Date"
           fullWidth
           required 
           value={duedate}
@@ -290,7 +284,7 @@ const Form = ({ handleUpdateClose }) => {
         }} startIcon={<CancelIcon />} disableElevation>
           Cancel
         </Button>
-        <Button type="submit" variant="contained" color="primary" startIcon={<AddBoxIcon />} disableElevation>
+        <Button type="submit" variant="contained" color="primary" startIcon={<UpdateIcon />} disableElevation>
           Add
         </Button>
       </div>

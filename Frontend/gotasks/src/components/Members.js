@@ -143,7 +143,7 @@ export const Members = (props) => {
             </div>
           </div>
             <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-              Username: {user.username}
+              Enrollment Number: {user.username}
             </Typography>
             <Typography variant="body2" gutterBottom>
               Email: {user.email}

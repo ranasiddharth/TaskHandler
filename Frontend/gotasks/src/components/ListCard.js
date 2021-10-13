@@ -73,7 +73,7 @@ const Navbar = (props) => {
           <div>
           <Button className={classes.buttonmargin} startIcon={<HomeIcon />} disableElevation><Link to="/gotasks/dashboard" className={classes.linkcol}>DASHBOARD</Link></Button>
           <Button className={classes.buttonmargin} startIcon={<WorkIcon />} disableElevation><Link to="/gotasks/projects" className={classes.linkcol}>Projects</Link></Button>
-          <Button className={classes.buttonmargin} onClick={handleOpen} startIcon={<AddBoxIcon />} disableElevation>Add New</Button>
+          <Button className={classes.buttonmargin} onClick={handleOpen} startIcon={<AddBoxIcon />} disableElevation>Add Card</Button>
           <AddCard getcards={props.cards} setGetcards={props.setCards} open={open} handleClose={handleClose} />
           <Button className={classes.buttoncol} startIcon={<LogoutIcon />} onClick={()=>{loggingout()}}disableElevation>Logout</Button>
           </div>
@@ -104,7 +104,7 @@ const Navbar = (props) => {
             <Button className={classes.buttonmargin} startIcon={<WorkIcon />} disableElevation><Link to="/gotasks/projects" className={classes.linkcol}>Projects</Link></Button>
           </ListItem>
           <ListItem className={classes.phonelistitems}>
-            <Button className={classes.buttonmargin} onClick={handleOpen} startIcon={<AddBoxIcon />} disableElevation>Add New</Button>
+            <Button className={classes.buttonmargin} onClick={handleOpen} startIcon={<AddBoxIcon />} disableElevation>Add Card</Button>
             <AddCard getcards={props.cards} setGetcards={props.setCards} open={open} handleClose={handleClose} />
           </ListItem>
           <ListItem className={classes.phonelistitems}>

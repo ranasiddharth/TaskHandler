@@ -142,7 +142,7 @@ export const Dashboard = (props) => {
     await http.get("/gotasks/loggeduser/")
     .then(res => {
       setUser(res.data[0])
-      console.log(res.data)
+      // console.log(res.data)
     })
     .catch(err => console.log(err))
 

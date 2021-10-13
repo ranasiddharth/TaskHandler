@@ -1,4 +1,7 @@
 import { makeStyles } from '@material-ui/core/styles';
+import grey from '@material-ui/core/colors/grey';
+
+const backcolgrey = grey[100];
 
 const useCardStyles = makeStyles((theme) => ({
   cardattr: {
@@ -10,6 +13,9 @@ const useCardStyles = makeStyles((theme) => ({
     display: "flex",
     flexDirection: "column",
     justifyContent: "space-between",
+    boxShadow: "4px 4px #888888",
+    borderRadius: "10px!important",
+    backgroundColor: backcolgrey,
   },
   heading: {
     marginTop: "30px",
@@ -34,9 +40,10 @@ const useCardStyles = makeStyles((theme) => ({
     alignItems: "center",
   },
   avatar: {
-    // margin: theme.spacing(1),
     backgroundColor: theme.palette.primary.main,
-    // display: "inline",
+    "&:hover":{
+      backgroundColor: theme.palette.secondary.main,
+    }
   }
 }));
 

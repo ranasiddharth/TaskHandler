@@ -8,6 +8,7 @@ import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { Checkbox } from '@material-ui/core';
 import { ListItemIcon, ListItemText } from '@material-ui/core';
 import AddBoxIcon from '@material-ui/icons/AddBox';
+import UpdateIcon from '@material-ui/icons/Update';
 import CancelIcon from '@material-ui/icons/Cancel';
 import { useState, useEffect } from 'react';
 import axios from 'axios'
@@ -154,7 +155,7 @@ const Form = ({ handleUpdateClose }) => {
           variant="filled" 
           fullWidth
           required value={name}
-          helperText={errormsg ? "Project name already exists !" : "Available"}
+          // helperText={errormsg ? "Project name already exists !" : "Available"}
           onInput={(e) => {
             setName(e.target.value)
             // validateName()
@@ -186,7 +187,6 @@ const Form = ({ handleUpdateClose }) => {
           }}
       />
       </div>
-
       <FormControl className={classes.formControl}>
         <InputLabel> Members </InputLabel>
         <Select 
@@ -219,7 +219,7 @@ const Form = ({ handleUpdateClose }) => {
         }} startIcon={<CancelIcon />} disableElevation>
           Cancel
         </Button>
-        <Button type="submit" variant="contained" color="primary" startIcon={<AddBoxIcon />} disableElevation>
+        <Button type="submit" variant="contained" color="primary" startIcon={<UpdateIcon />} disableElevation>
           Add
         </Button>
       </div>

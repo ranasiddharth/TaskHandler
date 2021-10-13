@@ -3,7 +3,7 @@ import grey from '@material-ui/core/colors/grey';
 import loginpage from '../images/loginpage.jpg';
 
 const bgcolroot = grey[600]
-const bgcolsubdiv = grey[100]
+const bgcolsubdiv = grey[200]
 
 const useLoginStyles = makeStyles((theme) => ({
   root: {
@@ -23,6 +23,7 @@ const useLoginStyles = makeStyles((theme) => ({
   signupsubdiv2: {
     // height: '85%',
     backgroundColor: bgcolsubdiv,
+    borderRadius: "15px!important"
   },
   image: {
     backgroundImage: `url(${loginpage})`,
