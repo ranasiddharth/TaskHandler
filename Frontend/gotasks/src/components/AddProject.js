@@ -12,7 +12,6 @@ import CancelIcon from '@material-ui/icons/Cancel';
 import { useState, useEffect } from 'react';
 import axios from 'axios'
 import Cookies from 'js-cookie'
-// import useStateWithCallback from 'use-state-with-callback'
 
 
 const useStyles = makeStyles(theme => ({
@@ -48,7 +47,6 @@ const Form = ({ handleClose, getproj, setGetproj, fetchData }) => {
   const [wiki, setWiki] = useState('');
   const [members, setMembers] = useState([]);
   const [selected, setSelected] = useState([]);
-  // const [checkboxesState, setCheckboxesState] = useState(-1)
   const [errormsg, setErrormsg] = useState(false);
   const [err, setErr] = useState(false)
 
@@ -65,12 +63,6 @@ const Form = ({ handleClose, getproj, setGetproj, fetchData }) => {
       formData.append("project_members", select)
     })
 
-    // setGetproj(prevState => {
-    //     return {
-    //       ...prevState, 
-    //     }
-    // })
-
     const config = {
       headers: {
         "Content-Type": 'multipart/form-data',
@@ -81,7 +73,6 @@ const Form = ({ handleClose, getproj, setGetproj, fetchData }) => {
     await axios.post("http://127.0.0.1:8000/gotasks/projects/",
     formData, config)
     .then(res => {
-      // console.log(res.data)
       setErr(false)
       console.log("post successful")
       handleClose();
@@ -93,14 +84,12 @@ const Form = ({ handleClose, getproj, setGetproj, fetchData }) => {
       console.log(err)
     })
 
-    // fetchData();
-    // handleClose();
   };
 
   useEffect(() => {
     http.get("/gotasks/usershow").then(
       (res) => {
-        // console.log(res.data)
+        console.log(res.data)
         setMembers(res.data)
       }).catch(err => {
         console.log(err)
@@ -114,10 +103,8 @@ const Form = ({ handleClose, getproj, setGetproj, fetchData }) => {
 
   const validateName = () => {
     for (let i=0; i<getproj.length; i++){
-      // console.log(getproj[i].project_name);
       if(getproj[i].project_name === name){
         setErrormsg(true);
-        // console.log(getproj[i].project_name);
         break;
       }else{
         setErrormsg(false);
@@ -137,15 +124,7 @@ const Form = ({ handleClose, getproj, setGetproj, fetchData }) => {
           helperText={errormsg ? <h4 style={{color:"red"}}>Project name already exists !</h4> : <h4 style={{color:"green"}}>Available !</h4>}
           onChange={(e) => {
             setName(e.target.value);
-            // validateName();
           }}/>
-
-      {/* <TextField 
-          label="Description"
-          variant="filled" 
-          fullWidth
-          required value={wiki}
-          onChange={e => setWiki(e.target.value)}/> */}
 
       <div className={classes.ckeditorwidth}>
       <h4>Description</h4>
@@ -160,8 +139,6 @@ const Form = ({ handleClose, getproj, setGetproj, fetchData }) => {
           onChange={(event, editor) => {
             const data = editor.getData();
             setWiki(data);
-            // console.log(data);
-            // console.log(wiki)
           }}
       />
       </div>
@@ -179,11 +156,8 @@ const Form = ({ handleClose, getproj, setGetproj, fetchData }) => {
         >
           {members.map(({id, username, fullname}, index) => {
             return(
-            <MenuItem key={id} value={fullname}>
-              
-              {/* <Checkbox checked={checkedState[index]} onChange={handleCheckBox(index)} /> */}
+            <MenuItem key={id} value={id}>
               {fullname}
-							{/* <ListItemText primary={option.username} /> */}
             </MenuItem>
             )
           })}

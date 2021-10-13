@@ -38,9 +38,6 @@ def responseGet(request):
     If user is maintainer, create user object, if absent, and login.
     """
     code = request.GET.get('code', '')
-    # data = json.loads(request.body.decode('utf-8'))
-    # auth_code = data['code']
-    # print(code)
     payload = {
         'client_id': env('client_id'), 
         'client_secret': env('client_secret'), 
@@ -48,10 +45,8 @@ def responseGet(request):
         'redirect_uri': 'http://localhost:3000/gotasks/oauth/',
         'code': code
     }
-    # print(payload)
     res = requests.post(env('token_url'), data=payload)
     token_response = json.loads(res.content)
-    # print(token_response)
     res = requests.get(url=env('get_user_data'), headers={"Authorization": f"{token_response['token_type']} {token_response['access_token']}"})
     user_data = json.loads(res.content)
     username = user_data['username']
@@ -198,7 +193,7 @@ class CardViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         card_data = request.data
         id = self.kwargs.get("parent_lookup_list")
-        user = User.objects.get(fullname=card_data["assigned"])
+        user = User.objects.get(id=card_data["assigned"])
         list_instance = Lists.objects.get(id=id)
 
         if request.user.moderator or request.user in list_instance.project.project_members.all():
@@ -206,7 +201,7 @@ class CardViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
                 obj = Cards.objects.create(card_name=card_data["card_name"], description=card_data["description"], list=list_instance, assigned=user, due_date=card_data["due_date"])
                 obj.save()
                 subject = 'Gotasks App Card Assignment'
-                message = f'Hi {card_data["assigned"]}, you have been assigned the card {card_data["card_name"]} inside the list name {list_instance.list_name} under the project name {list_instance.project}. Due date of the card is {card_data["due_date"]}'
+                message = f'Hi {user.fullname}, you have been assigned the card {card_data["card_name"]} inside the list name {list_instance.list_name} under the project name {list_instance.project}. Due date of the card is {card_data["due_date"]}'
                 email_from = settings.EMAIL_HOST_USER
                 recipient_list = [user.email, ]
                 send_mail( subject, message, email_from, recipient_list )
@@ -222,7 +217,7 @@ class CardViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
         card_data = request.data
         # id = self.kwargs.get("parent_lookup_list")
         list_instance = Lists.objects.get(id=card_data["list"])
-        assigned_instance = User.objects.get(fullname=card_data["assigned"])
+        assigned_instance = User.objects.get(id=card_data["assigned"])
 
         if request.user.moderator or request.user in list_instance.project.project_members.all():
             card_object.card_name = card_data["card_name"]
@@ -232,7 +227,7 @@ class CardViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
             card_object.due_date = card_data["due_date"]
             card_object.save()
             subject = 'Gotasks App Card Assignment'
-            message = f'Hi {card_data["assigned"]}, you have been assigned the card {card_data["card_name"]} inside the list name {list_instance.list_name} under the project name {list_instance.project}. Due date of the card is {card_data["due_date"]}'
+            message = f'Hi {assigned_instance.fullname}, you have been assigned the card {card_data["card_name"]} inside the list name {list_instance.list_name} under the project name {list_instance.project}. Due date of the card is {card_data["due_date"]}'
             email_from = settings.EMAIL_HOST_USER
             recipient_list = [assigned_instance.email, ]
             send_mail( subject, message, email_from, recipient_list )
@@ -250,7 +245,7 @@ class CardViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
 
         if request.user.moderator or request.user in list_instance.project.project_members.all():
             subject = 'Gotasks App Card Assignment'
-            message = f'Hi {card_data.assigned.fullname}, the card {card_data.card_name} inside the list name {list_instance.list_name} under the project name {list_instance.project} has been deleted.'
+            message = f'Hi {assigned_instance.fullname}, the card {card_data.card_name} inside the list name {list_instance.list_name} under the project name {list_instance.project} has been deleted.'
             email_from = settings.EMAIL_HOST_USER
             recipient_list = [assigned_instance.email, ]
             send_mail( subject, message, email_from, recipient_list )

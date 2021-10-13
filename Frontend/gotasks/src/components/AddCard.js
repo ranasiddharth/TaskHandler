@@ -53,21 +53,18 @@ const Form = ({ handleClose, getcards, setGetcards, fetchCard }) => {
   const classes = useStyles()
   const [name, setName] = useState('');
   const [desc, setDesc] = useState('');
-  const [assigned, setAssigned] = useState('');
+  const [assigned, setAssigned] = useState([]);
   const [duedate, setDuedate] = useState(new Date());
   const [members, setMembers] = useState([]);
-  // const [projmembers, setProjmembers] = useState([])
-  // const [checkboxesState, setCheckboxesState] = useState(-1)
   const [errormsg, setErrormsg] = useState(false);
   const [err, setErr] = useState(false)
   const [duperr, setDuperr] = useState(false)
   const [mailer, setMailer] = useState(false)
+  const [users, setUsers] = useState([])
 
 
   const handleSubmit = async(e) => {
     e.preventDefault();
-    // console.log(name, desc, assigned, duedate);
-    // console.log(getcards)
     setMailer(true)
 
     var formData = new FormData();
@@ -89,12 +86,11 @@ const Form = ({ handleClose, getcards, setGetcards, fetchCard }) => {
     await axios.post(`http://127.0.0.1:8000/gotasks/projects/${proj_id}/lists/${list_id}/cards/`,
     formData, config)
     .then(res => {
-      // console.log(res.data);
-      // fetchCard();
       setErr(false)
       setDuperr(false)
       setMailer(false)
       console.log("post successful")
+      console.log(assigned)
       handleClose();
     }).catch(err => {
       if(err.response.status === 403){
@@ -110,11 +106,18 @@ const Form = ({ handleClose, getcards, setGetcards, fetchCard }) => {
       console.log(err)
     })
 
-    // fetchCard();
-    // handleClose();
   };
 
   useEffect(async() => {
+
+    http.get(`/gotasks/usershow/`).then(
+      (res) => {
+        console.log(res.data);
+        setUsers(res.data)
+      }).catch(err => {
+        console.log(err)
+    });
+
     await http.get(`/gotasks/projects/${proj_id}`).then(
       (res) => {
         // console.log(res.data.project_members)
@@ -128,17 +131,6 @@ const Form = ({ handleClose, getcards, setGetcards, fetchCard }) => {
   useEffect(()=>{
     validateName();
   }, [name])
-
-  // const [checkedState, setCheckedState] = useState(
-  //   new Array(members.length).fill(false)
-  // );
-
-  // const handleCheckBox = (position) => {
-  //   const updatedCheckedState = checkedState.map((item, index) =>
-  //     index === position ? !item : item
-  //   );
-  //   setCheckedState(updatedCheckedState);
-  // };
 
 
   const validateName = () => {
@@ -192,13 +184,16 @@ const Form = ({ handleClose, getcards, setGetcards, fetchCard }) => {
           }
         >
           {members.map((member, index) => {
-            return(
-            <MenuItem key={index} value={member}>
-              
-              {/* <Checkbox checked={checkedState[index]} onChange={handleCheckBox(index)} /> */}
-              {member}
-							{/* <ListItemText primary={option.username} /> */}
-            </MenuItem>
+            return (
+              users.map((user, index) => {
+                if(user.id==member){
+                  return(
+                    <MenuItem key={index} value={user.id}>
+                      {user.fullname}
+                    </MenuItem>
+                  )
+                }
+              })
             )
           })}
         </Select>
@@ -210,16 +205,6 @@ const Form = ({ handleClose, getcards, setGetcards, fetchCard }) => {
         <h4>Due Date</h4>
       </div>
 
-      {/* <div className={classes.datepicker}> */}
-      {/* <DateTimePicker
-        required
-        className={classes.datepicker}
-        onChange={
-          (event) => 
-          handleDueDateChange(event)
-        } 
-        selected={duedate}
-      /> */}
       <TextField 
           variant="filled" 
           type="datetime-local"
@@ -231,7 +216,6 @@ const Form = ({ handleClose, getcards, setGetcards, fetchCard }) => {
           }}
       />
       
-      {/* </div> */}
       <br />
 
 

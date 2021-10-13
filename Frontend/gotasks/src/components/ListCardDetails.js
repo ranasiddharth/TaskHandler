@@ -58,6 +58,7 @@ export const ListCardDetails = (props) => {
   const classes = useLoginStyles()
   const { proj_id, list_id, card_id } = useParams()
   const [item, setItem] = useState([])
+  const [users, setUsers] = useState([])
 
 
   const [updateopen, setUpdateOpen] = useState(false);
@@ -75,6 +76,15 @@ export const ListCardDetails = (props) => {
 
 
   const fetchCard = (proj_id, list_id, card_id) => {
+
+    http.get(`/gotasks/usershow/`).then(
+      (res) => {
+        console.log(res.data)
+        setUsers(res.data)
+      }).catch(err => {
+        console.log(err)
+    });
+
     http.get(`/gotasks/projects/${proj_id}/lists/${list_id}/cards/${card_id}`)
     .then(res => {
       setItem(res.data)
@@ -116,7 +126,13 @@ export const ListCardDetails = (props) => {
                   <strong>Description:</strong> {item.description}
                 </Typography>
                 <Typography component="h1" variant="h6" gutterBottom>
-                  <strong>Assigned To:</strong> {item.assigned}
+                  <strong>Assigned To:</strong> {users.map((user, index) => {
+                  if(user.id==item.assigned){
+                    return(
+                      user.fullname
+                    )
+                  }
+                  })}
                 </Typography>
                 <Typography component="h1" variant="h6" gutterBottom>
                   <strong>Created on:</strong> {moment(item.date_created).format("dddd, MMMM Do YYYY, h:mm:ss a")}

@@ -45,7 +45,6 @@ const Form = ({ handleClose, getlists, setGetlists, fetchList }) => {
     console.log(name);
     var formData = new FormData();
     formData.append("list_name", name);
-    // console.log(getlists)
 
     const config = {
       headers: {
@@ -57,7 +56,6 @@ const Form = ({ handleClose, getlists, setGetlists, fetchList }) => {
     await axios.post(`http://127.0.0.1:8000/gotasks/projects/${proj_id}/lists/`,
     formData, config)
     .then(res => {
-      // console.log(res.data)
       setErr(false)
       setDuperr(false)
       console.log("post successful")
@@ -74,8 +72,6 @@ const Form = ({ handleClose, getlists, setGetlists, fetchList }) => {
       console.log(err)
     })
 
-    // fetchList();
-    // handleClose();
   };
 
   useEffect(() => {
@@ -105,7 +101,6 @@ const Form = ({ handleClose, getlists, setGetlists, fetchList }) => {
           helperText={errormsg ? <h4 style={{color:"red"}}>List name already exists !</h4> : <h4 style={{color:"green"}}>Available !</h4>}
           onInput={(e) => {
             setName(e.target.value)
-            // validateName()
             }}/>
 
       <div>

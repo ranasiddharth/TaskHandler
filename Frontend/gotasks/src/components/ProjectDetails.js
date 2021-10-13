@@ -51,6 +51,7 @@ export const ProjectDetails = (props) => {
   const { proj_id } = useParams()
   const [item, setItem] = useState([])
   const [proj_members, setProj_members] = useState([])
+  const [members, setMembers] = useState([])
 
   const [open, setOpen] = useState(false);
 
@@ -76,6 +77,14 @@ export const ProjectDetails = (props) => {
 
 
   const fetchList = (id) => {
+    http.get(`/gotasks/usershow/`).then(
+      (res) => {
+        console.log(res.data)
+        setMembers(res.data)
+      }).catch(err => {
+        console.log(err)
+    });
+
     http.get(`/gotasks/projects/${id}`)
     .then(res => {
       // console.log(id)
@@ -135,11 +144,17 @@ export const ProjectDetails = (props) => {
                 </Typography>
                 <Typography component="h1" variant="h6" gutterBottom>
                 <strong>Members:</strong> {proj_members.map((member)=>{
-                    return (
-                      <li>
-                      {member}
-                      </li>
-                    )
+                  return (
+                    members.map((users, index) => {
+                      if(users.id==member){
+                        return(
+                        <li>
+                          {users.fullname}
+                        </li>
+                        )
+                      }
+                    })
+                  )
                   })}
                 </Typography>
                 <Typography component="h1" variant="h6" gutterBottom>

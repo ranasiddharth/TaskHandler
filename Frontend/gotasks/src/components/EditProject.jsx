@@ -50,7 +50,6 @@ const Form = ({ handleUpdateClose }) => {
   const [wiki, setWiki] = useState('');
   const [members, setMembers] = useState([]);
   const [selected, setSelected] = useState([]);
-  // const [checkboxesState, setCheckboxesState] = useState(-1)
   const [errormsg, setErrormsg] = useState(false);
   const [err, setErr] = useState(false)
   const [duperr, setDuperr] = useState(false)
@@ -79,7 +78,6 @@ const Form = ({ handleUpdateClose }) => {
     await axios.put(`http://127.0.0.1:8000/gotasks/projects/${proj_id}/`,
     formData, config)
     .then(res => {
-      // console.log(res.data)
       setErr(false)
       setDuperr(false)
       console.log("edit successful")
@@ -96,15 +94,12 @@ const Form = ({ handleUpdateClose }) => {
       console.log(err)
     })
 
-    // fetchData();
-    // handleUpdateClose();
   };
 
   useEffect(async() => {
 
     await http.get(`/gotasks/usershow/`).then(
       (res) => {
-        // console.log(res.data)
         setMembers(res.data)
       }).catch(err => {
         console.log(err)
@@ -112,7 +107,6 @@ const Form = ({ handleUpdateClose }) => {
 
     await http.get(`/gotasks/projects/${proj_id}/`).then(
       (res) => {
-        // console.log(res.data)
         setName(res.data.project_name)
         setWiki(res.data.project_wiki)
         setSelected(res.data.project_members)
@@ -122,29 +116,6 @@ const Form = ({ handleUpdateClose }) => {
     
   }, [])
 
-
-  // const [checkedState, setCheckedState] = useState(
-  //   new Array(members.length).fill(false)
-  // );
-
-  // const handleCheckBox = (position) => {
-  //   const updatedCheckedState = checkedState.map((item, index) =>
-  //     index === position ? !item : item
-  //   );
-  //   setCheckedState(updatedCheckedState);
-  // };
-
-
-  // const validateName = () => {
-  //   for (let i=0; i<getproj.length; i++){
-  //     if(getproj[i].project_name === name){
-  //       setErrormsg(true);
-  //       break;
-  //     }else{
-  //       setErrormsg(false);
-  //     }
-  //   }
-  // }
 
   return (
     <form className={classes.root} onSubmit={handleUpdateSubmit}>
@@ -158,15 +129,7 @@ const Form = ({ handleUpdateClose }) => {
           // helperText={errormsg ? "Project name already exists !" : "Available"}
           onInput={(e) => {
             setName(e.target.value)
-            // validateName()
-            }}/>
-
-      {/* <TextField 
-          label="Description"
-          variant="filled" 
-          fullWidth
-          required value={wiki}
-          onChange={e => setWiki(e.target.value)}/> */}
+          }}/>
 
       <div className={classes.ckeditorwidth}>
       <h4>Description</h4>
@@ -182,8 +145,6 @@ const Form = ({ handleUpdateClose }) => {
           onChange={(event, editor) => {
             const data = editor.getData();
             setWiki(data);
-            // console.log(data);
-            // console.log(wiki)
           }}
       />
       </div>
@@ -200,11 +161,8 @@ const Form = ({ handleUpdateClose }) => {
         >
           {members.map(({id, username, fullname}, index) => {
             return(
-            <MenuItem key={id} value={fullname}>
-              
-              {/* <Checkbox checked={checkedState[index]} onChange={handleCheckBox(index)} /> */}
+            <MenuItem key={id} value={id}>
               {fullname}
-							{/* <ListItemText primary={option.username} /> */}
             </MenuItem>
             )
           })}

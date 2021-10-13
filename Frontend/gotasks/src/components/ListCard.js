@@ -149,7 +149,13 @@ export const CardItem = (props) => {
           <strong>Description:</strong> {props.card.description}
           </Typography>
           <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-          <strong>Assigned To:</strong> {props.card.assigned}
+          <strong>Assigned To:</strong> {props.users.map((user, index) => {
+                  if(user.id==props.card.assigned){
+                    return(
+                      user.fullname
+                    )
+                  }
+            })}
           </Typography>
           <Typography variant="body2" gutterBottom>
           <strong>Created on:</strong> {moment(props.card.date_created).format("dddd, MMMM Do YYYY, h:mm:ss a")}
@@ -175,10 +181,21 @@ export const ListCard = (props) => {
   const { proj_id, list_id } = useParams()
   const [cards, setCards] = useState([])
   const [fetched, setFetched] = useState(false)
+  const [users, setUsers] = useState([])
   const classes = useCardStyles()
   const history = useHistory()
 
   const fetchCard = () => {
+
+    http.get(`/gotasks/usershow/`).then(
+      (res) => {
+        console.log(res.data)
+        setUsers(res.data)
+      }).catch(err => {
+        console.log(err)
+    });
+
+
     http.get(`/gotasks/projects/${proj_id}/lists/${list_id}/cards`)
     .then(res => {
       // console.log(res.data)
@@ -214,7 +231,7 @@ export const ListCard = (props) => {
         {cards.map(card => {
         return (
         <>
-        <CardItem key={card.id} card={card} />
+        <CardItem key={card.id} card={card} users={users}/>
         </>
         )
       })}

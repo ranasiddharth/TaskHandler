@@ -55,7 +55,7 @@ const Form = ({ handleUpdateClose }) => {
   const classes = useStyles()
   const [name, setName] = useState('');
   const [desc, setDesc] = useState('');
-  const [assigned, setAssigned] = useState('');
+  const [assigned, setAssigned] = useState([]);
   const [duedate, setDuedate] = useState('');
   const [members, setMembers] = useState([]);
   const [lists, setLists] = useState([]);
@@ -64,6 +64,7 @@ const Form = ({ handleUpdateClose }) => {
   const [err, setErr] = useState(false)
   const [duperr, setDuperr] = useState(false)
   const [mailer, setMailer] = useState(false)
+  const [users, setUsers] = useState([])
 
 
   const handleUpdateSubmit = async(e) => {
@@ -121,6 +122,14 @@ const Form = ({ handleUpdateClose }) => {
 
   useEffect(async() => {
 
+    http.get(`/gotasks/usershow/`).then(
+      (res) => {
+        console.log(res.data);
+        setUsers(res.data)
+      }).catch(err => {
+        console.log(err)
+    });
+
     await http.get(`/gotasks/projects/${proj_id}`).then(
       (res) => {
         // console.log(res.data.project_members)
@@ -136,7 +145,7 @@ const Form = ({ handleUpdateClose }) => {
         setLists(res.data)
       }).catch(err => {
         console.log(err)
-      })
+    })
 
     await http.get(`/gotasks/projects/${proj_id}/lists/${list_id}/cards/${card_id}/`)
     .then(
@@ -215,13 +224,19 @@ const Form = ({ handleUpdateClose }) => {
           }
         >
           {members.map((member, index) => {
-            return(
-            <MenuItem key={index} value={member}>
+            return (
+              users.map((user, index) => {
+                if(user.id==member){
+                  return(
+                    <MenuItem key={index} value={user.id}>
               
-              {/* <Checkbox checked={checkedState[index]} onChange={handleCheckBox(index)} /> */}
-              {member}
-							{/* <ListItemText primary={option.username} /> */}
-            </MenuItem>
+                    {/* <Checkbox checked={checkedState[index]} onChange={handleCheckBox(index)} /> */}
+                    {user.fullname}
+                    {/* <ListItemText primary={option.username} /> */}
+                  </MenuItem>
+                  )
+                }
+              })
             )
           })}
         </Select>
