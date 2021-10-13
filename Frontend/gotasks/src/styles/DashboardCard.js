@@ -32,6 +32,11 @@ const useCardStyles = makeStyles((theme) => ({
     display: "flex",
     justifyContent: "space-around",
     alignItems: "center",
+  },
+  avatar: {
+    // margin: theme.spacing(1),
+    backgroundColor: theme.palette.primary.main,
+    // display: "inline",
   }
 }));
 

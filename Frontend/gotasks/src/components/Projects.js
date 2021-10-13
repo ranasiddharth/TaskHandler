@@ -2,6 +2,7 @@ import http from "./axios.js";
 import {AppBar, Toolbar, Button, Typography, Box, Card} from '@material-ui/core'
 import useStyles from '../styles/Navbar.js'
 import CardContent from "@material-ui/core/CardContent";
+import Avatar from '@material-ui/core/Avatar';
 import CardActions from '@material-ui/core/CardActions'
 import AddBoxIcon from '@material-ui/icons/AddBox';
 import { Link } from 'react-router-dom'
@@ -137,12 +138,21 @@ export const ProjectItem = (props) => {
 
   }
 
+  var name = props.project.project_name;
+
   return(
     <Card sx={{ minWidth: 275 }} variant="outlined" className={classes.cardattr}>
         <CardContent>
-          <Typography variant="h5" component="div" gutterBottom>
-          <strong>Name:</strong> {props.project.project_name}
+          <div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
+          <div>
+          <Typography variant="h5" component="div">
+            <strong>Name: </strong>{props.project.project_name}
           </Typography>
+          </div>
+          <div>
+          <Avatar className={classes.avatar}>{name.charAt(0).toUpperCase()}</Avatar>
+          </div>
+          </div>
           <Typography sx={{ fontSize: 14 }} gutterBottom>
             <strong>Description:</strong>
           </Typography>

@@ -8,6 +8,7 @@ import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box'
 import Card from "@material-ui/core/Card";
+import Avatar from '@material-ui/core/Avatar';
 import CardContent from "@material-ui/core/CardContent";
 import CardActions from '@material-ui/core/CardActions'
 import AddBoxIcon from '@material-ui/icons/AddBox';
@@ -134,9 +135,16 @@ export const CardItem = (props) => {
   return(
     <Card sx={{ minWidth: 275 }} variant="outlined" className={classes.cardattr}>
         <CardContent>
-          <Typography variant="h5" component="div" gutterBottom>
+        <div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
+          <div>
+          <Typography variant="h5" component="div">
           <strong>Name:</strong> {props.card.card_name}
           </Typography>
+          </div>
+          <div>
+          <Avatar className={classes.avatar}>{props.card.card_name.charAt(0).toUpperCase()}</Avatar>
+          </div>
+        </div>
           <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
           <strong>Description:</strong> {props.card.description}
           </Typography>

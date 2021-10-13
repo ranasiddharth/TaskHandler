@@ -7,6 +7,7 @@ import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box'
 import {useState, useEffect} from 'react';
+import Avatar from '@material-ui/core/Avatar';
 import { Link } from 'react-router-dom'
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
@@ -127,12 +128,20 @@ export const Members = (props) => {
       <div>
       <br />
       {users.map(user => {
+        const arr = user.fullname.split(" ")
         return (
           <Card sx={{ minWidth: 275 }} variant="outlined" className={classes.cardattr} key={user.id}>
           <CardContent>
-            <Typography variant="h5" component="div" gutterBottom>
+          <div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
+            <div>
+            <Typography variant="h5" component="div">
               Name: {user.fullname}
             </Typography>
+            </div>
+            <div>
+              <Avatar className={classes.avatar}>{arr[0].charAt(0).toUpperCase()}{arr[1].charAt(0).toUpperCase()}</Avatar>
+            </div>
+          </div>
             <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
               Username: {user.username}
             </Typography>

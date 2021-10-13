@@ -5,6 +5,7 @@ import axios from 'axios'
 import Typography from '@material-ui/core/Typography';
 import LogoutIcon from '@material-ui/icons/ExitToApp';
 import moment from "moment";
+import Avatar from '@material-ui/core/Avatar';
 import Grid from '@material-ui/core/Grid';
 import GroupIcon from '@material-ui/icons/Group';
 import WorkIcon from '@material-ui/icons/Work';
@@ -15,56 +16,8 @@ import useCardStyles from '../styles/DashboardCard'
 import { Link } from 'react-router-dom'
 import { Loading } from "./Loading.js";
 import { useHistory } from "react-router-dom";
-import "../styles/ListTags.css"
-// import Header from "./Header.js";
-
-
-const Navbar = () => {
-
-  const classes = useStyles()
-  const [admin, setAdmin] = useState(false)
-  const history = useHistory()
-
-  const loggingout = () => {
-    axios.get("http://127.0.0.1:8000/gotasks/logout", {withCredentials: true}).then((resp)=>{
-      Cookies.remove('mytoken');
-      Cookies.remove('sessionid');
-      Cookies.remove('csrftoken');
-      history.push('/');
-    }).catch((err)=>{
-      console.log("error while logging out")
-    })
-  }
-
-  useEffect(() => {
-    axios.get("http://127.0.0.1:8000/gotasks/users/", {withCredentials:true}).then(
-      (res) => {
-        if (res.status === 200){
-          setAdmin(true)
-        }
-      }
-    ).catch(error => {
-      console.log(error)
-    })
-  }, [])
-
-  return (
-    <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static">
-        <Toolbar className={classes.toolbar}>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            DASHBOARD
-          </Typography>
-          <div>
-          <Button className={classes.buttonmargin} startIcon={<WorkIcon />} disableElevation><Link to="/gotasks/projects" className={classes.linkcol}>Projects</Link></Button>
-          <Button disabled={!admin} className={classes.buttonmargin} startIcon={<GroupIcon />} disableElevation><Link to="/gotasks/users" className={classes.linkcol}>Members</Link></Button>
-          <Button className={classes.buttoncol} startIcon={<LogoutIcon />} onClick={()=>{loggingout()}}disableElevation>Logout</Button>
-          </div>
-        </Toolbar>
-      </AppBar>
-    </Box>
-  );
-}
+import "../styles/ListTags.css";
+import Header2 from "./Header2.js";
 
 
 const Project = (props) => {
@@ -88,9 +41,16 @@ const Project = (props) => {
       return (
         <Card sx={{ minWidth: 275 }} variant="outlined" className={classes.cardattr} key={project.id}>
           <CardContent>
-            <Typography variant="h5" component="div" gutterBottom>
-            <strong>Name:</strong> {project.project_name}
-            </Typography>
+          <div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
+            <div>
+              <Typography variant="h5" component="div">
+              <strong>Name:</strong> {project.project_name}
+              </Typography>
+            </div>
+            <div>
+              <Avatar className={classes.avatar}>{project.project_name.charAt(0).toUpperCase()}</Avatar>
+            </div>
+          </div>
             <Typography sx={{ fontSize: 14 }} gutterBottom>
             <strong>Description:</strong>
           </Typography>
@@ -136,9 +96,16 @@ const CardShow = (props) => {
         return (
         <Card sx={{ minWidth: 275 }} variant="outlined" className={classes.cardattr} key={card.id}>
           <CardContent>
-            <Typography variant="h5" component="div" gutterBottom>
+          <div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
+            <div>
+            <Typography variant="h5" component="div">
               <strong>Name:</strong> {card.card_name}
             </Typography>
+            </div>
+            <div>
+              <Avatar className={classes.avatar}>{card.card_name.charAt(0).toUpperCase()}</Avatar>
+            </div>
+          </div>
             <Typography sx={{ fontSize: 14 }} gutterBottom>
               <strong>Description:</strong> {card.description}
             </Typography>
@@ -171,25 +138,44 @@ export const Dashboard = (props) => {
   const [cards, setCards] = useState([])
   // const [username, setUsername] = useState("")
 
-  const fetchData = () => {
-    http.get("/gotasks/loggeduser/")
+  async function fetchData(){
+    await http.get("/gotasks/loggeduser/")
     .then(res => {
       setUser(res.data[0])
       console.log(res.data)
     })
     .catch(err => console.log(err))
 
-    const projectAPI = http.get("/gotasks/dashboard/projects")
-    const cardAPI = http.get("/gotasks/dashboard/cards")
-    axios.all([projectAPI, cardAPI]).then(
-      ([project, card]) => {
-        setProjects(project.data)
-        setCards(card.data)  
-        setFetched(true)
-      })
-      .catch(err => {
-      console.log("error in retrieving data")
-    })
+    // const projectAPI = http.get("/gotasks/dashboard/projects")
+    // const cardAPI = http.get("/gotasks/dashboard/cards")
+    // axios.all([projectAPI, cardAPI]).then(
+    //   ([project, card]) => {
+    //     setProjects(project.data)
+    //     setCards(card.data)  
+    //     setFetched(true)
+    //   })
+    //   .catch(err => {
+    //   console.log("error in retrieving data")
+    // })
+    let count = 0;
+    await http.get("/gotasks/dashboard/projects").then(
+      res=>{
+        setProjects(res.data);
+        count=count+1;
+      }
+    ).catch(err => console.log(err))
+
+    await http.get("/gotasks/dashboard/cards").then(
+      res=>{
+        setCards(res.data)
+        count=count+1;
+        // setFetched(true)
+      }
+    ).catch(err => console.log(err))
+
+    if(count == 2){
+      setFetched(true)
+    }
   }
 
   useEffect(() => {
@@ -199,28 +185,11 @@ export const Dashboard = (props) => {
     fetchData()
   }, [])
 
-  // const goback = () => {
-
-  //   history.goBack();
-
-  // }
-
-  // const loggingout = () => {
-  //     axios.get("http://127.0.0.1:8000/gotasks/logout", {withCredentials: true}).then((resp)=>{
-  //       Cookies.remove('mytoken');
-  //       Cookies.remove('sessionid');
-  //       Cookies.remove('csrftoken');
-  //       history.push('/');
-  //     }).catch((err)=>{
-  //       console.log("error while logging out")
-  //     })
-  // }
-
 
   if(!fetched === true){
     return(
       <>
-      <Navbar />
+      {/* <Header2 /> */}
       <Loading />
       </>
     )
@@ -228,7 +197,7 @@ export const Dashboard = (props) => {
   else{
     return(
       <div> 
-              <Navbar />
+              <Header2 />
               <h3 style={{textAlign: "center", margin: "20px", marginBottom: "0px"}}>Welcome {user.fullname} !</h3>
               <Grid container component="main" className={classes.mainGrid}>
                 <CssBaseline />

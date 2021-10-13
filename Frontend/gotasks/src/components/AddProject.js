@@ -112,18 +112,6 @@ const Form = ({ handleClose, getproj, setGetproj, fetchData }) => {
   }, [name])
 
 
-  // const [checkedState, setCheckedState] = useState(
-  //   new Array(members.length).fill(false)
-  // );
-
-  // const handleCheckBox = (position) => {
-  //   const updatedCheckedState = checkedState.map((item, index) =>
-  //     index === position ? !item : item
-  //   );
-  //   setCheckedState(updatedCheckedState);
-  // };
-
-
   const validateName = () => {
     for (let i=0; i<getproj.length; i++){
       // console.log(getproj[i].project_name);
