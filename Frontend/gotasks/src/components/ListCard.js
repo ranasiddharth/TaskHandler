@@ -31,6 +31,8 @@ import ListItem from "@material-ui/core/ListItem";
 import LogoutIcon from '@material-ui/icons/ExitToApp';
 import GroupIcon from '@material-ui/icons/Group';
 import WorkIcon from '@material-ui/icons/Work';
+import SearchIcon from "@material-ui/icons/Search"
+import useSearchStyles from "../styles/SearchBar.js";
 
 
 const Navbar = (props) => {
@@ -184,6 +186,9 @@ export const ListCard = (props) => {
   const [users, setUsers] = useState([])
   const classes = useCardStyles()
   const history = useHistory()
+  const searcher = useSearchStyles();
+  const [q, setQ] = useState("");
+  const [searchParam] = useState(["card_name"]);
 
   const fetchCard = () => {
 
@@ -213,6 +218,19 @@ export const ListCard = (props) => {
     fetchCard()
   }, [])
 
+
+  function search(items) {
+    return items.filter((item) => {
+        return searchParam.some((newItem) => {
+            return (
+                item[newItem]
+                    .toString()
+                    .toLowerCase()
+                    .indexOf(q.toLowerCase()) > -1
+            );
+        });
+    });
+  }
   
 
   if(!fetched === true){
@@ -228,7 +246,21 @@ export const ListCard = (props) => {
       <>
       <div>
         <Navbar cards={cards} setCards={setCards} fetchCard={fetchCard}/>
-        {cards.map(card => {
+        <div className={searcher.search}>
+          <SearchIcon />
+          <input
+          type="search"
+          name="search-form"
+          id="search-form"
+          style={{flexGrow: "1", border: "none", outline: "none", height: "100%", borderRadius: "5px", fontSize: "16px"}}
+          className="search-input"
+          placeholder="Search cards by name..."
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+        />
+      </div>
+      <br/>
+        {search(cards).map(card => {
         return (
         <>
         <CardItem key={card.id} card={card} users={users}/>

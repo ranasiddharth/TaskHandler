@@ -18,27 +18,8 @@ import CancelRoundedIcon from "@material-ui/icons/CancelRounded";
 import { useHistory } from "react-router-dom";
 import { Loading } from "./Loading.js";
 import Header from "./Header.js";
-
-
-// const Navbar = () => {
-
-//   const classes = useStyles()
-
-//   return (
-//     <Box sx={{ flexGrow: 1 }}>
-//       <AppBar position="static">
-//         <Toolbar className={classes.toolbar}>
-//           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-//             APP MEMBERS
-//           </Typography>
-//           <div>
-//           <Button className={classes.buttoncol} startIcon={<HomeIcon />} disableElevation><Link to="/gotasks/dashboard" className={classes.linkcol}>DASHBOARD</Link></Button>
-//           </div>
-//         </Toolbar>
-//       </AppBar>
-//     </Box>
-//   );
-// }
+import SearchIcon from "@material-ui/icons/Search"
+import useSearchStyles from "../styles/SearchBar.js";
 
 
 export const Members = (props) => {
@@ -47,6 +28,9 @@ export const Members = (props) => {
   const history = useHistory();
   const [fetched, setFetched] = useState(false)
   const [users, setUsers] = useState([])
+  const searcher = useSearchStyles();
+  const [q, setQ] = useState("");
+  const [searchParam] = useState(["fullname"]);
 
   const fetchData = async() => {
      await http.get("/gotasks/users").then(
@@ -65,6 +49,20 @@ export const Members = (props) => {
     }
     fetchData();
   }, [])
+
+
+  function search(items) {
+    return items.filter((item) => {
+        return searchParam.some((newItem) => {
+            return (
+                item[newItem]
+                    .toString()
+                    .toLowerCase()
+                    .indexOf(q.toLowerCase()) > -1
+            );
+        });
+    });
+  }
 
 
   const handleadminchange = async(id, moderator) => {
@@ -125,9 +123,22 @@ export const Members = (props) => {
     return (
       <>
       <Header />
+      <div className={searcher.search}>
+          <SearchIcon />
+          <input
+          type="search"
+          name="search-form"
+          id="search-form"
+          style={{flexGrow: "1", border: "none", outline: "none", height: "100%", borderRadius: "5px", fontSize: "16px"}}
+          className="search-input"
+          placeholder="Search members by name..."
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+        />
+      </div>
       <div>
       <br />
-      {users.map(user => {
+      {search(users).map(user => {
         const arr = user.fullname.split(" ")
         return (
           <Card sx={{ minWidth: 275 }} variant="outlined" className={classes.cardattr} key={user.id}>
@@ -135,7 +146,7 @@ export const Members = (props) => {
           <div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
             <div>
             <Typography variant="h5" component="div">
-              Name: {user.fullname}
+              <strong>Name:</strong> {user.fullname}
             </Typography>
             </div>
             <div>
@@ -143,18 +154,18 @@ export const Members = (props) => {
             </div>
           </div>
             <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-              Enrollment Number: {user.username}
+              <strong>Enrollment Number:</strong> {user.username}
             </Typography>
             <Typography variant="body2" gutterBottom>
-              Email: {user.email}
+              <strong>Email:</strong> {user.email}
             </Typography>
             <Typography variant="body2" gutterBottom>
-              <p>Moderator:</p>{user.moderator ? <DoneIcon style={{position:"relative", top:"8.5px"}}/>: <CancelRoundedIcon style={{position:"relative", top:"8.5px"}}/>}
+              <p><strong>Moderator:</strong></p>{user.moderator ? <DoneIcon style={{position:"relative", top:"8.5px"}}/>: <CancelRoundedIcon style={{position:"relative", top:"8.5px"}}/>}
               {user.moderator ? <Button size="small" variant="outlined" style={{ marginLeft: '5px',color: 'red'}}  onClick={() => {handleadminchange(user.id, user.moderator)}}>Remove as admin</Button>: 
               <Button size="small" variant="outlined" style={{marginLeft: '5px', color: 'green'}} onClick={() => {handleadminchange(user.id, user.moderator)}}>Make admin</Button>}
             </Typography>
             <Typography variant="body2" gutterBottom>
-            <p>Banned:</p>{user.is_banned ? <DoneIcon style={{position:"relative", top:"8.5px"}}/>: <CancelRoundedIcon style={{position:"relative", top:"8.5px"}}/>}
+            <p><strong>Banned:</strong></p>{user.is_banned ? <DoneIcon style={{position:"relative", top:"8.5px"}}/>: <CancelRoundedIcon style={{position:"relative", top:"8.5px"}}/>}
               {user.is_banned ? <Button size="small" variant="outlined" style={{marginLeft: '5px', color: 'green'}} onClick={() => {handlebanchange(user.id, user.is_banned)}}>Enable</Button>: 
               <Button size="small" variant="outlined" style={{marginLeft: '5px', color: 'red'}}  onClick={() => {handlebanchange(user.id, user.is_banned)}}>Disable</Button>}
             </Typography>

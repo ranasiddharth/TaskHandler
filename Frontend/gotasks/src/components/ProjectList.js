@@ -31,6 +31,8 @@ import ListItem from "@material-ui/core/ListItem";
 import LogoutIcon from '@material-ui/icons/ExitToApp';
 import GroupIcon from '@material-ui/icons/Group';
 import WorkIcon from '@material-ui/icons/Work';
+import SearchIcon from "@material-ui/icons/Search"
+import useSearchStyles from "../styles/SearchBar.js";
 
 
 const Navbar = (props) => {
@@ -172,6 +174,9 @@ export const ProjectList = (props) => {
   const [fetched, setFetched] = useState(false)
   const history = useHistory()
   const [lists, setLists] = useState([])
+  const searcher = useSearchStyles();
+  const [q, setQ] = useState("");
+  const [searchParam] = useState(["list_name"]);
 
   const fetchList = async() => {
     http.get(`/gotasks/projects/${proj_id}/lists/`)
@@ -192,6 +197,20 @@ export const ProjectList = (props) => {
   }, [])
 
 
+  function search(items) {
+    return items.filter((item) => {
+        return searchParam.some((newItem) => {
+            return (
+                item[newItem]
+                    .toString()
+                    .toLowerCase()
+                    .indexOf(q.toLowerCase()) > -1
+            );
+        });
+    });
+  }
+
+
   if(!fetched === true){
     return(
       <>
@@ -205,7 +224,21 @@ export const ProjectList = (props) => {
       <>
       <div>
         <Navbar lists={lists} setLists={setLists} fetchList={fetchList}/>
-        {lists.map(list => {
+        <div className={searcher.search}>
+          <SearchIcon />
+          <input
+          type="search"
+          name="search-form"
+          id="search-form"
+          style={{flexGrow: "1", border: "none", outline: "none", height: "100%", borderRadius: "5px", fontSize: "16px"}}
+          className="search-input"
+          placeholder="Search lists by name..."
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+        />
+        </div>
+        <br />
+        {search(lists).map(list => {
         return (
         <>
         <ListItems key={list.id} list={list} />

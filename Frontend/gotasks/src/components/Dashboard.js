@@ -18,11 +18,16 @@ import { Loading } from "./Loading.js";
 import { useHistory } from "react-router-dom";
 import "../styles/ListTags.css";
 import Header2 from "./Header2.js";
+import SearchIcon from "@material-ui/icons/Search"
+import useSearchStyles from "../styles/SearchBar.js";
 
 
 const Project = (props) => {
 
   const projects = props.projectState
+  const searcher = useSearchStyles();
+  const [q, setQ] = useState("");
+  const [searchParam] = useState(["project_name"]);
 
   const classes = useCardStyles()
 
@@ -34,10 +39,37 @@ const Project = (props) => {
 
   }
 
+  function search(items) {
+    return items.filter((item) => {
+        return searchParam.some((newItem) => {
+            return (
+                item[newItem]
+                    .toString()
+                    .toLowerCase()
+                    .indexOf(q.toLowerCase()) > -1
+            );
+        });
+    });
+  }
+
   return(
     <div>
     <h1 className={classes.heading}>Projects</h1>
-    {projects.map(project => {
+    <div className={searcher.search}>
+          <SearchIcon />
+          <input
+          type="search"
+          name="search-form"
+          id="search-form"
+          style={{flexGrow: "1", border: "none", outline: "none", height: "100%", borderRadius: "5px", fontSize: "16px"}}
+          className="search-input"
+          placeholder="Search projects by name..."
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+        />
+    </div>
+    <br />
+    {search(projects).map(project => {
       return (
         <Card sx={{ minWidth: 275 }} variant="outlined" className={classes.cardattr} key={project.id}>
           <CardContent>
@@ -77,6 +109,9 @@ const Project = (props) => {
 const CardShow = (props) => {
 
   const cards = props.cardState
+  const searcher = useSearchStyles();
+  const [q, setQ] = useState("");
+  const [searchParam] = useState(["card_name"]);
 
   const classes = useCardStyles()
 
@@ -88,11 +123,37 @@ const CardShow = (props) => {
 
   }
 
+  function search(items) {
+    return items.filter((item) => {
+        return searchParam.some((newItem) => {
+            return (
+                item[newItem]
+                    .toString()
+                    .toLowerCase()
+                    .indexOf(q.toLowerCase()) > -1
+            );
+        });
+    });
+  }
   
   return(
     <div >
     <h1 className={classes.heading}>Assigned Cards</h1>
-    {cards.map(card => {
+    <div className={searcher.search}>
+          <SearchIcon />
+          <input
+          type="search"
+          name="search-form"
+          id="search-form"
+          style={{flexGrow: "1", border: "none", outline: "none", height: "100%", borderRadius: "5px", fontSize: "16px"}}
+          className="search-input"
+          placeholder="Search cards by name..."
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+        />
+    </div>
+      <br />
+    {search(cards).map(card => {
         return (
         <Card sx={{ minWidth: 275 }} variant="outlined" className={classes.cardattr} key={card.id}>
           <CardContent>

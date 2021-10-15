@@ -1,5 +1,5 @@
 import http from "./axios.js";
-import {AppBar, Toolbar, Button, Typography, Box, Card} from '@material-ui/core'
+import {AppBar, Toolbar, Button, Typography, Box, Card, TextField} from '@material-ui/core'
 import useStyles from '../styles/Navbar.js'
 import CardContent from "@material-ui/core/CardContent";
 import Avatar from '@material-ui/core/Avatar';
@@ -17,6 +17,8 @@ import { Loading } from "./Loading.js";
 import Hidden from "@material-ui/core/Hidden";
 import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
+import SearchIcon from "@material-ui/icons/Search"
+import useSearchStyles from "../styles/SearchBar.js";
 import SwipeableDrawer from "@material-ui/core/SwipeableDrawer";
 import Divider from "@material-ui/core/Divider";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
@@ -179,6 +181,9 @@ export const Projects = (props) => {
 
   const [projects, setProjects] = useState([])
   const [fetched, setFetched] = useState(false)
+  const searcher = useSearchStyles();
+  const [q, setQ] = useState("");
+  const [searchParam] = useState(["project_name"]);
 
   const classes = useCardStyles();
 
@@ -203,6 +208,22 @@ export const Projects = (props) => {
   }, [])
 
 
+  function search(items) {
+    return items.filter((item) => {
+        return searchParam.some((newItem) => {
+            return (
+                item[newItem]
+                    .toString()
+                    .toLowerCase()
+                    .indexOf(q.toLowerCase()) > -1
+            );
+        });
+    });
+  }
+
+
+
+
   if(!fetched === true){
     return (
       <>
@@ -215,16 +236,26 @@ export const Projects = (props) => {
     return (
       <>
       <Navbar projects={projects} setProjects={setProjects} fetchData={fetchData}/>
+      <div className={searcher.search}>
+          <SearchIcon />
+          <input
+          type="search"
+          name="search-form"
+          id="search-form"
+          style={{flexGrow: "1", border: "none", outline: "none", height: "100%", borderRadius: "5px", fontSize: "16px"}}
+          className="search-input"
+          placeholder="Search projects by name..."
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+        />
+      </div>
       <div>
       <br />
-
-      {projects.map(project => {
-        return (
+      {search(projects).map((project) => (
         <>
         <ProjectItem key={project.id} project={project} />
         </>
-        )
-      })}
+      ))}‌
       </div>
       </>
     )
