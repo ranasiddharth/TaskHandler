@@ -179,7 +179,7 @@ export const ProjectList = (props) => {
   const [searchParam] = useState(["list_name"]);
 
   const fetchList = async() => {
-    http.get(`/gotasks/projects/${proj_id}/lists/`)
+    await http.get(`/gotasks/projects/${proj_id}/lists/`)
     .then(res => {
       // console.log(res.data)
       setLists(res.data)
@@ -189,11 +189,31 @@ export const ProjectList = (props) => {
     })
   }
 
-  useEffect(() => {
-    if(!props.loginStatus){
-      history.push("/");
-    }
-    fetchList()
+  const [loggedin, setLoggedin] = useState(false)
+  const checkLoginStatus = async() => {
+    await axios.get("http://127.0.0.1:8000/gotasks/login_check/", {withCredentials:true})
+    .then(response => {
+      console.log(response)
+      if (response.data.loggedin === true && loggedin === false){
+        setLoggedin(true)
+      }
+      else if (response.data.loggedin === false && loggedin === false){
+        setLoggedin(false)
+        history.push("/")
+      }
+      else{
+        setLoggedin(false);
+        history.push("/")
+      }
+    }).catch(error => {
+      console.log("login check failed, try again", error)
+    })
+  }
+
+
+  useEffect(async() => {
+    await checkLoginStatus();
+    await fetchList();
   }, [])
 
 
@@ -228,6 +248,8 @@ export const ProjectList = (props) => {
           <SearchIcon />
           <input
           type="search"
+          autocomplete="off"
+          list="data"
           name="search-form"
           id="search-form"
           style={{flexGrow: "1", border: "none", outline: "none", height: "100%", borderRadius: "5px", fontSize: "16px"}}
@@ -236,6 +258,11 @@ export const ProjectList = (props) => {
           value={q}
           onChange={(e) => setQ(e.target.value)}
         />
+            <datalist id="data">
+              {lists.map((item, key) =>
+                <option key={key} value={item.list_name} />
+              )}
+            </datalist>
         </div>
         <br />
         {search(lists).map(list => {

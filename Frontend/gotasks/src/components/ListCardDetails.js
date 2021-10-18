@@ -1,5 +1,6 @@
 import { useParams } from "react-router"
 import http from './axios.js'
+import axios from 'axios'
 import moment from "moment"
 import { useHistory } from "react-router-dom"
 import { useState, useEffect } from "react"
@@ -73,11 +74,31 @@ export const ListCardDetails = (props) => {
   };
 
   const [fetched, setFetched] = useState(false)
+  const [loggedin, setLoggedin] = useState(false)
+  const checkLoginStatus = async() => {
+    await axios.get("http://127.0.0.1:8000/gotasks/login_check/", {withCredentials:true})
+    .then(response => {
+      console.log(response)
+      if (response.data.loggedin === true && loggedin === false){
+        setLoggedin(true)
+      }
+      else if (response.data.loggedin === false && loggedin === false){
+        setLoggedin(false)
+        history.push("/")
+      }
+      else{
+        setLoggedin(false);
+        history.push("/")
+      }
+    }).catch(error => {
+      console.log("login check failed, try again", error)
+    })
+  }
 
 
-  const fetchCard = (proj_id, list_id, card_id) => {
+  const fetchCard = async(proj_id, list_id, card_id) => {
 
-    http.get(`/gotasks/usershow/`).then(
+    await http.get(`/gotasks/usershow/`).then(
       (res) => {
         console.log(res.data)
         setUsers(res.data)
@@ -85,7 +106,7 @@ export const ListCardDetails = (props) => {
         console.log(err)
     });
 
-    http.get(`/gotasks/projects/${proj_id}/lists/${list_id}/cards/${card_id}`)
+    await http.get(`/gotasks/projects/${proj_id}/lists/${list_id}/cards/${card_id}`)
     .then(res => {
       setItem(res.data)
       setFetched(true)
@@ -95,10 +116,8 @@ export const ListCardDetails = (props) => {
   }
 
   useEffect(async() => {
-    if(!props.loginStatus){
-      history.push("/");
-    }
-    fetchCard(proj_id, list_id, card_id)
+    await checkLoginStatus();
+    await fetchCard(proj_id, list_id, card_id)
   }, [])
 
 

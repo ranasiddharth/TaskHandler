@@ -18,28 +18,6 @@ import { ListCardDetails } from './components/ListCardDetails';
 
 function App() {
 
-  const history = useHistory()
-  const [loggedin, setLoggedin] = useState(false)
-  const checkLoginStatus = () => {
-    axios.get("http://127.0.0.1:8000/gotasks/login_check/", {withCredentials:true})
-    .then(response => {
-      console.log(response)
-      if (response.data.loggedin === true && loggedin === false){
-        setLoggedin(true)
-      }
-      if (response.data.loggedin === false && loggedin === false){
-        setLoggedin(false)
-      }
-    }).catch(error => {
-      console.log("login check failed, try again", error)
-    })
-  }
-
-  useEffect(()=>{
-    checkLoginStatus();
-    // console.log(loggedin)
-  })
-
   return (
     <>
       <Switch>
@@ -50,28 +28,28 @@ function App() {
           <Oauth />
         </Route>
         <Route exact path='/gotasks/dashboard/' >
-          <Dashboard loginStatus={loggedin} />
+          <Dashboard />
         </Route>
         <Route exact path='/gotasks/projects/' >
-          <Projects loginStatus={loggedin} />
+          <Projects />
         </Route>
         <Route exact path='/gotasks/projects/:proj_id' >
-          <ProjectDetails loginStatus={loggedin}/>
+          <ProjectDetails />
         </Route>
         <Route exact path='/gotasks/projects/:proj_id/lists' >
-          <ProjectList loginStatus={loggedin} />
+          <ProjectList />
         </Route>
         <Route exact path='/gotasks/projects/:proj_id/lists/:list_id' >
-          <ProjectListDetails loginStatus={loggedin} />
+          <ProjectListDetails />
         </Route>
         <Route exact path='/gotasks/projects/:proj_id/lists/:list_id/cards' >
-          <ListCard loginStatus={loggedin} />
+          <ListCard />
         </Route>
         <Route exact path='/gotasks/projects/:proj_id/lists/:list_id/cards/:card_id' >
-          <ListCardDetails loginStatus={loggedin}/>
+          <ListCardDetails />
         </Route>
         <Route exact path='/gotasks/users/' >
-          <Members loginStatus={loggedin}/>
+          <Members />
         </Route>
         <Route component={NotFound} />
       </Switch>

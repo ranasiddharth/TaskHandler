@@ -60,6 +60,8 @@ const Project = (props) => {
           <input
           type="search"
           name="search-form"
+          list="data"
+          autocomplete="off"
           id="search-form"
           style={{flexGrow: "1", border: "none", outline: "none", height: "100%", borderRadius: "5px", fontSize: "16px"}}
           className="search-input"
@@ -67,6 +69,11 @@ const Project = (props) => {
           value={q}
           onChange={(e) => setQ(e.target.value)}
         />
+            <datalist id="data">
+              {projects.map((item, key) =>
+                <option key={key} value={item.project_name} />
+              )}
+            </datalist>
     </div>
     <br />
     {search(projects).map(project => {
@@ -144,6 +151,8 @@ const CardShow = (props) => {
           <input
           type="search"
           name="search-form"
+          list="data"
+          autocomplete="off"
           id="search-form"
           style={{flexGrow: "1", border: "none", outline: "none", height: "100%", borderRadius: "5px", fontSize: "16px"}}
           className="search-input"
@@ -151,6 +160,11 @@ const CardShow = (props) => {
           value={q}
           onChange={(e) => setQ(e.target.value)}
         />
+            <datalist id="data">
+              {cards.map((item, key) =>
+                <option key={key} value={item.card_name} />
+              )}
+            </datalist>
     </div>
       <br />
     {search(cards).map(card => {
@@ -188,7 +202,7 @@ const CardShow = (props) => {
 }
 
 
-export const Dashboard = (props) => {
+export const Dashboard = () => {
 
   const history = useHistory();
 
@@ -198,8 +212,30 @@ export const Dashboard = (props) => {
   const [projects, setProjects] = useState([])
   const [cards, setCards] = useState([])
   // const [username, setUsername] = useState("")
+  const [loggedin, setLoggedin] = useState(false)
+  const checkLoginStatus = async() => {
+    await axios.get("http://127.0.0.1:8000/gotasks/login_check/", {withCredentials:true})
+    .then(response => {
+      console.log(response)
+      if (response.data.loggedin === true && loggedin === false){
+        setLoggedin(true)
+      }
+      else if (response.data.loggedin === false && loggedin === false){
+        setLoggedin(false)
+        history.push("/")
+      }
+      else{
+        setLoggedin(false);
+        history.push("/")
+      }
+    }).catch(error => {
+      console.log("login check failed, try again", error)
+    })
+  }
+
 
   async function fetchData(){
+
     await http.get("/gotasks/loggeduser/")
     .then(res => {
       setUser(res.data[0])
@@ -207,17 +243,6 @@ export const Dashboard = (props) => {
     })
     .catch(err => console.log(err))
 
-    // const projectAPI = http.get("/gotasks/dashboard/projects")
-    // const cardAPI = http.get("/gotasks/dashboard/cards")
-    // axios.all([projectAPI, cardAPI]).then(
-    //   ([project, card]) => {
-    //     setProjects(project.data)
-    //     setCards(card.data)  
-    //     setFetched(true)
-    //   })
-    //   .catch(err => {
-    //   console.log("error in retrieving data")
-    // })
     let count = 0;
     await http.get("/gotasks/dashboard/projects").then(
       res=>{
@@ -239,18 +264,15 @@ export const Dashboard = (props) => {
     }
   }
 
-  useEffect(() => {
-    if(!props.loginStatus){
-      history.push("/");
-    }
-    fetchData()
+  useEffect(async() => {
+    await checkLoginStatus();
+    await fetchData();
   }, [])
 
 
   if(!fetched === true){
     return(
       <>
-      {/* <Header2 /> */}
       <Loading />
       </>
     )

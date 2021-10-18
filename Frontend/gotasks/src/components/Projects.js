@@ -184,13 +184,33 @@ export const Projects = (props) => {
   const searcher = useSearchStyles();
   const [q, setQ] = useState("");
   const [searchParam] = useState(["project_name"]);
+  const [loggedin, setLoggedin] = useState(false)
+  const checkLoginStatus = async() => {
+    await axios.get("http://127.0.0.1:8000/gotasks/login_check/", {withCredentials:true})
+    .then(response => {
+      console.log(response)
+      if (response.data.loggedin === true && loggedin === false){
+        setLoggedin(true)
+      }
+      else if (response.data.loggedin === false && loggedin === false){
+        setLoggedin(false)
+        history.push("/")
+      }
+      else{
+        setLoggedin(false);
+        history.push("/")
+      }
+    }).catch(error => {
+      console.log("login check failed, try again", error)
+    })
+  }
 
   const classes = useCardStyles();
 
   const history = useHistory();
 
-  const fetchData = () => {
-     http.get("/gotasks/projects").then(
+  const fetchData = async() => {
+    await http.get("/gotasks/projects").then(
       (res) => {
         setProjects(res.data)
         setFetched(true)
@@ -200,11 +220,9 @@ export const Projects = (props) => {
     })
   }
 
-  useEffect(() => {
-    if(!props.loginStatus === true){
-      history.push("/");
-    }
-    fetchData()
+  useEffect(async() => {
+    await checkLoginStatus();
+    await fetchData();
   }, [])
 
 
@@ -240,6 +258,8 @@ export const Projects = (props) => {
           <SearchIcon />
           <input
           type="search"
+          autocomplete="off"
+          list="data"
           name="search-form"
           id="search-form"
           style={{flexGrow: "1", border: "none", outline: "none", height: "100%", borderRadius: "5px", fontSize: "16px"}}
@@ -248,6 +268,11 @@ export const Projects = (props) => {
           value={q}
           onChange={(e) => setQ(e.target.value)}
         />
+            <datalist id="data">
+              {projects.map((item, key) =>
+                <option key={key} value={item.project_name} />
+              )}
+            </datalist>
       </div>
       <div>
       <br />

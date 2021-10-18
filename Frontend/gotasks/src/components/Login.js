@@ -12,6 +12,9 @@ import { BeatingHeart } from 'beating-heart-emoji'
 import 'beating-heart-emoji/dist/index.css'
 import {Redirect} from 'react-router-dom'
 import Cookies from 'js-cookie';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+import { useHistory } from 'react-router-dom';
 
 
 function Copyright() {
@@ -29,18 +32,36 @@ function Copyright() {
 export default function Login() {
 
   const classes = useLoginStyles();
+  const history = useHistory()
+  const [loggedin, setLoggedin] = useState(false)
+  const checkLoginStatus = async() => {
+    await axios.get("http://127.0.0.1:8000/gotasks/login_check/", {withCredentials:true})
+    .then(response => {
+      console.log(response)
+      if (response.data.loggedin === true && loggedin === false){
+        setLoggedin(true)
+        history.push("/gotasks/dashboard")
+      }
+      else if (response.data.loggedin === false && loggedin === false){
+        setLoggedin(false)
+      }
+      else{
+        setLoggedin(false);
+      }
+    }).catch(error => {
+      console.log("login check failed, try again", error)
+    })
+  }
+
+  useEffect(async() => {
+    await checkLoginStatus();
+  }, [])
 
   const oauth = () => {
     // eslint-disable-next-line no-restricted-globals
     window.location.href='https://channeli.in/oauth/authorise/?client_id=RZ1hP1gezPy5j6fBffYBllW2PQvYxlQrx7IbikbG&redirect_uri=http://localhost:3000/gotasks/oauth/&state=RANDOM_STATE_STRING'
   }
 
-  if(Cookies.get('mytoken')){
-    return (
-    <Redirect to="/gotasks/dashboard" />
-    )
-  }
-  else{
     return (
       <Grid container component="main" className={classes.root}>
         <CssBaseline />
@@ -73,5 +94,4 @@ export default function Login() {
         </Grid>
       </Grid>
     );
-  }
 }

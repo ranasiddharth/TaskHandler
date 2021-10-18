@@ -83,13 +83,14 @@ def check_auth(request):
     msg = {
         "loggedin": False
     }
-    if request.user.is_authenticated:
+    if request.user.is_authenticated and not request.user.is_banned:
         msg["loggedin"] = True
         res = Response(msg, status=status.HTTP_200_OK)
         res['Access-Control-Allow-Origin'] = 'http://localhost:3000'
         res['Access-Control-Allow-Credentials'] = 'true'
         return res
     else:
+        msg["loggedin"] = False
         res = Response(msg, status=status.HTTP_200_OK)
         res['Access-Control-Allow-Origin'] = 'http://localhost:3000'
         res['Access-Control-Allow-Credentials'] = 'true'

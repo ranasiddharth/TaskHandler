@@ -71,12 +71,31 @@ export const ProjectListDetails = (props) => {
   const [fetched, setFetched] = useState(false)
   const { proj_id, list_id } = useParams()
   const [item, setItem] = useState([])
+  const [loggedin, setLoggedin] = useState(false)
+  const checkLoginStatus = async() => {
+    await axios.get("http://127.0.0.1:8000/gotasks/login_check/", {withCredentials:true})
+    .then(response => {
+      console.log(response)
+      if (response.data.loggedin === true && loggedin === false){
+        setLoggedin(true)
+      }
+      else if (response.data.loggedin === false && loggedin === false){
+        setLoggedin(false)
+        history.push("/")
+      }
+      else{
+        setLoggedin(false);
+        history.push("/")
+      }
+    }).catch(error => {
+      console.log("login check failed, try again", error)
+    })
+  }
 
-  const fetchList = (proj_id, list_id) => {
-    http.get(`/gotasks/projects/${proj_id}/lists/${list_id}`)
+
+  const fetchList = async(proj_id, list_id) => {
+    await http.get(`/gotasks/projects/${proj_id}/lists/${list_id}`)
     .then(res => {
-      // console.log(id)
-      // console.log(res.data)
       setItem(res.data)
       setFetched(true)
     }).catch(err=>{
@@ -90,11 +109,9 @@ export const ProjectListDetails = (props) => {
 
   }
 
-  useEffect(() => {
-    if(!props.loginStatus){
-      history.push("/");
-    }
-    fetchList(proj_id, list_id)
+  useEffect(async() => {
+    await checkLoginStatus();
+    await fetchList(proj_id, list_id)
   }, [])
 
 

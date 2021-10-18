@@ -31,7 +31,6 @@ class CardsShowSerializer(serializers.ModelSerializer):
 
 
 class CardsSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Cards
         fields = ['id', 'card_name', 'list', 'description', 'assigned', 'date_created', 'due_date']
@@ -47,9 +46,6 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    # creator = serializers.StringRelatedField(many=True)
-    # cards = CardsShowSerializer(many=True)
-
     class Meta:
         model = User
         fields = ['id', 'username', 'fullname', 'email','moderator', 'is_banned']
@@ -62,8 +58,8 @@ class UserShowSerializer(serializers.ModelSerializer):
         fields = ['id', 'username', 'fullname']
 
 
-class DashboardProjectSerializer(serializers.ModelSerializer):
 
+class DashboardProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Projects
         fields = "__all__"
@@ -72,7 +68,6 @@ class DashboardProjectSerializer(serializers.ModelSerializer):
 
 
 class DashboardCardSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Cards
         fields = "__all__"

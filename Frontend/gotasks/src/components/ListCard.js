@@ -189,10 +189,31 @@ export const ListCard = (props) => {
   const searcher = useSearchStyles();
   const [q, setQ] = useState("");
   const [searchParam] = useState(["card_name"]);
+  const [loggedin, setLoggedin] = useState(false)
+  const checkLoginStatus = async() => {
+    await axios.get("http://127.0.0.1:8000/gotasks/login_check/", {withCredentials:true})
+    .then(response => {
+      console.log(response)
+      if (response.data.loggedin === true && loggedin === false){
+        setLoggedin(true)
+      }
+      else if (response.data.loggedin === false && loggedin === false){
+        setLoggedin(false)
+        history.push("/")
+      }
+      else{
+        setLoggedin(false);
+        history.push("/")
+      }
+    }).catch(error => {
+      console.log("login check failed, try again", error)
+    })
+  }
 
-  const fetchCard = () => {
 
-    http.get(`/gotasks/usershow/`).then(
+  const fetchCard = async() => {
+
+    await http.get(`/gotasks/usershow/`).then(
       (res) => {
         console.log(res.data)
         setUsers(res.data)
@@ -201,7 +222,7 @@ export const ListCard = (props) => {
     });
 
 
-    http.get(`/gotasks/projects/${proj_id}/lists/${list_id}/cards`)
+    await http.get(`/gotasks/projects/${proj_id}/lists/${list_id}/cards`)
     .then(res => {
       // console.log(res.data)
       setCards(res.data)
@@ -211,11 +232,9 @@ export const ListCard = (props) => {
     })
   }
 
-  useEffect(() => {
-    if(!props.loginStatus){
-      history.push("/");
-    }
-    fetchCard()
+  useEffect(async() => {
+    await checkLoginStatus();
+    await fetchCard();
   }, [])
 
 
@@ -251,6 +270,8 @@ export const ListCard = (props) => {
           <input
           type="search"
           name="search-form"
+          list="data"
+          autocomplete="off"
           id="search-form"
           style={{flexGrow: "1", border: "none", outline: "none", height: "100%", borderRadius: "5px", fontSize: "16px"}}
           className="search-input"
@@ -258,6 +279,11 @@ export const ListCard = (props) => {
           value={q}
           onChange={(e) => setQ(e.target.value)}
         />
+            <datalist id="data">
+              {cards.map((item, key) =>
+                <option key={key} value={item.card_name} />
+              )}
+            </datalist>
       </div>
       <br/>
         {search(cards).map(card => {
