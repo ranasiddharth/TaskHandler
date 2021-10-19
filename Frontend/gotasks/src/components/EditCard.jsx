@@ -3,9 +3,10 @@ import http from './axios.js'
 import Dialog from '@material-ui/core/Dialog';
 import { TextField, Button, MenuItem, Select, FormControl, InputLabel, Box } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core';
-import { Checkbox } from '@material-ui/core';
 import { ListItemIcon, ListItemText } from '@material-ui/core';
 import AddBoxIcon from '@material-ui/icons/AddBox';
+import Checkbox from '@material-ui/core/Checkbox'
+import FormControlLabel from '@material-ui/core/FormControlLabel'
 import UpdateIcon from '@material-ui/icons/Update';
 import CancelIcon from '@material-ui/icons/Cancel';
 import { useState, useEffect } from 'react';
@@ -60,6 +61,7 @@ const Form = ({ handleUpdateClose }) => {
   const [members, setMembers] = useState([]);
   const [lists, setLists] = useState([]);
   const [selectedlist, setSelectedlist] = useState(null)
+  const [checked, setChecked] = useState(false)
   const [errormsg, setErrormsg] = useState(false);
   const [err, setErr] = useState(false)
   const [duperr, setDuperr] = useState(false)
@@ -80,6 +82,7 @@ const Form = ({ handleUpdateClose }) => {
     formData.append("assigned", assigned);
     formData.append("list", selectedlist)
     formData.append("due_date", duedate);
+    formData.append("is_completed", checked)
 
 
     const config = {
@@ -155,23 +158,16 @@ const Form = ({ handleUpdateClose }) => {
         setDesc(res.data.description)
         setDuedate(res.data.due_date.slice(0, -1))
         setSelectedlist(res.data.list)
+        setChecked(res.data.is_completed)
       }).catch(err => {
         console.log(err)
       })
   }, [])
 
 
-  // const [checkedState, setCheckedState] = useState(
-  //   new Array(members.length).fill(false)
-  // );
-
-  // const handleCheckBox = (position) => {
-  //   const updatedCheckedState = checkedState.map((item, index) =>
-  //     index === position ? !item : item
-  //   );
-  //   setCheckedState(updatedCheckedState);
-  // };
-
+  function handleCompleteChange(e){
+    setChecked(e.target.checked)
+  }
 
   // const validateName = () => {
   //   for (let i=0; i<getcards.length; i++){
@@ -287,8 +283,11 @@ const Form = ({ handleUpdateClose }) => {
           }}
       />
       
-      <br />
-
+      <FormControlLabel 
+        style={{alignSelf: "flex-start"}}
+        control={<Checkbox style={{margin: "0px", paddingRight: "3px"}} checked={checked} onChange={handleCompleteChange}/>} 
+        label="Completion Status" 
+      />
 
       <div>
         <Button variant="contained"  onClick={()=>{

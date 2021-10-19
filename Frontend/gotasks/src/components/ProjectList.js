@@ -33,6 +33,8 @@ import GroupIcon from '@material-ui/icons/Group';
 import WorkIcon from '@material-ui/icons/Work';
 import SearchIcon from "@material-ui/icons/Search"
 import useSearchStyles from "../styles/SearchBar.js";
+import Checkbox from '@material-ui/core/Checkbox'
+import CancelRoundedIcon from "@material-ui/icons/CancelRounded";
 
 
 const Navbar = (props) => {
@@ -153,6 +155,16 @@ export const ListItems = (props) => {
           </Typography>
           <Typography variant="body1" gutterBottom>
           <strong>Created on:</strong> {moment(props.list.list_created).format("dddd, MMMM Do YYYY, h:mm:ss a")}
+          </Typography>
+          <Typography variant="body2" gutterBottom style={{display: "flex", justifyContent: "flex-start", alignItems: "center"}}>
+            <strong>Completion Status:</strong> {props.list.is_completed ? 
+            <Checkbox
+              checked={true}
+              style={{paddingTop: "0px", paddingBottom: "0px", color: "#3f51b5"}}
+              inputProps={{ 'aria-label': 'controlled' }}
+            /> : 
+            <CancelRoundedIcon style={{color: "#3f51b5", marginLeft: "8px"}}/>
+          }
           </Typography>
         </CardContent>
         <CardActions className={classes.cardActions}>

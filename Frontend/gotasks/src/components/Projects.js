@@ -27,6 +27,8 @@ import ListItem from "@material-ui/core/ListItem";
 import LogoutIcon from '@material-ui/icons/ExitToApp';
 import GroupIcon from '@material-ui/icons/Group';
 import HomeIcon from '@material-ui/icons/Home';
+import Checkbox from '@material-ui/core/Checkbox'
+import CancelRoundedIcon from "@material-ui/icons/CancelRounded";
 
 
 const Navbar = (props) => {
@@ -165,6 +167,16 @@ export const ProjectItem = (props) => {
           </div>
           <Typography variant="body2" gutterBottom>
           <strong>Created by:</strong> {props.project.project_creator}
+          </Typography>
+          <Typography variant="body2" gutterBottom style={{display: "flex", justifyContent: "flex-start", alignItems: "center"}}>
+          <strong>Completion Status:</strong> {props.project.is_completed ? 
+          <Checkbox
+            checked={true}
+            style={{paddingTop: "0px", paddingBottom: "0px", color: "#3f51b5"}}
+            inputProps={{ 'aria-label': 'controlled' }}
+          /> : 
+          <CancelRoundedIcon style={{color: "#3f51b5", marginLeft: "8px"}}/>
+          }
           </Typography>
         </CardContent>
         <CardActions className={classes.cardActions}>

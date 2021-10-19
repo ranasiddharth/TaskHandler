@@ -9,7 +9,7 @@ class ProjectsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Projects
-        fields = ['id', 'project_name', 'project_wiki', 'project_creator', 'project_members', 'project_created']
+        fields = ['id', 'project_name', 'project_wiki', 'project_creator', 'project_members', 'project_created', 'is_completed']
 
 
 
@@ -18,7 +18,7 @@ class ListsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Lists
-        fields = ['id', 'list_name', 'list_created', 'project']
+        fields = ['id', 'list_name', 'list_created', 'project', 'is_completed']
         read_only_fields = ['project']
 
 
@@ -33,7 +33,7 @@ class CardsShowSerializer(serializers.ModelSerializer):
 class CardsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cards
-        fields = ['id', 'card_name', 'list', 'description', 'assigned', 'date_created', 'due_date']
+        fields = ['id', 'card_name', 'list', 'description', 'assigned', 'date_created', 'due_date', 'is_completed']
 
 
 

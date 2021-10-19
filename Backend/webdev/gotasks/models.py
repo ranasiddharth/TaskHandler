@@ -22,6 +22,7 @@ class Projects(models.Model):
     project_creator = models.ForeignKey(to=User, on_delete=models.CASCADE, related_name='creator')
     project_members = models.ManyToManyField(User)
     project_created = models.DateTimeField(auto_now_add=True)
+    is_completed = models.BooleanField(default=False)
 
     class Meta:
         ordering = ['project_created']
@@ -34,6 +35,7 @@ class Lists(models.Model):
     list_name = models.CharField(max_length=100)
     project = models.ForeignKey(to=Projects, on_delete=models.CASCADE)
     list_created = models.DateTimeField(auto_now_add=True)
+    is_completed = models.BooleanField(default=False)
 
     class Meta:
         ordering = ['list_created']
@@ -50,6 +52,7 @@ class Cards(models.Model):
     assigned = models.ForeignKey(to=User, on_delete=models.CASCADE, related_name='cards')
     date_created = models.DateTimeField(auto_now_add=True)
     due_date = models.DateTimeField()
+    is_completed = models.BooleanField(default=False)
 
     class Meta:
         ordering = ['due_date']

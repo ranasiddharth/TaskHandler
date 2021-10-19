@@ -5,8 +5,9 @@ import { TextField, Button, MenuItem, Select, FormControl, InputLabel, Box } fro
 import { makeStyles } from '@material-ui/core';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
-import { Checkbox } from '@material-ui/core';
 import { ListItemIcon, ListItemText } from '@material-ui/core';
+import Checkbox from '@material-ui/core/Checkbox'
+import FormControlLabel from '@material-ui/core/FormControlLabel'
 import AddBoxIcon from '@material-ui/icons/AddBox';
 import UpdateIcon from '@material-ui/icons/Update';
 import CancelIcon from '@material-ui/icons/Cancel';
@@ -53,6 +54,7 @@ const Form = ({ handleUpdateClose }) => {
   const [errormsg, setErrormsg] = useState(false);
   const [err, setErr] = useState(false)
   const [duperr, setDuperr] = useState(false)
+  const [checked, setChecked] = useState(false)
 
 
   const handleUpdateSubmit = async(e) => {
@@ -67,6 +69,8 @@ const Form = ({ handleUpdateClose }) => {
     selected.map(select => {
       formData.append("project_members", select)
     })
+
+    formData.append("is_completed", checked)
 
     const config = {
       headers: {
@@ -110,11 +114,16 @@ const Form = ({ handleUpdateClose }) => {
         setName(res.data.project_name)
         setWiki(res.data.project_wiki)
         setSelected(res.data.project_members)
+        setChecked(res.data.is_completed)
       }).catch(err => {
         console.log(err)
     });
     
   }, [])
+
+  function handleCompleteChange(e){
+    setChecked(e.target.checked)
+  }
 
 
   return (
@@ -148,6 +157,7 @@ const Form = ({ handleUpdateClose }) => {
           }}
       />
       </div>
+      <br />
       <FormControl className={classes.formControl}>
         <InputLabel> Members </InputLabel>
         <Select 
@@ -168,6 +178,12 @@ const Form = ({ handleUpdateClose }) => {
           })}
         </Select>
       </FormControl>
+      <br />
+      <FormControlLabel 
+        style={{alignSelf: "flex-start"}}
+        control={<Checkbox style={{margin: "0px", paddingRight: "3px"}} checked={checked} onChange={handleCompleteChange}/>} 
+        label="Completion Status" 
+      />
 
       <div>
         <Button variant="contained"  onClick={()=>{

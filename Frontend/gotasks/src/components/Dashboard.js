@@ -20,6 +20,8 @@ import "../styles/ListTags.css";
 import Header2 from "./Header2.js";
 import SearchIcon from "@material-ui/icons/Search"
 import useSearchStyles from "../styles/SearchBar.js";
+import Checkbox from '@material-ui/core/Checkbox'
+import CancelRoundedIcon from "@material-ui/icons/CancelRounded";
 
 
 const Project = (props) => {
@@ -101,6 +103,16 @@ const Project = (props) => {
             <Typography variant="body2" gutterBottom>
               <strong>Created by:</strong> {project.project_creator.fullname}
             </Typography>
+            <Typography variant="body2" gutterBottom style={{display: "flex", justifyContent: "flex-start", alignItems: "center"}}>
+            <strong>Completion Status:</strong> {project.is_completed ? 
+            <Checkbox
+              checked={true}
+              style={{paddingTop: "0px", paddingBottom: "0px", color: "#3f51b5"}}
+              inputProps={{ 'aria-label': 'controlled' }}
+            /> : 
+            <CancelRoundedIcon style={{color: "#3f51b5", marginLeft: "8px"}}/>
+          }
+          </Typography>
           </CardContent>
           <CardActions className={classes.cardActions}>
               <Button size="small" variant="contained" color="primary" onClick={()=>{proj(project.id)}} disableElevation>Details</Button>
@@ -190,6 +202,16 @@ const CardShow = (props) => {
             <Typography variant="body2">
               <strong>Due Date:</strong> {moment(card.due_date).format("dddd, MMMM Do YYYY, h:mm:ss a")}
             </Typography>
+            <Typography variant="body2" gutterBottom style={{display: "flex", justifyContent: "flex-start", alignItems: "center"}}>
+            <strong>Completion Status:</strong> {card.is_completed ? 
+            <Checkbox
+              checked={true}
+              style={{paddingTop: "0px", paddingBottom: "0px", color: "#3f51b5"}}
+              inputProps={{ 'aria-label': 'controlled' }}
+            /> : 
+            <CancelRoundedIcon style={{color: "#3f51b5", marginLeft: "8px"}}/>
+          }
+          </Typography>
           </CardContent>
           <CardActions className={classes.cardActions}>
               <Button size="small" variant="contained" color="primary" onClick={() => {getcard(card.list.project, card.list.id, card.id)}} disableElevation>Details</Button>
@@ -207,12 +229,13 @@ export const Dashboard = () => {
   const history = useHistory();
 
   const classes = useCardStyles()
+  const label = { inputProps: { 'aria-label': 'Switch demo' } };
   const [user, setUser] = useState({})
   const [fetched, setFetched] = useState(false)
   const [projects, setProjects] = useState([])
   const [cards, setCards] = useState([])
-  // const [username, setUsername] = useState("")
   const [loggedin, setLoggedin] = useState(false)
+
   const checkLoginStatus = async() => {
     await axios.get("http://127.0.0.1:8000/gotasks/login_check/", {withCredentials:true})
     .then(response => {
@@ -233,13 +256,11 @@ export const Dashboard = () => {
     })
   }
 
-
   async function fetchData(){
 
     await http.get("/gotasks/loggeduser/")
     .then(res => {
       setUser(res.data[0])
-      // console.log(res.data)
     })
     .catch(err => console.log(err))
 
@@ -255,7 +276,6 @@ export const Dashboard = () => {
       res=>{
         setCards(res.data)
         count=count+1;
-        // setFetched(true)
       }
     ).catch(err => console.log(err))
 

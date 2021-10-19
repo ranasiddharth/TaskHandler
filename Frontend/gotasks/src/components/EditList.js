@@ -7,6 +7,8 @@ import { useParams } from "react-router"
 import AddBoxIcon from '@material-ui/icons/AddBox';
 import UpdateIcon from '@material-ui/icons/Update';
 import CancelIcon from '@material-ui/icons/Cancel';
+import Checkbox from '@material-ui/core/Checkbox'
+import FormControlLabel from '@material-ui/core/FormControlLabel'
 import axios from 'axios'
 import http from './axios.js'
 import Cookies from 'js-cookie'
@@ -41,13 +43,14 @@ const Form = ({ handleUpdateClose }) => {
   const [errormsg, setErrormsg] = useState(false);
   const [err, setErr] = useState(false)
   const [duperr, setDuperr] = useState(false)
+  const [checked, setChecked] = useState(false)
 
   const handleUpdateSubmit = async(e) => {
     e.preventDefault();
     console.log(name);
     var formData = new FormData();
     formData.append("list_name", name);
-    // console.log(getlists)
+    formData.append("is_completed", checked)
 
     const config = {
       headers: {
@@ -56,6 +59,7 @@ const Form = ({ handleUpdateClose }) => {
         'X-Requested-With': 'XMLHttpRequest'
       }
     }
+
     await axios.put(`http://127.0.0.1:8000/gotasks/projects/${proj_id}/lists/${list_id}/`,
     formData, config)
     .then(res => {
@@ -86,6 +90,7 @@ const Form = ({ handleUpdateClose }) => {
       (res) => {
         console.log(res.data)
         setName(res.data.list_name)
+        setChecked(res.data.is_completed)
       }).catch(err => {
         console.log(err)
       })
@@ -103,6 +108,10 @@ const Form = ({ handleUpdateClose }) => {
   //   }
   // }
 
+  function handleCompleteChange(e){
+    setChecked(e.target.checked)
+  }
+
   return (
     <form className={classes.root} onSubmit={handleUpdateSubmit}>
       <h3 style={{color:"red"}}>{err ? "Updation of list unsuccessful! Available for only admins and project members." : ""}</h3>
@@ -116,7 +125,14 @@ const Form = ({ handleUpdateClose }) => {
           onInput={(e) => {
             setName(e.target.value)
             // validateName()
-            }}/>
+          }}
+      />
+
+      <FormControlLabel 
+        style={{alignSelf: "flex-start"}}
+        control={<Checkbox style={{margin: "0px", paddingRight: "3px"}} checked={checked} onChange={handleCompleteChange}/>} 
+        label="Completion Status" 
+      />
 
       <div>
         <Button variant="contained"  onClick={()=>{

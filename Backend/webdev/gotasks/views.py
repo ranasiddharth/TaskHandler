@@ -219,6 +219,10 @@ class CardViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
         # id = self.kwargs.get("parent_lookup_list")
         list_instance = Lists.objects.get(id=card_data["list"])
         assigned_instance = User.objects.get(id=card_data["assigned"])
+        if(card_data["is_completed"]):
+            msg = True
+        else:
+            msg = False
 
         if request.user.moderator or request.user in list_instance.project.project_members.all():
             card_object.card_name = card_data["card_name"]
@@ -226,6 +230,7 @@ class CardViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
             card_object.list = list_instance
             card_object.assigned = assigned_instance
             card_object.due_date = card_data["due_date"]
+            card_object.is_completed = msg
             card_object.save()
             subject = 'Gotasks App Card Assignment'
             message = f'Hi {assigned_instance.fullname}, you have been assigned the card {card_data["card_name"]} inside the list name {list_instance.list_name} under the project name {list_instance.project}. Due date of the card is {card_data["due_date"]}'
