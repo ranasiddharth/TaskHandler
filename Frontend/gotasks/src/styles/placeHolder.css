@@ -1,0 +1,16 @@
+.change::placeholder {
+  color: white;
+  opacity: 1; /* Firefox */
+}
+
+.change:-ms-input-placeholder { /* Internet Explorer 10-11 */
+ color: white;
+}
+
+.change::-ms-input-placeholder { /* Microsoft Edge */
+ color: white;
+}
+
+.sendmessageIcon:hover {
+  background-color: white;
+}

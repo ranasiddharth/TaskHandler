@@ -14,6 +14,7 @@ import { ProjectList } from './components/ProjectList';
 import { ProjectListDetails } from './components/ProjectListDetails';
 import { ListCard } from './components/ListCard';
 import { ListCardDetails } from './components/ListCardDetails';
+import Chat from './components/Chat';
 
 
 function App() {
@@ -50,6 +51,9 @@ function App() {
         </Route>
         <Route exact path='/gotasks/users/' >
           <Members />
+        </Route>
+        <Route exact path='/gotasks/projects/:proj_id/lists/:list_id/cards/:card_id/comments' >
+          <Chat />
         </Route>
         <Route component={NotFound} />
       </Switch>

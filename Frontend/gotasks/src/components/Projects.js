@@ -1,4 +1,5 @@
 import http from "./axios.js";
+import '../index.css';
 import {AppBar, Toolbar, Button, Typography, Box, Card, TextField} from '@material-ui/core'
 import useStyles from '../styles/Navbar.js'
 import CardContent from "@material-ui/core/CardContent";
@@ -266,7 +267,7 @@ export const Projects = (props) => {
     return (
       <>
       <Navbar projects={projects} setProjects={setProjects} fetchData={fetchData}/>
-      <div className={searcher.search}>
+      <div className={searcher.search} style={{backgroundColor: "white"}}>
           <SearchIcon />
           <input
           type="search"

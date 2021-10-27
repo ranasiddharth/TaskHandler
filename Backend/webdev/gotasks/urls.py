@@ -11,6 +11,7 @@ basic_router.register('projects', views.ProjectViewSet)
 basic_router.register('users', views.UserViewSet, basename="users")
 basic_router.register('dashboard/cards', views.DashboardCardViewset, basename="dash-card")
 basic_router.register('dashboard/projects', views.DashboardProjectViewset, basename="dash-project")
+basic_router.register('comments', views.CommentViewSet, basename="comments")
 basic_router.register('usershow', views.UserShowViewSet, basename="usershow")
 basic_router.register('loggeduser', views.LoggedinViewSet, basename="loggeduser")
 
@@ -26,4 +27,7 @@ urlpatterns = [
     path('gotasks/login/', views.profile),
     path('gotasks/logout/', views.log_out),
     path('gotasks/login_check/', views.check_auth),
+
+    path('gotasks/chat/', views.index, name='index'),
+    path('gotasks/chat/<str:room_name>/', views.room, name='room'),
 ]

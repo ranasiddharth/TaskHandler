@@ -74,5 +74,4 @@ export const DeleteCard = ({ open, handleClose }) => {
       </Box>
     </Dialog>
   );
-
 };

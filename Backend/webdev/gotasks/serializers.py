@@ -40,8 +40,8 @@ class CardsSerializer(serializers.ModelSerializer):
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
-        fields =['id', 'body', 'commentor']
-        read_only_fields = ['id', 'commentor']
+        fields =['id', 'body', 'commentor', 'card', 'timestamp']
+        read_only_fields = ['id', 'commentor', 'card', 'timestamp']
 
 
 

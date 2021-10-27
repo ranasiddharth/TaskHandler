@@ -277,7 +277,7 @@ export const ListCard = (props) => {
       <>
       <div>
         <Navbar cards={cards} setCards={setCards} fetchCard={fetchCard}/>
-        <div className={searcher.search}>
+        <div className={searcher.search} style={{backgroundColor: "white"}}>
           <SearchIcon />
           <input
           type="search"

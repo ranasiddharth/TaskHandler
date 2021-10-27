@@ -22,6 +22,10 @@ import SearchIcon from "@material-ui/icons/Search"
 import useSearchStyles from "../styles/SearchBar.js";
 import Checkbox from '@material-ui/core/Checkbox'
 import CancelRoundedIcon from "@material-ui/icons/CancelRounded";
+import Switch from '@mui/material/Switch';
+import { styled } from '@mui/material/styles';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import MaterialUISwitch from './DarkMode.js'
 
 
 const Project = (props) => {
@@ -56,8 +60,10 @@ const Project = (props) => {
 
   return(
     <div>
+    {props.checked ? <h1 className={classes.heading} style={{color: "white"}}>Projects</h1> :
     <h1 className={classes.heading}>Projects</h1>
-    <div className={searcher.search}>
+    }
+    <div className={searcher.search} style={{backgroundColor: "white"}}>
           <SearchIcon />
           <input
           type="search"
@@ -157,13 +163,15 @@ const CardShow = (props) => {
   
   return(
     <div >
+    {props.checked ? <h1 className={classes.heading} style={{color: "white"}}>Assigned Cards</h1> :
     <h1 className={classes.heading}>Assigned Cards</h1>
-    <div className={searcher.search}>
+    }
+    <div className={searcher.search} style={{backgroundColor: "white"}}>
           <SearchIcon />
           <input
           type="search"
           name="search-form"
-          list="data"
+          list="datacards"
           autocomplete="off"
           id="search-form"
           style={{flexGrow: "1", border: "none", outline: "none", height: "100%", borderRadius: "5px", fontSize: "16px"}}
@@ -172,7 +180,7 @@ const CardShow = (props) => {
           value={q}
           onChange={(e) => setQ(e.target.value)}
         />
-            <datalist id="data">
+            <datalist id="datacards">
               {cards.map((item, key) =>
                 <option key={key} value={item.card_name} />
               )}
@@ -235,6 +243,7 @@ export const Dashboard = () => {
   const [projects, setProjects] = useState([])
   const [cards, setCards] = useState([])
   const [loggedin, setLoggedin] = useState(false)
+  const [checked, setChecked] = useState(false)
 
   const checkLoginStatus = async() => {
     await axios.get("http://127.0.0.1:8000/gotasks/login_check/", {withCredentials:true})
@@ -286,8 +295,29 @@ export const Dashboard = () => {
 
   useEffect(async() => {
     await checkLoginStatus();
+    await handleRouterChange();
     await fetchData();
   }, [])
+
+
+  const handleRouterChange = async() => {
+    if(document.body.style.backgroundColor == "black"){
+      setChecked(true);
+    }else{
+      setChecked(false)
+    }
+  }
+
+
+  const handleToggleChange = async() => {
+    if(!checked){
+      setChecked(true);
+      document.body.style.backgroundColor = "black";
+    }else{
+      setChecked(false);
+      document.body.style.backgroundColor = "white";
+    }
+  }
 
 
   if(!fetched === true){
@@ -301,14 +331,22 @@ export const Dashboard = () => {
     return(
       <div> 
               <Header2 />
+              <FormControlLabel
+                control={<MaterialUISwitch sx={{ m: 1 }} checked={checked} onChange={handleToggleChange}/>}
+                label={checked ? <p style={{color: "white"}}>Dark Mode</p> : <p style={{color: "black"}}>Light Mode</p>}
+              />
+              {checked ? 
+              <h3 style={{textAlign: "center", margin: "20px", marginBottom: "0px", color: "white"}}>Welcome {user.fullname} !</h3>
+              :
               <h3 style={{textAlign: "center", margin: "20px", marginBottom: "0px"}}>Welcome {user.fullname} !</h3>
+              }
               <Grid container component="main" className={classes.mainGrid}>
                 <CssBaseline />
                 <Grid item xs={12} sm={12} md={6}>
-                <Project projectState = {projects} />
+                <Project projectState = {projects} checked={checked}/>
                 </Grid>
                 <Grid item xs={12} sm={12} md={6}>
-                <CardShow cardState = {cards} />
+                <CardShow cardState = {cards} checked={checked}/>
                 </Grid>
               </Grid>
       </div>

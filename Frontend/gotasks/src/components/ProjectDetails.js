@@ -21,27 +21,6 @@ import { Loading } from "./Loading.js";
 import Header from "./Header.js";
 
 
-// const Navbar = () => {
-
-//   const classes = useStyles()
-  
-//   return (
-//     <Box sx={{ flexGrow: 1 }}>
-//       <AppBar position="static">
-//         <Toolbar className={classes.toolbar}>
-//           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-//             PROJECT
-//           </Typography>
-//           <div>
-//           <Button className={classes.buttonmargin} startIcon={<HomeIcon />} disableElevation><Link to="/gotasks/dashboard" className={classes.linkcol}>DASHBOARD</Link></Button>
-//           </div>
-//         </Toolbar>
-//       </AppBar>
-//     </Box>
-//   );
-// }
-
-
 export const ProjectDetails = (props) => {
 
   const history = useHistory();

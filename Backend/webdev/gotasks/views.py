@@ -17,6 +17,21 @@ from rest_framework.permissions import IsAuthenticated
 from .permissions import IsProjectCreator_MemberOrReadOnly, IsListCreator_MemberOrReadOnly, IsCardCreator_MemberOrReadOnly, IsAdminPrivilege, IsCommentCreator
 from django.conf import settings
 from django.core.mail import send_mail
+from channels.layers import get_channel_layer
+channel_layer = get_channel_layer()
+from asgiref.sync import async_to_sync
+
+# gotasks/views.py
+from django.shortcuts import render
+
+def index(request):
+    return render(request, 'gotasks/index.html')
+
+def room(request, room_name):
+    return render(request, 'gotasks/room.html', {
+        'room_name': room_name
+    })
+
 
 
 import environ
@@ -276,13 +291,30 @@ class CommentViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         comment_data = request.data
-        id = self.kwargs.get("parent_lookup_card")
-        card_instance = Cards.objects.get(id=id)
-
+        card_instance = Cards.objects.get(id=comment_data["card"])
         obj = Comment.objects.create(body=comment_data["body"], commentor=request.user, card=card_instance)
         obj.save()
         serializer = CommentSerializer(obj)
         return Response(serializer.data, status=status.HTTP_201_CREATED) 
+
+    def destroy(self, request, *args, **kwargs):
+        comment_data = self.get_object()
+        serializerData = CommentSerializer(instance=comment_data)
+        room_name = 'chat_' + str(comment_data.card.id)
+        print(serializerData.data)
+        if comment_data.commentor == request.user:
+            self.perform_destroy(comment_data)
+        else:
+            return Response("comment can be deleted only by the commentor", status=status.HTTP_401_UNAUTHORIZED)
+        async_to_sync(channel_layer.group_send)(
+            room_name, {
+                'type': 'delete_comment',
+                'message': serializerData.data
+            }
+        )
+        print(room_name)
+        print(serializerData.data)
+        return Response("comment has been deleted successfully", status=status.HTTP_204_NO_CONTENT)
         
     authentication_classes = [TokenAuthentication, SessionAuthentication]
     permission_classes = [IsAuthenticated, IsCommentCreator]

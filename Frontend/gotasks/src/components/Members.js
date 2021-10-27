@@ -141,7 +141,7 @@ export const Members = (props) => {
     return (
       <>
       <Header />
-      <div className={searcher.search}>
+      <div className={searcher.search} style={{backgroundColor: "white"}}>
           <SearchIcon />
           <input
           type="search"

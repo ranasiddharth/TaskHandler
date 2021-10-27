@@ -5,6 +5,7 @@ import moment from "moment"
 import { useHistory } from "react-router-dom"
 import { useState, useEffect } from "react"
 import { Button } from "@material-ui/core"
+import ViewListIcon from '@material-ui/icons/ViewList';
 import useStyles from '../styles/Navbar.js'
 import {AppBar, Toolbar, Grid} from '@material-ui/core'
 import HomeIcon from '@material-ui/icons/Home';
@@ -21,32 +22,11 @@ import { Loading } from "./Loading.js"
 import Header from "./Header.js";
 
 
-// const Navbar = () => {
-
-//   const classes = useStyles()
-
-//   return (
-//     <Box sx={{ flexGrow: 1 }}>
-//       <AppBar position="static">
-//         <Toolbar className={classes.toolbar}>
-//           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-//             CARDS
-//           </Typography>
-//           <div>
-//           <Button className={classes.buttonmargin} startIcon={<HomeIcon />} disableElevation><Link to="/gotasks/dashboard" className={classes.linkcol}>DASHBOARD</Link></Button>
-//           </div>
-//         </Toolbar>
-//       </AppBar>
-//     </Box>
-//   );
-// }
-
-
 export const ListCardDetails = (props) => {
 
-  const [open, setOpen] = useState(false);
   const classescard = useCardStyles()
   const history = useHistory()
+  const [open, setOpen] = useState(false);
 
   const handleOpen = () => {
     setOpen(true);
@@ -72,6 +52,10 @@ export const ListCardDetails = (props) => {
     fetchCard(proj_id, list_id, card_id);
     setUpdateOpen(false);
   };
+
+  const goToComments = () => {
+    history.push(`/gotasks/projects/${proj_id}/lists/${list_id}/cards/${card_id}/comments`)
+  }
 
   const [fetched, setFetched] = useState(false)
   const [loggedin, setLoggedin] = useState(false)
@@ -160,6 +144,8 @@ export const ListCardDetails = (props) => {
                   <strong>Due date:</strong> {moment(item.due_date).format("dddd, MMMM Do YYYY, h:mm:ss a")}
                 </Typography>
                 <div className={classes.buttonsdiv}>
+                <Button type="submit" variant="contained" color="primary" startIcon={<ViewListIcon />} className={classes.submit} onClick={(e)=>{goToComments()}} >Comment
+                </Button>   
                 <Button type="submit" fullWidth variant="contained" startIcon={<UpdateIcon />} color="primary" className={classes.submit} onClick={handleUpdateOpen}> Update
                 </Button>  
                 <EditCard updateopen={updateopen} handleUpdateClose={handleUpdateClose}/>

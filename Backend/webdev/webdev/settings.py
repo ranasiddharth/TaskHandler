@@ -38,6 +38,7 @@ ALLOWED_HOSTS = ["localhost", '127.0.0.1']
 
 INSTALLED_APPS = [
     'corsheaders',
+    'channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -95,6 +96,18 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'webdev.wsgi.application'
 
+# Django Channels + Redis
+ASGI_APPLICATION = 'webdev.asgi.application'
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}
+
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
@@ -109,12 +122,6 @@ DATABASES = {
         'PORT': '3306',
     }
 }
-
-# REST_FRAMEWORK = {
-#     'DEFAULT_AUTHENTICATION_CLASSES':(
-#         'rest_framework.authentication.SessionAuthentication',
-#     )
-# }
 
 
 # Password validation
@@ -155,6 +162,9 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+
+# Send Email
+
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
@@ -162,11 +172,14 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = env('senderEmail')
 EMAIL_HOST_PASSWORD = env('senderPass')
 
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+
+#Auth user model (Abstract user)
 AUTH_USER_MODEL = "gotasks.User"
 
 # REST_FRAMEWORK = {

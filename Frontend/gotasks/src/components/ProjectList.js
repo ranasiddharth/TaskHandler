@@ -256,7 +256,7 @@ export const ProjectList = (props) => {
       <>
       <div>
         <Navbar lists={lists} setLists={setLists} fetchList={fetchList}/>
-        <div className={searcher.search}>
+        <div className={searcher.search} style={{backgroundColor: "white"}}>
           <SearchIcon />
           <input
           type="search"

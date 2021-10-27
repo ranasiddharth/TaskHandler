@@ -16,6 +16,10 @@ const useCardStyles = makeStyles((theme) => ({
     boxShadow: "4px 4px #888888",
     borderRadius: "10px!important",
     backgroundColor: backcolgrey,
+    transition: "all 0.3s ease-in-out",
+    "&:hover": {
+      transform: "scale(1.02)",
+    }
   },
   heading: {
     marginTop: "30px",
@@ -40,6 +44,13 @@ const useCardStyles = makeStyles((theme) => ({
     alignItems: "center",
   },
   avatar: {
+    backgroundColor: theme.palette.primary.main,
+    "&:hover":{
+      backgroundColor: theme.palette.secondary.main,
+    }
+  },
+  chatavatar: {
+    marginRight: "0px",
     backgroundColor: theme.palette.primary.main,
     "&:hover":{
       backgroundColor: theme.palette.secondary.main,

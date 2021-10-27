@@ -83,7 +83,12 @@ const useLoginStyles = makeStyles((theme) => ({
       justifyContent: "space-between",
       alignItems: "center",
     },
-  }
+  },
+  chatdiv: {
+    minHeight: '100vh',
+    display: 'flex',
+    justifyContent: 'center',
+  },
 }));
 
 export default useLoginStyles

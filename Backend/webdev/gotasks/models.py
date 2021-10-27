@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from ckeditor.fields import RichTextField
 from django.db.models.constraints import UniqueConstraint
+from django.utils import timezone
 
 # Create your models here.
 
@@ -66,6 +67,7 @@ class Comment(models.Model):
     body = models.CharField(max_length=200)
     card = models.ForeignKey(Cards, on_delete=models.CASCADE, related_name="comments")
     commentor = models.ForeignKey(User, on_delete=models.CASCADE, related_name="yourcomments")
+    timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.body} - by {self.commentor}"
