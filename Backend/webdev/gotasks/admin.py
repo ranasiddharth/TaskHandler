@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import User, Projects, Lists, Cards, Comment
+
+from .models import Cards, Comment, Lists, Projects, User
 
 # Register your models here.
 

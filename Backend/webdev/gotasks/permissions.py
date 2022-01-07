@@ -1,5 +1,3 @@
-from .serializers import ProjectsSerializer
-from .models import Projects
 from rest_framework import permissions
 
 
@@ -7,6 +5,7 @@ class IsAdminPrivilege(permissions.BasePermission):
     """
     Custom permission to only allow admins to view and change status of other users
     """
+
     def has_permission(self, request, view):
         return request.user.moderator == True
 
@@ -15,6 +14,7 @@ class IsProjectCreator_MemberOrReadOnly(permissions.BasePermission):
     """
     Custom permission to only allow members and creators of an project to edit it (delete and update).
     """
+
     def has_object_permission(self, request, view, obj):
         if request.method in permissions.SAFE_METHODS:
             return True
@@ -38,6 +38,7 @@ class IsCardCreator_MemberOrReadOnly(permissions.BasePermission):
     """
     Custom permission to only allow members and creators of an project to edit the card (delete and update)
     """
+
     def has_object_permission(self, request, view, obj):
         if request.method in permissions.SAFE_METHODS:
             return True
@@ -50,10 +51,11 @@ class IsCommentCreator(permissions.BasePermission):
     Custom permission to allow only card commentor to edit the comment and allows admin to delete
     the comment if not suitable
     """
+
     def has_object_permission(self, request, view, obj):
         if request.method in permissions.SAFE_METHODS:
             return True
-        
+
         if request.method == 'PUT':
             return request.user == obj.commentor
 

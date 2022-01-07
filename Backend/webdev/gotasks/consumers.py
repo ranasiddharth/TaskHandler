@@ -1,9 +1,12 @@
 # gotasks/consumers.py
 import json
-from channels.generic.websocket import AsyncWebsocketConsumer
+
 from channels.db import database_sync_to_async
+from channels.generic.websocket import AsyncWebsocketConsumer
+
 from . import models
 from .serializers import CommentSerializer
+
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -29,16 +32,16 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
         # print(text_data)
-        card= text_data_json['card']
+        card = text_data_json['card']
         message = text_data_json['message']
         commentor = int(self.scope['user'].id)
-        data={
+        data = {
             'commentor': commentor,
             'card': card,
-            'body':message
+            'body': message
         }
         # print(data)
-        serializer_data= await self.save_comment(data)
+        serializer_data = await self.save_comment(data)
 
         # Send message to room group
         await self.channel_layer.group_send(
@@ -54,12 +57,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
     def save_comment(self, data):
         commentor = models.User.objects.get(id=data['commentor'])
         # print(commentor)
-        card= models.Cards.objects.get(id=data['card'])  
+        card = models.Cards.objects.get(id=data['card'])
         # print(card)
 
-        body= models.Comment.objects.create(commentor=commentor, card=card, body=data['body'])
+        body = models.Comment.objects.create(
+            commentor=commentor, card=card, body=data['body'])
 
-        CommentSerializer_data= CommentSerializer(body)
+        CommentSerializer_data = CommentSerializer(body)
         print(CommentSerializer_data.data)
 
         return CommentSerializer_data.data
@@ -83,13 +87,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     # Receive message from room group
     async def chat_message(self, event):
-        data=event["data"]
+        data = event["data"]
         # print(event)
         # print(data)
         message = event['message']
         # print(message)
         # Send message to WebSocket
         await self.send(text_data=json.dumps({
-            'info' : 'created',
+            'info': 'created',
             'message': data
         }))

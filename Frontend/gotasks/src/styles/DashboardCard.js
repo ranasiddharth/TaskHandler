@@ -1,5 +1,5 @@
-import { makeStyles } from '@material-ui/core/styles';
-import grey from '@material-ui/core/colors/grey';
+import { makeStyles } from "@material-ui/core/styles";
+import grey from "@material-ui/core/colors/grey";
 
 const backcolgrey = grey[100];
 
@@ -8,7 +8,7 @@ const useCardStyles = makeStyles((theme) => ({
     margin: "auto",
     width: "80%",
     marginTop: "40px",
-    marginBottom: "10px", 
+    marginBottom: "10px",
     minHeight: "195.55px",
     display: "flex",
     flexDirection: "column",
@@ -19,7 +19,7 @@ const useCardStyles = makeStyles((theme) => ({
     transition: "all 0.3s ease-in-out",
     "&:hover": {
       transform: "scale(1.02)",
-    }
+    },
   },
   heading: {
     marginTop: "30px",
@@ -32,7 +32,7 @@ const useCardStyles = makeStyles((theme) => ({
     padding: "16px",
   },
   logoutOutdiv: {
-    textAlign: 'center',
+    textAlign: "center",
     padding: "20px",
     margin: "20px",
   },
@@ -45,17 +45,17 @@ const useCardStyles = makeStyles((theme) => ({
   },
   avatar: {
     backgroundColor: theme.palette.primary.main,
-    "&:hover":{
+    "&:hover": {
       backgroundColor: theme.palette.secondary.main,
-    }
+    },
   },
   chatavatar: {
     marginRight: "0px",
     backgroundColor: theme.palette.primary.main,
-    "&:hover":{
+    "&:hover": {
       backgroundColor: theme.palette.secondary.main,
-    }
-  }
+    },
+  },
 }));
 
-export default useCardStyles
+export default useCardStyles;

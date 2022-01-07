@@ -9,17 +9,15 @@ const useStyles = makeStyles({
     height: "100vh",
     width: "100vw",
   },
-
-})
+});
 
 export const Loading = () => {
-
-    const classes = useStyles()
-    return (
-        <div className={classes.loading}>
-            <div>
-                <CircularProgress color="secondary" size="3rem" />
-            </div>
-        </div>
-    );
-}
+  const classes = useStyles();
+  return (
+    <div className={classes.loading}>
+      <div>
+        <CircularProgress color="secondary" size="3rem" />
+      </div>
+    </div>
+  );
+};

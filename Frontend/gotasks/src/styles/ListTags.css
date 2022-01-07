@@ -3,5 +3,8 @@ ol li {
 }
 
 ul li {
-  margin-left: 19px;
+  margin-left: 0px;
+}
+ol li {
+  margin-left: 0px;
 }

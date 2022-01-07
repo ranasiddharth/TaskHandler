@@ -1,16 +1,16 @@
-from django.http.request import HttpRequest
-from django.http.response import HttpResponse, JsonResponse
-from rest_framework import response, serializers
-from gotasks.models import Comment, User, Projects, Lists, Cards
+from rest_framework import serializers
+
+from gotasks.models import Cards, Comment, Lists, Projects, User
 
 
 class ProjectsSerializer(serializers.ModelSerializer):
-    project_creator = serializers.ReadOnlyField(source='project_creator.fullname')
+    project_creator = serializers.ReadOnlyField(
+        source='project_creator.fullname')
 
     class Meta:
         model = Projects
-        fields = ['id', 'project_name', 'project_wiki', 'project_creator', 'project_members', 'project_created', 'is_completed']
-
+        fields = ['id', 'project_name', 'project_wiki', 'project_creator',
+                  'project_members', 'project_created', 'is_completed']
 
 
 class ListsSerializer(serializers.ModelSerializer):
@@ -22,33 +22,32 @@ class ListsSerializer(serializers.ModelSerializer):
         read_only_fields = ['project']
 
 
-
 class CardsShowSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cards
-        fields = ['id', 'card_name', 'list', 'assigned', 'date_created', 'due_date']
-
+        fields = ['id', 'card_name', 'list',
+                  'assigned', 'date_created', 'due_date']
 
 
 class CardsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cards
-        fields = ['id', 'card_name', 'list', 'description', 'assigned', 'date_created', 'due_date', 'is_completed']
-
+        fields = ['id', 'card_name', 'list', 'description',
+                  'assigned', 'date_created', 'due_date', 'is_completed']
 
 
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
-        fields =['id', 'body', 'commentor', 'card', 'timestamp']
+        fields = ['id', 'body', 'commentor', 'card', 'timestamp']
         read_only_fields = ['id', 'commentor', 'card', 'timestamp']
-
 
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'fullname', 'email','moderator', 'is_banned']
+        fields = ['id', 'username', 'fullname',
+                  'email', 'moderator', 'is_banned']
         read_only_fields = ['id', 'username', 'fullname', 'email']
 
 
@@ -58,7 +57,6 @@ class UserShowSerializer(serializers.ModelSerializer):
         fields = ['id', 'username', 'fullname']
 
 
-
 class DashboardProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Projects
@@ -66,9 +64,8 @@ class DashboardProjectSerializer(serializers.ModelSerializer):
         depth = 1
 
 
-
 class DashboardCardSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cards
         fields = "__all__"
-        depth=1
+        depth = 1

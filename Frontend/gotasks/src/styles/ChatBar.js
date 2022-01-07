@@ -1,5 +1,5 @@
-import { makeStyles } from '@material-ui/core/styles';
-import grey from '@material-ui/core/colors/grey';
+import { makeStyles } from "@material-ui/core/styles";
+import grey from "@material-ui/core/colors/grey";
 
 const backcolgrey = grey[100];
 
@@ -17,13 +17,13 @@ const useChatStyles = makeStyles((theme) => ({
     boxShadow: "1px 1px",
     height: "35px",
     padding: "5px",
-    backgroundColor: "grey",
+    backgroundColor: "#b3b2b2",
   },
   cardattr: {
     margin: "auto",
     width: "80%",
     marginTop: "40px",
-    marginBottom: "10px", 
+    marginBottom: "10px",
     minHeight: "195.55px",
     display: "flex",
     height: "85vh",
@@ -36,7 +36,7 @@ const useChatStyles = makeStyles((theme) => ({
       height: "100%!important",
       borderRadius: "0px!important",
       boxShadow: "none",
-    }
+    },
   },
   cardActions: {
     padding: "16px",

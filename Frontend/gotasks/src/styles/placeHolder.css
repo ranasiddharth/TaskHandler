@@ -1,16 +1,16 @@
 .change::placeholder {
-  color: white;
+  color: black;
   opacity: 1; /* Firefox */
 }
 
 .change:-ms-input-placeholder { /* Internet Explorer 10-11 */
- color: white;
+ color: black;
 }
 
 .change::-ms-input-placeholder { /* Microsoft Edge */
- color: white;
+ color: black;
 }
 
 .sendmessageIcon:hover {
-  background-color: white;
+  background-color: black;
 }

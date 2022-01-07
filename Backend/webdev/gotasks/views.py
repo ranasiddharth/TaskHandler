@@ -1,31 +1,40 @@
-from django.http.response import HttpResponse
-from django.shortcuts import redirect
-from django.contrib.auth import login, logout
-from rest_framework import serializers, views, viewsets, status
-from rest_framework.response import Response
-from gotasks.models import User, Projects, Lists, Cards, Comment
-from gotasks.serializers import UserSerializer, ProjectsSerializer, ListsSerializer, CardsSerializer, DashboardProjectSerializer, DashboardCardSerializer, CommentSerializer, UserShowSerializer
-from rest_framework.authtoken.views import Token
-from rest_framework.decorators import api_view, authentication_classes
-from django.contrib.auth.decorators import login_required
-from rest_framework_extensions.mixins import NestedViewSetMixin
-import requests
-import json
-from django.middleware import csrf
-from rest_framework.authentication import SessionAuthentication, TokenAuthentication
-from rest_framework.permissions import IsAuthenticated
-from .permissions import IsProjectCreator_MemberOrReadOnly, IsListCreator_MemberOrReadOnly, IsCardCreator_MemberOrReadOnly, IsAdminPrivilege, IsCommentCreator
-from django.conf import settings
-from django.core.mail import send_mail
-from channels.layers import get_channel_layer
-channel_layer = get_channel_layer()
-from asgiref.sync import async_to_sync
-
-# gotasks/views.py
+import environ
 from django.shortcuts import render
+from asgiref.sync import async_to_sync
+import json
+
+import requests
+from channels.layers import get_channel_layer
+from django.conf import settings
+from django.contrib.auth import login, logout
+from django.core.mail import send_mail
+from django.middleware import csrf
+from django.shortcuts import redirect
+from rest_framework import status, viewsets
+from rest_framework.authentication import (SessionAuthentication,
+                                           TokenAuthentication)
+from rest_framework.authtoken.views import Token
+from rest_framework.decorators import api_view
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework_extensions.mixins import NestedViewSetMixin
+
+from gotasks.models import Cards, Comment, Lists, Projects, User
+from gotasks.serializers import (CardsSerializer, CommentSerializer,
+                                 DashboardCardSerializer,
+                                 DashboardProjectSerializer, ListsSerializer,
+                                 ProjectsSerializer, UserSerializer,
+                                 UserShowSerializer)
+
+from .permissions import (IsAdminPrivilege, IsCardCreator_MemberOrReadOnly,
+                          IsCommentCreator, IsListCreator_MemberOrReadOnly,
+                          IsProjectCreator_MemberOrReadOnly)
+
+channel_layer = get_channel_layer()
 
 def index(request):
     return render(request, 'gotasks/index.html')
+
 
 def room(request, room_name):
     return render(request, 'gotasks/room.html', {
@@ -33,12 +42,9 @@ def room(request, room_name):
     })
 
 
-
-import environ
 env = environ.Env()
 environ.Env.read_env()
 
-# Create your views here.
 
 def profile(request):
     """
@@ -54,40 +60,45 @@ def responseGet(request):
     """
     code = request.GET.get('code', '')
     payload = {
-        'client_id': env('client_id'), 
-        'client_secret': env('client_secret'), 
-        'grant_type': env('grant_type'), 
+        'client_id': env('client_id'),
+        'client_secret': env('client_secret'),
+        'grant_type': env('grant_type'),
         'redirect_uri': 'http://localhost:3000/gotasks/oauth/',
         'code': code
     }
     res = requests.post(env('token_url'), data=payload)
     token_response = json.loads(res.content)
-    res = requests.get(url=env('get_user_data'), headers={"Authorization": f"{token_response['token_type']} {token_response['access_token']}"})
+    res = requests.get(url=env('get_user_data'), headers={
+                       "Authorization": f"{token_response['token_type']} {token_response['access_token']}"})
     user_data = json.loads(res.content)
     username = user_data['username']
     fullname = user_data['person']['fullName']
     email = user_data['contactInformation']['instituteWebmailAddress']
     role = user_data['person']['roles'][1]['role']
     if str(role) == 'Maintainer':
-        if User.objects.filter(username=username).count()==0:
-            user = User.objects.create(username=username, fullname=fullname, email=email)
+        if User.objects.filter(username=username).count() == 0:
+            user = User.objects.create(
+                username=username, fullname=fullname, email=email)
             Token.objects.create(user=user)
 
         if User.objects.get(username=username).is_banned == False:
             user = User.objects.get(username=username)
             token_obj = Token.objects.get(user=user)
             login(request, User.objects.get(username=username))
-            res = Response({"csrftoken": csrf.get_token(request), "mytoken": token_obj.key, "sessionid": request.session._session_key}, status=status.HTTP_200_OK)
+            res = Response({"csrftoken": csrf.get_token(request), "mytoken": token_obj.key,
+                           "sessionid": request.session._session_key}, status=status.HTTP_200_OK)
             res['Access-Control-Allow-Origin'] = 'http://localhost:3000'
             res['Access-Control-Allow-Credentials'] = 'true'
             return res
         else:
-            res = Response('You are banned', status=status.HTTP_400_BAD_REQUEST)
+            res = Response('You are banned',
+                           status=status.HTTP_400_BAD_REQUEST)
             res['Access-Control-Allow-Origin'] = 'http://localhost:3000'
             res['Access-Control-Allow-Credentials'] = 'true'
             return res
     else:
-        res = Response('Only site maintainers can access this app', status=status.HTTP_400_BAD_REQUEST)
+        res = Response('Only site maintainers can access this app',
+                       status=status.HTTP_400_BAD_REQUEST)
         res['Access-Control-Allow-Origin'] = 'http://localhost:3000'
         res['Access-Control-Allow-Credentials'] = 'true'
         return res
@@ -138,15 +149,13 @@ class UserViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, IsAdminPrivilege]
 
 
-
 class UserShowViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserShowSerializer
-    http_method_names='get'
-    
+    http_method_names = 'get'
+
     authentication_classes = [TokenAuthentication, SessionAuthentication]
     permission_classes = [IsAuthenticated]
-
 
 
 class ProjectViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
@@ -171,7 +180,6 @@ class ProjectViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, IsProjectCreator_MemberOrReadOnly]
 
 
-
 class ListViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
     """
     Only admins or members of project can create/edit a list and
@@ -179,17 +187,18 @@ class ListViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
     """
     queryset = Lists.objects.all()
     serializer_class = ListsSerializer
-    
+
     def create(self, request, *args, **kwargs):
         list_data = request.data
         id = self.kwargs.get("parent_lookup_project")
         project_instance = Projects.objects.get(id=id)
 
         if request.user.moderator or request.user in project_instance.project_members.all():
-            obj = Lists.objects.create(list_name=list_data["list_name"], project=project_instance)
+            obj = Lists.objects.create(
+                list_name=list_data["list_name"], project=project_instance)
             obj.save()
             serializer = ListsSerializer(obj)
-            return Response(serializer.data, status=status.HTTP_201_CREATED) 
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response("You do not have permission to perform this action", status=status.HTTP_403_FORBIDDEN)
 
@@ -197,14 +206,13 @@ class ListViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, IsListCreator_MemberOrReadOnly]
 
 
-
 class CardViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
     """
     Only project members, admins can edit/create a card and the card must be
     assigned to a project member. Any authenticated user can view the cards.
     """
-    queryset =  Cards.objects.all()
-    serializer_class =  CardsSerializer
+    queryset = Cards.objects.all()
+    serializer_class = CardsSerializer
 
     def create(self, request, *args, **kwargs):
         card_data = request.data
@@ -214,15 +222,16 @@ class CardViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
 
         if request.user.moderator or request.user in list_instance.project.project_members.all():
             if user in list_instance.project.project_members.all():
-                obj = Cards.objects.create(card_name=card_data["card_name"], description=card_data["description"], list=list_instance, assigned=user, due_date=card_data["due_date"])
+                obj = Cards.objects.create(
+                    card_name=card_data["card_name"], description=card_data["description"], list=list_instance, assigned=user, due_date=card_data["due_date"])
                 obj.save()
                 subject = 'Gotasks App Card Assignment'
                 message = f'Hi {user.fullname}, you have been assigned the card {card_data["card_name"]} inside the list name {list_instance.list_name} under the project name {list_instance.project}. Due date of the card is {card_data["due_date"]}'
                 email_from = settings.EMAIL_HOST_USER
                 recipient_list = [user.email, ]
-                send_mail( subject, message, email_from, recipient_list )
+                send_mail(subject, message, email_from, recipient_list)
                 serializer = CardsSerializer(obj)
-                return Response(serializer.data, status=status.HTTP_201_CREATED) 
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
             else:
                 return Response("Cards can be assigned to project members only", status=status.HTTP_400_BAD_REQUEST)
         else:
@@ -251,10 +260,10 @@ class CardViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
             message = f'Hi {assigned_instance.fullname}, you have been assigned the card {card_data["card_name"]} inside the list name {list_instance.list_name} under the project name {list_instance.project}. Due date of the card is {card_data["due_date"]}'
             email_from = settings.EMAIL_HOST_USER
             recipient_list = [assigned_instance.email, ]
-            send_mail( subject, message, email_from, recipient_list )
+            send_mail(subject, message, email_from, recipient_list)
             serializer = CardsSerializer(card_object)
             return Response(serializer.data)
-            
+
         else:
             return Response("You do not have permission to perform this action", status=status.HTTP_403_FORBIDDEN)
 
@@ -269,7 +278,7 @@ class CardViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
             message = f'Hi {assigned_instance.fullname}, the card {card_data.card_name} inside the list name {list_instance.list_name} under the project name {list_instance.project} has been deleted.'
             email_from = settings.EMAIL_HOST_USER
             recipient_list = [assigned_instance.email, ]
-            send_mail( subject, message, email_from, recipient_list )
+            send_mail(subject, message, email_from, recipient_list)
             card_data.delete()
             return Response("message: card has been deleted")
 
@@ -278,7 +287,6 @@ class CardViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
 
     authentication_classes = [TokenAuthentication, SessionAuthentication]
     permission_classes = [IsAuthenticated, IsCardCreator_MemberOrReadOnly]
-
 
 
 class CommentViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
@@ -292,10 +300,11 @@ class CommentViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         comment_data = request.data
         card_instance = Cards.objects.get(id=comment_data["card"])
-        obj = Comment.objects.create(body=comment_data["body"], commentor=request.user, card=card_instance)
+        obj = Comment.objects.create(
+            body=comment_data["body"], commentor=request.user, card=card_instance)
         obj.save()
         serializer = CommentSerializer(obj)
-        return Response(serializer.data, status=status.HTTP_201_CREATED) 
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def destroy(self, request, *args, **kwargs):
         comment_data = self.get_object()
@@ -315,10 +324,9 @@ class CommentViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
         print(room_name)
         print(serializerData.data)
         return Response("comment has been deleted successfully", status=status.HTTP_204_NO_CONTENT)
-        
+
     authentication_classes = [TokenAuthentication, SessionAuthentication]
     permission_classes = [IsAuthenticated, IsCommentCreator]
-
 
 
 class DashboardProjectViewset(viewsets.ModelViewSet):
@@ -326,16 +334,15 @@ class DashboardProjectViewset(viewsets.ModelViewSet):
     Shows the list of projects a user is part of
     """
     serializer_class = DashboardProjectSerializer
-    http_method_names=['get']
+    http_method_names = ['get']
 
     def get_queryset(self, *args, **kwargs):
         user = self.request.user
-        queryset = Projects.objects.filter(project_members = user)
+        queryset = Projects.objects.filter(project_members=user)
         return queryset
 
     authentication_classes = [TokenAuthentication, SessionAuthentication]
     permission_classes = [IsAuthenticated]
-
 
 
 class DashboardCardViewset(viewsets.ModelViewSet):
@@ -343,11 +350,11 @@ class DashboardCardViewset(viewsets.ModelViewSet):
     Shows the cards assigned to a user.
     """
     serializer_class = DashboardCardSerializer
-    http_method_names=['get']
+    http_method_names = ['get']
 
     def get_queryset(self, *args, **kwargs):
         user = self.request.user
-        queryset = Cards.objects.filter(assigned = user)
+        queryset = Cards.objects.filter(assigned=user)
         return queryset
 
     authentication_classes = [TokenAuthentication, SessionAuthentication]
@@ -359,11 +366,11 @@ class LoggedinViewSet(viewsets.ModelViewSet):
     Shows the current logged in user details.
     """
     serializer_class = UserShowSerializer
-    http_method_names=['get']
+    http_method_names = ['get']
 
     def get_queryset(self, *args, **kwargs):
         user = self.request.user.id
-        queryset = User.objects.filter(id = user)
+        queryset = User.objects.filter(id=user)
         return queryset
 
     authentication_classes = [TokenAuthentication, SessionAuthentication]

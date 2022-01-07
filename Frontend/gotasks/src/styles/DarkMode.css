@@ -1,0 +1,11 @@
+.dark-mode{
+  width: 80%;
+  margin: auto;
+  margin-top: 20px;
+}
+
+@media screen and (min-width: 960px) {
+  .dark-mode{
+    width: 90%;
+  }
+}

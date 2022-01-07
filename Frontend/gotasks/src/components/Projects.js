@@ -1,40 +1,49 @@
 import http from "./axios.js";
-import '../index.css';
-import {AppBar, Toolbar, Button, Typography, Box, Card, TextField} from '@material-ui/core'
-import useStyles from '../styles/Navbar.js'
+import "../index.css";
+import {
+  AppBar,
+  Toolbar,
+  Button,
+  Typography,
+  Box,
+  Card,
+} from "@material-ui/core";
+import useStyles from "../styles/Navbar.js";
 import CardContent from "@material-ui/core/CardContent";
-import Avatar from '@material-ui/core/Avatar';
-import CardActions from '@material-ui/core/CardActions'
-import AddBoxIcon from '@material-ui/icons/AddBox';
-import { Link } from 'react-router-dom'
-import {useState, useEffect} from 'react';
-import useCardStyles from '../styles/DashboardCard'
-import { AddProject } from './AddProject.js'
+import Avatar from "@material-ui/core/Avatar";
+import CardActions from "@material-ui/core/CardActions";
+import AddBoxIcon from "@material-ui/icons/AddBox";
+import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import useCardStyles from "../styles/DashboardCard";
+import { AddProject } from "./AddProject.js";
 import { useHistory } from "react-router-dom";
-import axios from 'axios';
-import Cookies from 'js-cookie';
-import "../styles/ListTags.css"
+import axios from "axios";
+import Cookies from "js-cookie";
+import "../styles/ListTags.css";
+import "../styles/placeHolder.css";
 import { Loading } from "./Loading.js";
+import NoDisplay from "./NoDisplay.js";
 import Hidden from "@material-ui/core/Hidden";
 import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
-import SearchIcon from "@material-ui/icons/Search"
+import SearchIcon from "@material-ui/icons/Search";
 import useSearchStyles from "../styles/SearchBar.js";
 import SwipeableDrawer from "@material-ui/core/SwipeableDrawer";
 import Divider from "@material-ui/core/Divider";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
-import LogoutIcon from '@material-ui/icons/ExitToApp';
-import GroupIcon from '@material-ui/icons/Group';
-import HomeIcon from '@material-ui/icons/Home';
-import Checkbox from '@material-ui/core/Checkbox'
+import LogoutIcon from "@material-ui/icons/ExitToApp";
+import GroupIcon from "@material-ui/icons/Group";
+import HomeIcon from "@material-ui/icons/Home";
+import Checkbox from "@material-ui/core/Checkbox";
 import CancelRoundedIcon from "@material-ui/icons/CancelRounded";
-
+import Breadcrumbs from "@mui/material/Breadcrumbs";
+import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 
 const Navbar = (props) => {
-
-  const classes = useStyles()
+  const classes = useStyles();
   const [open, setOpen] = useState(false);
   const [opendrawer, setOpendrawer] = useState(false);
 
@@ -49,32 +58,35 @@ const Navbar = (props) => {
     setOpen(false);
   };
 
-  const [admin, setAdmin] = useState(false)
-  const history = useHistory()
+  const [admin, setAdmin] = useState(false);
+  const history = useHistory();
 
   const loggingout = () => {
-    axios.get("http://127.0.0.1:8000/gotasks/logout", {withCredentials: true}).then((resp)=>{
-      Cookies.remove('mytoken');
-      Cookies.remove('sessionid');
-      Cookies.remove('csrftoken');
-      history.push('/');
-    }).catch((err)=>{
-      console.log("error while logging out")
-    })
-  }
+    axios
+      .get("http://127.0.0.1:8000/gotasks/logout", { withCredentials: true })
+      .then((resp) => {
+        Cookies.remove("mytoken");
+        Cookies.remove("sessionid");
+        Cookies.remove("csrftoken");
+        history.push("/");
+      })
+      .catch((err) => {
+        console.log("error while logging out");
+      });
+  };
 
   useEffect(() => {
-    axios.get("http://127.0.0.1:8000/gotasks/users/", {withCredentials:true}).then(
-      (res) => {
-        if (res.status === 200){
-          setAdmin(true)
+    axios
+      .get("http://127.0.0.1:8000/gotasks/users/", { withCredentials: true })
+      .then((res) => {
+        if (res.status === 200) {
+          setAdmin(true);
         }
-      }
-    ).catch(error => {
-      console.log(error)
-    })
-  }, [])
-
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -84,17 +96,61 @@ const Navbar = (props) => {
             PROJECTS
           </Typography>
           <Hidden smDown>
-          <div>
-          <Button className={classes.buttonmargin} startIcon={<HomeIcon />} disableElevation><Link to="/gotasks/dashboard" className={classes.linkcol}>Dashboard</Link></Button>
-          <Button disabled={!admin} className={classes.buttonmargin} startIcon={<GroupIcon />} disableElevation><Link to="/gotasks/users" className={classes.linkcol}>Members</Link></Button>
-          <Button className={classes.buttonmargin} onClick={handleOpen} startIcon={<AddBoxIcon />} disableElevation>Add Project</Button>
-          <AddProject getproj={props.projects} setGetproj={props.setProjects} fetchData={props.fetchData} open={open} handleClose={handleClose} />
-          <Button className={classes.buttoncol} startIcon={<LogoutIcon />} onClick={()=>{loggingout()}}disableElevation>Logout</Button>
-          </div>
+            <div>
+              <Button
+                className={classes.buttonmargin}
+                startIcon={<HomeIcon />}
+                disableElevation
+              >
+                <Link to="/gotasks/dashboard" className={classes.linkcol}>
+                  Dashboard
+                </Link>
+              </Button>
+              <Button
+                disabled={!admin}
+                className={classes.buttonmargin}
+                startIcon={<GroupIcon />}
+                disableElevation
+              >
+                <Link to="/gotasks/users" className={classes.linkcol}>
+                  Members
+                </Link>
+              </Button>
+              <Button
+                className={classes.buttonmargin}
+                onClick={handleOpen}
+                startIcon={<AddBoxIcon />}
+                disableElevation
+              >
+                Add Project
+              </Button>
+              <AddProject
+                getproj={props.projects}
+                setGetproj={props.setProjects}
+                fetchData={props.fetchData}
+                open={open}
+                handleClose={handleClose}
+              />
+              <Button
+                className={classes.buttoncol}
+                startIcon={<LogoutIcon />}
+                onClick={() => {
+                  loggingout();
+                }}
+                disableElevation
+              >
+                Logout
+              </Button>
+            </div>
           </Hidden>
           <Hidden mdUp>
             <IconButton>
-              <MenuIcon style={{ color: 'white' }} onClick={() => {setOpendrawer(true)}}/>
+              <MenuIcon
+                style={{ color: "white" }}
+                onClick={() => {
+                  setOpendrawer(true);
+                }}
+              />
             </IconButton>
           </Hidden>
         </Toolbar>
@@ -104,199 +160,352 @@ const Navbar = (props) => {
           onOpen={() => setOpendrawer(true)}
           onClose={() => setOpendrawer(false)}
         >
-        <div>
-          <IconButton>
-            <ChevronRightIcon onClick={()=>{setOpendrawer(false)}}/>
-          </IconButton>
-        </div>
-        <Divider />
-        <List>
-          <ListItem className={classes.phonelistitems}>
-            <Button className={classes.buttonmargin} startIcon={<HomeIcon />} disableElevation><Link to="/gotasks/dashboard" className={classes.linkcol}>Dashboard</Link></Button>
-          </ListItem>
-          <ListItem className={classes.phonelistitems}>
-          <Button disabled={!admin} className={classes.buttonmargin} startIcon={<GroupIcon />} disableElevation><Link to="/gotasks/users" className={classes.linkcol}>Members</Link></Button>
-          </ListItem>
-          <ListItem className={classes.phonelistitems}>
-          <Button className={classes.buttoncol} onClick={handleOpen} startIcon={<AddBoxIcon />} disableElevation>Add Project</Button>
-          <AddProject getproj={props.projects} setGetproj={props.setProjects} fetchData={props.fetchData} open={open} handleClose={handleClose} />
-          </ListItem>
-          <ListItem className={classes.phonelistitems}>
-          <Button className={classes.buttoncol} startIcon={<LogoutIcon />} onClick={()=>{loggingout()}}disableElevation>Logout</Button>
-          </ListItem>
-        </List>
-      </SwipeableDrawer>
+          <div>
+            <IconButton>
+              <ChevronRightIcon
+                onClick={() => {
+                  setOpendrawer(false);
+                }}
+              />
+            </IconButton>
+          </div>
+          <Divider />
+          <List>
+            <ListItem className={classes.phonelistitems}>
+              <Button
+                className={classes.buttonmargin}
+                startIcon={<HomeIcon />}
+                disableElevation
+              >
+                <Link to="/gotasks/dashboard" className={classes.linkcol}>
+                  Dashboard
+                </Link>
+              </Button>
+            </ListItem>
+            <ListItem className={classes.phonelistitems}>
+              <Button
+                disabled={!admin}
+                className={classes.buttonmargin}
+                startIcon={<GroupIcon />}
+                disableElevation
+              >
+                <Link to="/gotasks/users" className={classes.linkcol}>
+                  Members
+                </Link>
+              </Button>
+            </ListItem>
+            <ListItem className={classes.phonelistitems}>
+              <Button
+                className={classes.buttoncol}
+                onClick={handleOpen}
+                startIcon={<AddBoxIcon />}
+                disableElevation
+              >
+                Add Project
+              </Button>
+              <AddProject
+                getproj={props.projects}
+                setGetproj={props.setProjects}
+                fetchData={props.fetchData}
+                open={open}
+                handleClose={handleClose}
+              />
+            </ListItem>
+            <ListItem className={classes.phonelistitems}>
+              <Button
+                className={classes.buttoncol}
+                startIcon={<LogoutIcon />}
+                onClick={() => {
+                  loggingout();
+                }}
+                disableElevation
+              >
+                Logout
+              </Button>
+            </ListItem>
+          </List>
+        </SwipeableDrawer>
       </AppBar>
     </Box>
   );
-}
+};
 
 export const ProjectItem = (props) => {
-
   const classes = useCardStyles();
 
   const history = useHistory();
 
   const projectDetails = (id) => {
-
-    history.push(`/gotasks/projects/${id}`)
-
-  }
+    history.push(`/gotasks/projects/${id}`);
+  };
 
   var name = props.project.project_name;
 
-  return(
-    <Card sx={{ minWidth: 275 }} variant="outlined" className={classes.cardattr}>
-        <CardContent>
-          <div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
+  return (
+    <Card
+      sx={{ minWidth: 275 }}
+      variant="outlined"
+      className={classes.cardattr}
+      style={{
+        backgroundColor:
+          document.getElementsByTagName("body")[0].style.backgroundColor ==
+          "black"
+            ? "#b3b2b2"
+            : classes.cardattr.backgroundColor,
+      }}
+    >
+      <CardContent>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
           <div>
-          <Typography variant="h5" component="div">
-            <strong>Name: </strong>{props.project.project_name}
-          </Typography>
+            <Typography variant="h5" component="div">
+              <strong>Name: </strong>
+              {props.project.project_name}
+            </Typography>
           </div>
           <div>
-          <Avatar className={classes.avatar}>{name.charAt(0).toUpperCase()}</Avatar>
+            <Avatar className={classes.avatar}>
+              {name.charAt(0).toUpperCase()}
+            </Avatar>
           </div>
-          </div>
-          <Typography sx={{ fontSize: 14 }} gutterBottom>
-            <strong>Description:</strong>
-          </Typography>
-          <div>
-          <Typography sx={{ fontSize: 14 }} gutterBottom dangerouslySetInnerHTML={{__html: props.project.project_wiki}}>
-          
-          </Typography>
-          </div>
-          <Typography variant="body2" gutterBottom>
+        </div>
+        <Typography sx={{ fontSize: 14 }} gutterBottom>
+          <strong>Description:</strong>
+        </Typography>
+        <div>
+          <Typography
+            sx={{ fontSize: 14 }}
+            gutterBottom
+            dangerouslySetInnerHTML={{ __html: props.project.project_wiki }}
+          ></Typography>
+        </div>
+        <Typography variant="body2" gutterBottom>
           <strong>Created by:</strong> {props.project.project_creator}
-          </Typography>
-          <Typography variant="body2" gutterBottom style={{display: "flex", justifyContent: "flex-start", alignItems: "center"}}>
-          <strong>Completion Status:</strong> {props.project.is_completed ? 
-          <Checkbox
-            checked={true}
-            style={{paddingTop: "0px", paddingBottom: "0px", color: "#3f51b5"}}
-            inputProps={{ 'aria-label': 'controlled' }}
-          /> : 
-          <CancelRoundedIcon style={{color: "#3f51b5", marginLeft: "8px"}}/>
-          }
-          </Typography>
-        </CardContent>
-        <CardActions className={classes.cardActions}>
-            <Button size="small" color="primary" variant="contained" onClick={(e)=>{
-              e.preventDefault(); 
-              projectDetails(props.project.id)}}>Details</Button>
-        </CardActions>
+        </Typography>
+        <Typography
+          variant="body2"
+          gutterBottom
+          style={{
+            display: "flex",
+            justifyContent: "flex-start",
+            alignItems: "center",
+          }}
+        >
+          <strong>Completion Status:</strong>{" "}
+          {props.project.is_completed ? (
+            <Checkbox
+              checked={true}
+              style={{
+                paddingTop: "0px",
+                paddingBottom: "0px",
+                color: "#3f51b5",
+              }}
+              inputProps={{ "aria-label": "controlled" }}
+            />
+          ) : (
+            <CancelRoundedIcon
+              style={{ color: "#3f51b5", marginLeft: "8px" }}
+            />
+          )}
+        </Typography>
+      </CardContent>
+      <CardActions className={classes.cardActions}>
+        <Button
+          size="small"
+          color="primary"
+          variant="contained"
+          onClick={(e) => {
+            e.preventDefault();
+            projectDetails(props.project.id);
+          }}
+        >
+          Details
+        </Button>
+      </CardActions>
     </Card>
-  )
-
-}
+  );
+};
 
 export const Projects = (props) => {
-
-  const [projects, setProjects] = useState([])
-  const [fetched, setFetched] = useState(false)
+  const [projects, setProjects] = useState([]);
+  const [fetched, setFetched] = useState(false);
   const searcher = useSearchStyles();
   const [q, setQ] = useState("");
   const [searchParam] = useState(["project_name"]);
-  const [loggedin, setLoggedin] = useState(false)
-  const checkLoginStatus = async() => {
-    await axios.get("http://127.0.0.1:8000/gotasks/login_check/", {withCredentials:true})
-    .then(response => {
-      console.log(response)
-      if (response.data.loggedin === true && loggedin === false){
-        setLoggedin(true)
-      }
-      else if (response.data.loggedin === false && loggedin === false){
-        setLoggedin(false)
-        history.push("/")
-      }
-      else{
-        setLoggedin(false);
-        history.push("/")
-      }
-    }).catch(error => {
-      console.log("login check failed, try again", error)
-    })
-  }
-
-  const classes = useCardStyles();
+  const [loggedin, setLoggedin] = useState(false);
+  const checkLoginStatus = async () => {
+    await axios
+      .get("http://127.0.0.1:8000/gotasks/login_check/", {
+        withCredentials: true,
+      })
+      .then((response) => {
+        if (response.data.loggedin === true && loggedin === false) {
+          setLoggedin(true);
+        } else if (response.data.loggedin === false && loggedin === false) {
+          setLoggedin(false);
+          history.push("/");
+        } else {
+          setLoggedin(false);
+          history.push("/");
+        }
+      })
+      .catch((error) => {
+        console.log("login check failed, try again", error);
+      });
+  };
 
   const history = useHistory();
 
-  const fetchData = async() => {
-    await http.get("/gotasks/projects").then(
-      (res) => {
-        setProjects(res.data)
-        setFetched(true)
-      }
-    ).catch(err => {
-      console.log("error in receiving data")
-    })
-  }
+  const fetchData = async () => {
+    await http
+      .get("/gotasks/projects")
+      .then((res) => {
+        setProjects(res.data);
+        setFetched(true);
+      })
+      .catch((err) => {
+        console.log("error in receiving data");
+      });
+  };
 
-  useEffect(async() => {
+  useEffect(async () => {
     await checkLoginStatus();
     await fetchData();
-  }, [])
-
+  }, []);
 
   function search(items) {
     return items.filter((item) => {
-        return searchParam.some((newItem) => {
-            return (
-                item[newItem]
-                    .toString()
-                    .toLowerCase()
-                    .indexOf(q.toLowerCase()) > -1
-            );
-        });
+      return searchParam.some((newItem) => {
+        return (
+          item[newItem].toString().toLowerCase().indexOf(q.toLowerCase()) > -1
+        );
+      });
     });
   }
 
+  const breadcrumbs = [
+    <Link
+      style={{
+        textDecoration: "none",
+        color:
+          document.getElementsByTagName("body")[0].style.backgroundColor ==
+          "black"
+            ? "#b3b2b2"
+            : "#3f51b5",
+        fontSize: "20px",
+        marginLeft: "0px!important",
+        fontWeight: "bold",
+      }}
+      key="1"
+      color="inherit"
+      to="/gotasks/dashboard"
+    >
+      Gotasks
+    </Link>,
+  ];
 
-
-
-  if(!fetched === true){
+  if (!fetched === true) {
     return (
       <>
-      <Navbar projects={projects} setProjects={setProjects} fetchData={fetchData}/>
-      <Loading />
+        <Navbar
+          projects={projects}
+          setProjects={setProjects}
+          fetchData={fetchData}
+        />
+        <Loading />
       </>
-    )
-  }
-  else{
+    );
+  } else {
     return (
       <>
-      <Navbar projects={projects} setProjects={setProjects} fetchData={fetchData}/>
-      <div className={searcher.search} style={{backgroundColor: "white"}}>
+        <Navbar
+          projects={projects}
+          setProjects={setProjects}
+          fetchData={fetchData}
+        />
+        <div
+          style={{
+            width: "80%",
+            margin: "auto",
+            marginTop: "20px",
+            display: "flex",
+          }}
+        >
+          <Breadcrumbs style={{ display: "inline" }} aria-label="breadcrumb">
+            {breadcrumbs}
+          </Breadcrumbs>
+          <NavigateNextIcon
+            fontSize="small"
+            style={{
+              alignSelf: "center",
+              color:
+                document.getElementsByTagName("body")[0].style.backgroundCol ==
+                "black"
+                  ? "#b3b2b2"
+                  : "grey",
+            }}
+          />
+        </div>
+        <div
+          className={searcher.search}
+          style={{
+            backgroundColor:
+              document.getElementsByTagName("body")[0].style.backgroundColor ==
+              "black"
+                ? "#b3b2b2"
+                : "white",
+          }}
+        >
           <SearchIcon />
           <input
-          type="search"
-          autocomplete="off"
-          list="data"
-          name="search-form"
-          id="search-form"
-          style={{flexGrow: "1", border: "none", outline: "none", height: "100%", borderRadius: "5px", fontSize: "16px"}}
-          className="search-input"
-          placeholder="Search projects by name..."
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-        />
-            <datalist id="data">
-              {projects.map((item, key) =>
-                <option key={key} value={item.project_name} />
-              )}
-            </datalist>
-      </div>
-      <div>
-      <br />
-      {search(projects).map((project) => (
-        <>
-        <ProjectItem key={project.id} project={project} />
-        </>
-      ))}‌
-      </div>
+            type="search"
+            autocomplete="off"
+            list="data"
+            name="search-form"
+            id="search-form"
+            style={{
+              flexGrow: "1",
+              border: "none",
+              outline: "none",
+              height: "100%",
+              borderRadius: "5px",
+              fontSize: "16px",
+              backgroundColor:
+                document.getElementsByTagName("body")[0].style
+                  .backgroundColor == "black"
+                  ? "#b3b2b2"
+                  : "white",
+            }}
+            className="search-input change"
+            placeholder="Search projects by name..."
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+          />
+          <datalist id="data">
+            {projects.map((item, key) => (
+              <option key={key} value={item.project_name} />
+            ))}
+          </datalist>
+        </div>
+        <div>
+          <br />
+          {projects.length > 0 ? (
+            search(projects).map((project) => (
+              <>
+                <ProjectItem key={project.id} project={project} />
+              </>
+            ))
+          ) : (
+            <NoDisplay whoisitem={"project"} />
+          )}
+          ‌
+        </div>
       </>
-    )
+    );
   }
-}
-
+};

@@ -46,3 +46,25 @@
   float: left;
   color: #3F51B5;
 }
+
+.crumb-css{
+  width: 80%;
+  margin: auto;
+  margin-top: 20px;
+}
+
+.main-div{
+  height: 90vh;
+  margin-top: 20px;
+}
+
+@media screen and (max-width: 500px) {
+  .crumb-css{
+    width: 90%;
+    margin-left: 16px;
+    margin-top: 5px;
+  }
+  .main-div{
+    margin-top: 5px;
+  }
+}

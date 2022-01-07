@@ -1,11 +1,8 @@
-import { makeStyles } from '@material-ui/core/styles';
-import grey from '@material-ui/core/colors/grey';
-
-const backcolgrey = grey[100];
+import { makeStyles } from "@material-ui/core/styles";
 
 const useSearchStyles = makeStyles((theme) => ({
   search: {
-    marginTop: "40px",
+    marginTop: "30px",
     display: "flex",
     flexDirection: "row",
     justifyContent: "center",

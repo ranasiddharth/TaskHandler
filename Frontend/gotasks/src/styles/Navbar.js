@@ -1,15 +1,15 @@
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles((theme) => ({
   toolbar: {
     display: "flex",
-    justifyContent: "space-between"
+    justifyContent: "space-between",
   },
   navcol: {
-    backgroundColor: "grey"
+    backgroundColor: "grey",
   },
   buttoncol: {
-    backgroundColor: "white"
+    backgroundColor: "white",
   },
   linkcol: {
     textDecoration: "none",
@@ -17,11 +17,11 @@ const useStyles = makeStyles((theme) => ({
   },
   buttonmargin: {
     marginRight: theme.spacing(4),
-    backgroundColor: "white"
+    backgroundColor: "white",
   },
   phonelistitems: {
-    marginLeft: "0px"
-  }
+    marginLeft: "0px",
+  },
 }));
 
-export default useStyles
+export default useStyles;

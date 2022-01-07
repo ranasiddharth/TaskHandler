@@ -179,7 +179,7 @@ EMAIL_HOST_PASSWORD = env('senderPass')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-#Auth user model (Abstract user)
+# Auth user model (Abstract user)
 AUTH_USER_MODEL = "gotasks.User"
 
 # REST_FRAMEWORK = {
