@@ -9,17 +9,19 @@ import CancelIcon from "@material-ui/icons/Cancel";
 export const DeleteComment = ({ open, handleClose, comment }) => {
   const { proj_id, list_id, card_id } = useParams();
 
-  const deletecomment = () => {
-    http
+  const deletecomment = async() => {
+    await http
       .delete(
         `/gotasks/projects/${proj_id}/lists/${list_id}/cards/${card_id}/comments/${comment.id}`
       )
       .then((res) => {
-        handleClose();
+        
       })
       .catch((err) => {
         console.log(err, "cannot delete the comment");
       });
+
+    handleClose();
   };
 
   return (

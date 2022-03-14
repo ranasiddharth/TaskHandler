@@ -419,10 +419,15 @@ const Chat = (props) => {
           sx={{ minWidth: 275 }}
           variant="outlined"
           className={chat.cardattr}
-          style={{ marginTop: "5px", marginBottom: "auto", backgroundColor: document.getElementsByTagName("body")[0].style
-          .backgroundColor == "black"
-          ? "black"
-          : chat.cardattr.backgroundColor, }}
+          style={{
+            marginTop: "5px",
+            marginBottom: "auto",
+            backgroundColor:
+              document.getElementsByTagName("body")[0].style.backgroundColor ==
+              "black"
+                ? "black"
+                : chat.cardattr.backgroundColor,
+          }}
         >
           <CardContent
             style={{ height: "100%", overflowY: "scroll" }}
@@ -431,7 +436,15 @@ const Chat = (props) => {
             {!fetched ? (
               <LoadingComments />
             ) : prevComments.length === 0 && fetched ? (
-              <h2>
+              <h2
+                style={{
+                  color:
+                    document.getElementsByTagName("body")[0].style
+                      .backgroundColor == "black"
+                      ? "#b3b2b2"
+                      : "black",
+                }}
+              >
                 <strong>No comments to display !!</strong>
               </h2>
             ) : (

@@ -1,6 +1,8 @@
 import React from "react";
 import { Button } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const useStyle = makeStyles((theme) => ({
   maindiv: {
@@ -25,56 +27,62 @@ const useStyle = makeStyles((theme) => ({
 function NoDisplay(props) {
   const classes = useStyle();
 
+  const message = 
+      `Click on Add ${props.whoisitem} in the Navbar to add a new ${props.whoisitem}`;
+
   const handleButtonClick = () => {
-    alert(
-      `Click on Add ${props.whoisitem} in the Navbar to add a new ${props.whoisitem}`
+    toast.success(
+      <div style={{ color: "green" }}> {message} </div>
     );
   };
 
   return (
-    <div className={classes.maindiv}>
-      <h1
-        className={classes.headingtag}
-        style={{
-          color:
-            document.body.style.backgroundColor == "black" ? "#b3b2b2" : "black",
-        }}
-      >
-        Nothing to display !!
-      </h1>
-      {props.whoisitem !== "dashboard" ? (
-        <h3
-          className={classes.linktag}
+    <>
+      <ToastContainer />
+      <div className={classes.maindiv}>
+        <h1
+          className={classes.headingtag}
           style={{
             color:
-              document.body.style.backgroundColor == "black"
-                ? "#b3b2b2"
-                : "black",
+              document.body.style.backgroundColor == "black" ? "#b3b2b2" : "black",
           }}
         >
-          Please add {props.whoisitem} to see something.
-        </h3>
-      ) : (
-        <h3
-          className={classes.linktag}
-          style={{
-            color:
-              document.body.style.backgroundColor == "black"
-                ? "#b3b2b2"
-                : "black",
-          }}
-        >
-          Nothing assigned !
-        </h3>
-      )}
-      {props.whoisitem !== "dashboard" ? (
-        <Button variant="contained" color="primary" onClick={handleButtonClick}>
-          What to do ?
-        </Button>
-      ) : (
-        ""
-      )}
-    </div>
+          Nothing to display !!
+        </h1>
+        {props.whoisitem !== "dashboard" ? (
+          <h3
+            className={classes.linktag}
+            style={{
+              color:
+                document.body.style.backgroundColor == "black"
+                  ? "#b3b2b2"
+                  : "black",
+            }}
+          >
+            Please add {props.whoisitem} to see something.
+          </h3>
+        ) : (
+          <h3
+            className={classes.linktag}
+            style={{
+              color:
+                document.body.style.backgroundColor == "black"
+                  ? "#b3b2b2"
+                  : "black",
+            }}
+          >
+            Nothing assigned !
+          </h3>
+        )}
+        {props.whoisitem !== "dashboard" ? (
+          <Button variant="contained" color="primary" onClick={handleButtonClick}>
+            What to do ?
+          </Button>
+        ) : (
+          ""
+        )}
+      </div>
+    </>
   );
 }
 
